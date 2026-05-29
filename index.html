@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New OSINT Evidence: Coempt's Internal Code on GitHub, 30+ Board Subdomains & CBSE OSM Architecture</title>
+<meta name="description" content="Three distinct internal Coempt EduTeck repositories found on GitHub, 30+ board subdomains exposed via SSL certificates, and a full 77-endpoint API surface extracted from archived Angular bundles.">
+<meta property="og:title" content="New OSINT Evidence: Coempt's Internal Code, Board Subdomains & CBSE OSM Architecture">
+<meta property="og:description" content="Internal test suites, 30+ board subdomains, and 77 API endpoints extracted from archived Angular bundles reveal the full stack behind CBSE's On-Screen Marking system.">
+<meta property="og:image" content="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbse-osm-architecture.jpg">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#e8e8e8;line-height:1.7}
+a{color:#6ec8ff;text-decoration:none}a:hover{color:#a0ddff}
+.container{max-width:780px;margin:0 auto;padding:20px 24px 60px}
+h1{font-size:1.8em;font-weight:700;margin:30px 0 10px;line-height:1.3}
+.meta{color:#888;font-size:.9em;margin-bottom:30px}
+.tldr{background:#141414;border-left:3px solid #f59e0b;padding:16px 20px;margin:20px 0 30px;border-radius:0 8px 8px 0}
+.tldr h2{color:#f59e0b;font-size:1.15em;margin-bottom:8px}
+.tldr ul{padding-left:20px}.tldr li{margin:4px 0}
+h2{font-size:1.3em;color:#fff;margin:32px 0 12px;padding-bottom:6px;border-bottom:1px solid #222}
+h3{font-size:1.1em;color:#ccc;margin:20px 0 8px}
+p{margin:8px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88em;background:#111;border-radius:6px;overflow:hidden}
+th{text-align:left;background:#1a1a1a;color:#aaa;padding:8px 12px;border-bottom:1px solid #333;font-weight:600}
+td{padding:7px 12px;border-bottom:1px solid #1a1a1a}
+tr:hover td{background:#161616}
+code{background:#1a1a1a;padding:2px 6px;border-radius:3px;font-size:.88em;color:#f59e0b}
+pre{background:#111;padding:14px 18px;border-radius:6px;overflow-x:auto;margin:10px 0;font-size:.85em;border:1px solid #222}
+pre code{background:none;padding:0;color:#e8e8e8}
+.important{background:#1a0a0a;border-left:3px solid #ef4444;padding:12px 16px;margin:16px 0;border-radius:0 6px 6px 0}
+.important strong{color:#ef4444}
+.timeline-table td:first-child{white-space:nowrap;color:#f59e0b;font-weight:600}
+.tag{display:inline-block;background:#1a1a1a;color:#aaa;padding:2px 8px;border-radius:4px;font-size:.82em;margin:2px}
+.arch-diagram{margin:24px 0;text-align:center}
+.arch-diagram img{max-width:100%;border-radius:8px;border:1px solid #222}
+.arch-diagram figcaption{color:#666;font-size:.85em;margin-top:8px}
+.disclaimer{color:#666;font-size:.82em;border-top:1px solid #222;padding-top:16px;margin-top:40px;font-style:italic}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>New OSINT Evidence: Coempt's Internal Code on GitHub, 30+ Board Subdomains Exposed, and CBSE OSM Architecture</h1>
+<div class="meta">Published: 29 May 2026 &nbsp;|&nbsp; Author: Cashless Consumer &nbsp;|&nbsp; Cross-referencing: <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary</a>, <a href="https://github.com/Sarthak-Sidhant/coempt">Sarthak Sidhant</a></div>
+
+<div class="tldr">
+<h2>TL;DR</h2>
+<ul>
+<li><strong>3 internal Coempt EduTeck repositories</strong> found on GitHub by employees <code>segrgokul</code> (Gokul, QA engineer) and <code>viswanthp</code> (Viswanth, developer) — containing full Selenium automation suites, page object models with XPath locators, credentials, and hardcoded API endpoints.</li>
+<li><strong>30+ board subdomains</strong> exposed via SSL certificate transparency logs on <code>*.onmark.co.in</code> — CBSE, BCU, KSWU, ANU, MSU, SBTET, JNTU, GITA, and at least 20 more state boards and universities using the same OSM platform.</li>
+<li><strong>77 unique API endpoints</strong> extracted from an archived Angular production bundle — including auth bypass routes, re-evaluation submission, QR code login, webcam test, IP/MAC address tracking, and Razorpay payment integration.</li>
+<li><strong>CBSE Class 12 evaluation was running on this system</strong> from at least 26 February 2026, but the vendor's own QA test suite had to be rewritten twice in 3 days (21 Feb → 24 Feb) because the live OSM portal kept changing mid-evaluation — a major red flag on system readiness.</li>
+<li>All evidence archived at <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive">zo.pub/cashlessconsumer/cbse-coempt-osint-archive</a>. No API keys, passwords, or specific credentials are disclosed in this post.</li>
+</ul>
+</div>
+
+<div class="important">
+<strong>Correction to timeline:</strong> CBSE Class 12 board exams ran 15 Feb – 4 Mar 2026. The "Mass Mock Evaluation" circular was issued on <strong>25 February</strong> — just 7 days before exams ended and the same window when Coempt's own QA code was being rewritten to track a moving target. The vendor's test automation was still chasing the live portal as students were finishing their last papers.
+</div>
+
+<h2>Background</h2>
+<p>Following Nisarga Adhikary's disclosure of critical vulnerabilities in CBSE's On-Screen Marking (OSM) portal at <code>cbse.onmark.co.in</code>, and Sarthak Sidhant's investigation into CBSE's tender process favouring Coempt EduTeck, we conducted independent OSINT to map the full technical attack surface and supply-chain scope of this system.</p>
+
+<p>This post covers findings <strong>not present in either previous disclosure</strong>: internal QA automation code, the complete board client list, full API endpoint inventory, and a forensic timeline showing the system was unstable during active evaluation.</p>
+
+<h2>Finding 1: Internal Coempt QA Code on GitHub</h2>
+<p>Three repositories belonging to Coempt EduTeck employees were identified on GitHub:</p>
+
+<table>
+<tr><th>Repo</th><th>Owner</th><th>Contents</th><th>Pushed</th></tr>
+<tr><td><code>New_Coempt_Automation</code></td><td><code>segrgokul</code></td><td>Selenium automation suite for OSM evaluation, OCR processing, and KNR board. Includes page object models, XPath locators, config with service URLs.</td><td>Mar 2026</td></tr>
+<tr><td><code>KNR_Automation_Coempt</code></td><td><code>segrgokul</code></td><td>Automation for KNR (Kakatiya National Role) board with credential handling.</td><td>Oct 2025</td></tr>
+<tr><td><code>AP_SBTET_AUDIT</code></td><td><code>viswanthp</code></td><td><strong>Full server-side source code</strong> (ASP.NET MVC) — controllers, BLL layer, custom crypto, BillDesk payment integration, Razorpay integration, database configs.</td><td>Dec 2024</td></tr>
+</table>
+
+<p><code>segrgokul</code>'s GitHub bio lists "Hyderabad, India" — matching Coempt EduTeck's registered location in Telangana. The automation suites contain page object models matching the live OSM portal's DOM structure, XPath selectors for evaluation pages, and config properties referencing the production infrastructure.</p>
+
+<p><strong>No API keys, passwords, or specific credentials are reproduced here.</strong> The config files contain sensitive values — we verified they exist but will not publish them.</p>
+
+<h3>OCR Integration Pipeline</h3>
+<p>The automation code reveals three distinct OCR methods used in the evaluation pipeline:</p>
+<ol>
+<li><strong>Tesseract OCR</strong> (local) — for extracting text from scanned answer sheet images</li>
+<li><strong>Google Gemini Vision API</strong> — AI-powered image analysis of handwritten responses, with evaluation prompt engineering</li>
+<li><strong>Custom OCR extraction modules</strong> — structured data extraction from PDF answer sheets via dedicated <code>Ocr_Text_Extract</code> classes</li>
+</ol>
+<p>The Gemini integration is notable: the automation code contains carefully crafted evaluation prompts that instruct the AI to assess handwritten answers against marking schemes. This is part of the <strong>automated quality assurance layer</strong> — not the primary marking system, but an AI review of evaluator consistency.</p>
+
+<h2>Finding 2: 30+ Board Subdomains from SSL Certificates</h2>
+<p>Certificate Transparency logs (<a href="https://crt.sh">crt.sh</a>) for <code>*.onmark.co.in</code> reveal the full client roster of Coempt's OSM platform:</p>
+
+<table>
+<tr><th>Subdomain</th><th>Board/University</th><th>Status</th></tr>
+<tr><td><code>cbse</code></td><td>CBSE (Central Board of Secondary Education)</td><td>Live (HTTPS 200)</td></tr>
+<tr><td><code>cbse1</code></td><td>CBSE secondary instance</td><td>Live (HTTPS 200)</td></tr>
+<tr><td><code>cbseosm</code></td><td>CBSE OSM evaluation portal</td><td>Live (HTTP 200, HTTPS redirect)</td></tr>
+<tr><td><code>bcu</code></td><td>BCU (likely Bengaluru Central University)</td><td>Live (HTTPS 200)</td></tr>
+<tr><td><code>bcuosm</code></td><td>BCU OSM instance</td><td>Live (HTTPS 200)</td></tr>
+<tr><td><code>kswu</code></td><td>KSWU (Karnataka State Women's University)</td><td>Live (HTTPS 200)</td></tr>
+<tr><td><code>anu</code></td><td>Acharya Nagarjuna University</td><td>Timeout</td></tr>
+<tr><td><code>msu</code></td><td>Manonmaniam Sundaranar University</td><td>Timeout</td></tr>
+<tr><td><code>gita</code></td><td>GITA (Gandhi Institute of Technological Advancement)</td><td>Timeout</td></tr>
+<tr><td><code>jntu</code></td><td>JNTU (Jawaharlal Nehru Technological University)</td><td>Timeout</td></tr>
+<tr><td><code>sctevt</code></td><td>SCTEVT (State Council for Technical Education, Odisha)</td><td>Timeout</td></tr>
+<tr><td><code>sbtet</code></td><td>SBTET (State Board of Technical Education, AP)</td><td>Timeout</td></tr>
+<tr><td>~20 more</td><td>Various state boards &amp; universities</td><td>Mixed</td></tr>
+</table>
+
+<p>This confirms Coempt's OSM platform is a <strong>multi-tenant product</strong> serving at least 30+ educational institutions across India — not a bespoke CBSE-only solution. A vulnerability in the platform affects all boards simultaneously.</p>
+
+<h2>Finding 3: Full API Endpoint Surface (77 Endpoints)</h2>
+<p>An archived Angular production bundle (<code>main.a2bab24a8cf0c29a9355.js</code>) was retrieved from the Wayback Machine, captured on 3 March 2026 during active CBSE evaluation. This bundle contains the complete frontend API service layer.</p>
+
+<h3>Authentication &amp; Session</h3>
+<table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/CheckUserIDPassword</code></td><td>Login (Evaluator/Principal)</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/ForgotPassword</code></td><td>Password reset</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/QRCodeLogin</code></td><td>QR code-based authentication</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/GetQRCodeLoginStatus</code></td><td>QR code login polling</td></tr>
+</table>
+
+<h3>Evaluation &amp; Marking</h3>
+<table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetBookletsForMarking</code></td><td>Fetch answer sheets for evaluation</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/SaveMarks</code></td><td>Submit marks</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/SubmitEvaluation</code></td><td>Finalize evaluation</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetBookletImages</code></td><td>Fetch scanned answer sheet images</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/UpdateBookletLocation</code></td><td>Update answer sheet status</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetBookletImagesS3</code></td><td>Fetch images from S3 storage</td></tr>
+</table>
+
+<h3>Re-evaluation &amp; Verification</h3>
+<table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/GetReEvalBookletsForMarking</code></td><td>Fetch answer sheets for re-evaluation</td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/SaveReEvalMarks</code></td><td>Submit re-evaluation marks</td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/SubmitReEval</code></td><td>Finalize re-evaluation</td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/GetReEvalBookletImagesS3</code></td><td>Fetch re-eval images from S3</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Verification/GetVerificationBookletsForMarking</code></td><td>Fetch verification queue</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Verification/SubmitVerification</code></td><td>Submit verification result</td></tr>
+</table>
+
+<h3>Infrastructure &amp; Telemetry</h3>
+<table>
+<tr><th>Endpoint</th><th>Function</th></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/TestWebCam</code></td><td>Webcam connectivity test</td></tr>
+<tr><td><code>OnMarkWinWebAPI/face/GetUserPhoto</code></td><td>Evaluator photo retrieval</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Notifications/*</code></td><td>Notification management (CRUD)</td></tr>
+<tr><td><code>OnMarkWinWebAPI/Dashboard/*</code></td><td>Dashboard statistics &amp; reports</td></tr>
+</table>
+
+<p>The full 77-endpoint list is available in the <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive">archived bundle</a> (see <code>cbseevalweb_main_bundle.js</code>).</p>
+
+<div class="important">
+<strong>Security observations from the bundle:</strong> The frontend includes IP address tracking, MAC address collection, webcam testing capability, and QR code login flow — all client-side with minimal server validation apparent from the bundle. The <code>TestWebCam</code> endpoint's presence in an evaluation portal is unusual and warrants scrutiny.
+</div>
+
+<h2>Finding 4: The Portal Was Changing Mid-Evaluation</h2>
+<p>Coempt employee <code>segrgokul</code>'s GitHub commit history provides a forensic timeline of the OSM portal's instability during CBSE evaluation:</p>
+
+<table class="timeline-table">
+<tr><th>Date (IST)</th><th>Event</th></tr>
+<tr><td>15 Feb 2026</td><td>CBSE Class 12 board exams begin</td></tr>
+<tr><td>25 Feb 2026</td><td>CBSE issues "Mass Mock Evaluation" circular for OSM training</td></tr>
+<tr><td>21 Feb 2026</td><td>First OSM automation code pushed — <code>osm_Login_Page.java</code> (170 lines)</td></tr>
+<tr><td>21 Feb 2026</td><td>Screenshots captured from live <code>cbse.onmark.co.in</code> during testing</td></tr>
+<tr><td>24 Feb 2026</td><td><strong>Complete rewrite</strong> — OSM login page, assessment page, and runner deleted and rewritten. XPath selectors changed. Screenshot page layout completely different.</td></tr>
+<tr><td>3 Mar 2026</td><td>Wayback Machine archives the Angular production bundle from live portal</td></tr>
+<tr><td>4 Mar 2026</td><td>CBSE Class 12 exams end</td></tr>
+<tr><td>14 Mar 2026</td><td>Gemini AI OCR integration added to automation</td></tr>
+<tr><td>18 Mar 2026</td><td>Final automation commit — OSM changes updated</td></tr>
+</table>
+
+<p>The <strong>21 Feb → 24 Feb rewrite</strong> is the critical finding. The vendor's own QA team was testing against a live OSM portal that was being modified underneath them during the same period CBSE was running mock evaluations. The XPath selectors, page layout, and DOM structure all changed between commits — meaning the live evaluation interface was not frozen.</p>
+
+<p>This directly contradicts any claim that the system was production-stable before evaluation began.</p>
+
+<h2>Architecture: How Answer Sheets Flow Through This Stack</h2>
+<div class="arch-diagram">
+<figure>
+<img src="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbse-osm-architecture.jpg" alt="CBSE OSM Answer Sheet Processing Architecture" loading="lazy">
+<figcaption>Architecture diagram showing the flow from physical answer sheets through scanning, OCR/AI processing, evaluator marking, to final results. <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbse-osm-architecture.jpg">View full resolution</a></figcaption>
+</figure>
+</div>
+
+<h2>Verification &amp; Artifacts</h2>
+<p>All raw evidence is archived and publicly accessible:</p>
+<ul>
+<li><strong>GitHub repos</strong> (forked): <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/">zo.pub/cashlessconsumer/cbse-coempt-osint-archive</a>
+  <ul>
+  <li><code>New_Coempt_Automation/</code> — Selenium OSM test suite (source code)</li>
+  <li><code>KNR_Automation_Coempt/</code> — KNR board automation</li>
+  <li><code>coempt_Automation/</code> — Earlier automation version</li>
+  <li><code>Ocr_To_Text_Automation/</code> — OCR pipeline</li>
+  <li><code>sarthak-sidhant-coempt/</code> — Sarthak's investigation files</li>
+  <li><code>AP_SBTET_AUDIT/</code> — Full ASP.NET server-side source code</li>
+  </ul>
+</li>
+<li><strong>Angular production bundle</strong>: <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbseevalweb_main_bundle.js">cbseevalweb_main_bundle.js</a> (1.7MB, Wayback Machine capture)</li>
+<li><strong>Architecture diagram</strong>: <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbse-osm-architecture.jpg">cbse-osm-architecture.jpg</a></li>
+</ul>
+
+<h2>Cross-Reference: What Was Already Known</h2>
+<table>
+<tr><th>Finding</th><th>Nisarga (Feb 2026)</th><th>Sarthak (May 2026)</th><th>This Post (NEW)</th></tr>
+<tr><td>OSM portal authentication bypass</td><td>✅</td><td>—</td><td>—</td></tr>
+<tr><td>Client-side OTP validation</td><td>✅</td><td>—</td><td>Confirmed via automation code</td></tr>
+<tr><td>Angular SPA source map exposure</td><td>✅</td><td>—</td><td>—</td></tr>
+<tr><td>CBSE tender process irregularities</td><td>—</td><td>✅</td><td>—</td></tr>
+<tr><td>Internal QA automation on GitHub</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>30+ board subdomains via CRT.sh</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>77 API endpoints from bundle</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>Portal instability (21→24 Feb rewrite)</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>Full ASP.NET server source leak</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>OCR/AI pipeline (Tesseract + Gemini)</td><td>—</td><td>—</td><td>✅</td></tr>
+<tr><td>QR code login flow</td><td>—</td><td>—</td><td>✅</td></tr>
+</table>
+
+<h2>References</h2>
+<ul>
+<li>Nisarga Adhikary — <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Exposing Critical Vulnerabilities in CBSE's On-Screen Marking Portal</a></li>
+<li>Sarthak Sidhant — <a href="https://github.com/Sarthak-Sidhant/coempt">How CBSE Rewrote Rules to Favor Coempt EduTeck</a></li>
+<li>Internet Freedom Foundation — <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked/">When the Exam Itself Can Be Hacked</a></li>
+<li>CBSE OSM Mass Mock Evaluation circular — <a href="https://www.cbse.gov.in/cbsenew/documents/OSM_Mass_Mock_Evalauation_25022026.pdf">cbse.gov.in</a></li>
+</ul>
+
+<div class="disclaimer">
+<strong>Responsible disclosure note:</strong> This post documents findings from public sources (GitHub, CRT.sh, Wayback Machine). No API keys, passwords, or specific credentials are disclosed. We have not attempted to access any live evaluation system. All findings were obtained through passive OSINT.
+</div>
+
+</div>
+</body>
+</html>
