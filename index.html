@@ -69,6 +69,10 @@ pre code{background:none;padding:0;color:#e8e8e8}
 <h2>Finding 1: Internal Coempt QA Code on GitHub</h2>
 <p>Three repositories belonging to Coempt EduTeck employees were identified on GitHub:</p>
 
+<div style="background:#1a1a2e;border-left:4px solid #e94560;padding:12px 16px;margin:16px 0;border-radius:4px;font-size:0.92em;color:#ccc">
+<strong>⚠️ Important Clarification:</strong> The three repos represent <strong>two separate systems</strong>. <code>New_Coempt_Automation</code> and <code>KNR_Automation_Coempt</code> are <strong>QA test suites for the CBSE OSM platform</strong> — Selenium automation that exercises the live cbse.onmark.co.in evaluation portal. <code>AP_SBTET_AUDIT</code> is <strong>full server-side source code for a different client</strong> (Andhra Pradesh State Board of Technical Education) — an ASP.NET MVC application on a separate instance (sbtet.onmark.co.in). The SBTET repo reveals Coempt's <em>engineering patterns</em> (custom crypto, payment integrations, auth design) but <strong>its code does not run on the CBSE OSM portal</strong>. The CBSE portal is an Angular SPA served from cbse.onmark.co.in, while SBTET uses ASP.NET — entirely different tech stacks. We include it because the shared vendor (Coempt) and identical security anti-patterns are relevant to assessing CBSE's risk.
+</div>
+
 <table>
 <tr><th>Repo</th><th>Owner</th><th>Contents</th><th>Pushed</th></tr>
 <tr><td><code>New_Coempt_Automation</code></td><td><code>segrgokul</code></td><td>Selenium automation suite for OSM evaluation, OCR processing, and KNR board. Includes page object models, XPath locators, config with service URLs.</td><td>Mar 2026</td></tr>
