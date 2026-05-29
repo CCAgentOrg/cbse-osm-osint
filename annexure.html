@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Annexure — CBSE OSM OSINT Evidence</title>
+<meta name="description" content="Full code evidence, API endpoints, XPath selectors, and methodology for the CBSE OSM OSINT investigation.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'JetBrains Mono','Fira Code',monospace;background:#0d1117;color:#c9d1d9;line-height:1.7;font-size:14px}
+a{color:#58a6ff;text-decoration:none}a:hover{color:#79c0ff}
+.container{max-width:960px;margin:0 auto;padding:20px 24px 80px}
+h1{font-size:1.5em;color:#f0f6fc;margin:30px 0 8px;font-family:-apple-system,sans-serif}
+.back{display:inline-block;color:#58a6ff;margin-bottom:20px;font-family:-apple-system,sans-serif}
+.back:hover{color:#79c0ff}
+h2{font-size:1.2em;color:#f0f6fc;margin:32px 0 12px;padding-bottom:6px;border-bottom:1px solid #21262d;font-family:-apple-system,sans-serif}
+h3{font-size:1.05em;color:#8b949e;margin:20px 0 8px;font-family:-apple-system,sans-serif}
+p{margin:8px 0}
+pre{background:#161b22;padding:14px 18px;border-radius:6px;overflow-x:auto;margin:10px 0;font-size:13px;border:1px solid #21262d}
+code{font-size:13px}
+pre code{color:#c9d1d9}
+.inline-code{background:#161b22;padding:2px 6px;border-radius:3px;color:#f0883e;font-size:13px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;background:#0d1117}
+th{text-align:left;background:#161b22;color:#8b949e;padding:8px 12px;border-bottom:1px solid #21262d;font-weight:600}
+td{padding:6px 12px;border-bottom:1px solid #161b22}
+tr:hover td{background:#161b22}
+.section{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px 20px;margin:20px 0}
+.section-label{color:#f0883e;font-weight:700;font-size:.85em;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-family:-apple-system,sans-serif}
+.warning{border-color:#f85149}
+.warning .section-label{color:#f85149}
+.toc{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:16px 20px;margin:20px 0}
+.toc ol{padding-left:24px;margin:0}
+.toc li{margin:4px 0}
+.toc a{color:#58a6ff}
+.disclaimer{color:#484f58;font-size:.82em;border-top:1px solid #21262d;padding-top:16px;margin-top:50px;font-style:italic}
+</style>
+</head>
+<body>
+<div class="container">
+
+<a href="index.html" class="back">← Back to article</a>
+<h1>Technical Annexure</h1>
+<p style="color:#8b949e;font-size:.9em;margin-bottom:30px">Full code evidence, API endpoints, XPath selectors, and methodology.</p>
+
+<div class="toc">
+<h3 style="margin-bottom:10px;color:#f0f6fc">Contents</h3>
+<ol>
+<li><a href="#methodology">Methodology &amp; Tools</a></li>
+<li><a href="#repos">Repository Inventory</a></li>
+<li><a href="#otp-bypass">OTP Bypass — Code Evidence</a></li>
+<li><a href="#marking">Automated Canvas Marking</a></li>
+<li><a href="#ci-scale">Jenkins CI Scale</a></li>
+<li><a href="#subdomains">Subdomain Inventory (CRT.sh)</a></li>
+<li><a href="#api">Full API Endpoint List (77 endpoints)</a></li>
+<li><a href="#ocr">OCR/AI Pipeline</a></li>
+<li><a href="#sbtet">SBTET Server-Side Source Code</a></li>
+<li><a href="#timeline">Forensic Timeline with Git SHAs</a></li>
+<li><a href="#bundle">Angular Bundle Extraction</a></li>
+<li><a href="#artifacts">Artifact Inventory</a></li>
+</ol>
+</div>
+
+<h2 id="methodology">1. Methodology &amp; Tools</h2>
+<div class="section">
+<div class="section-label">Passive OSINT only — no active testing</div>
+<table>
+<tr><th>Source</th><th>Tool / Method</th><th>Purpose</th></tr>
+<tr><td>GitHub API</td><td><code>api.github.com/search/repositories</code>, <code>search/code</code></td><td>Locate repos by keyword (coempt, globarena, onmark, cbseevalweb)</td></tr>
+<tr><td>GitHub API</td><td><code>GET /repos/{owner}/{repo}/commits</code></td><td>Forensic timeline of commits with diffs</td></tr>
+<tr><td>GitHub API</td><td><code>GET /users/{username}</code></td><td>Profile metadata (location, bio)</td></tr>
+<tr><td>CRT.sh</td><td><code>crt.sh/?q=%.onmark.co.in</code></td><td>SSL certificate transparency — all issued subdomains</td></tr>
+<tr><td>Wayback Machine CDX</td><td><code>web.archive.org/cdx/search/cdx?url=cbse.onmark.co.in/*</code></td><td>Archived URLs including Angular JS bundles</td></tr>
+<tr><td>Wayback Machine</td><td>Direct HTTP fetch of archived JS bundles</td><td>1.7 MB <code>main.a2bab24a8cf0c29a9355.js</code> from 3 Mar 2026</td></tr>
+<tr><td>curl / HTTP headers</td><td>Live probes of subdomains</td><td>Determine which onmark.co.in instances are live (HTTP status codes)</td></tr>
+<tr><td>grep / sed / jq</td><td>Local analysis of cloned repos and downloaded bundles</td><td>Extract API endpoints, XPath selectors, credential patterns</td></tr>
+</table>
+</div>
+
+<h2 id="repos">2. Repository Inventory</h2>
+<div class="section">
+<div class="section-label">Three repos by two Coempt employees</div>
+
+<h3>segrgokul (Gokul — QA Engineer, Hyderabad)</h3>
+<table>
+<tr><th>Repo</th><th>Language</th><th>Size</th><th>Commits</th><th>First Push</th><th>Last Push</th></tr>
+<tr><td><code>New_Coempt_Automation</code></td><td>Java (Selenium + TestNG)</td><td>~2.8 GB (incl. .git)</td><td>8</td><td>18 Oct 2025</td><td>18 Mar 2026</td></tr>
+<tr><td><code>KNR_Automation_Coempt</code></td><td>Java (Selenium + TestNG)</td><td>~120 MB</td><td>3</td><td>18 Oct 2025</td><td>18 Oct 2025</td></tr>
+</table>
+
+<h3>viswanthp (Viswanth — Developer)</h3>
+<table>
+<tr><th>Repo</th><th>Language</th><th>Size</th><th>Commits</th><th>First Push</th></tr>
+<tr><td><code>AP_SBTET_AUDIT</code></td><td>C# (ASP.NET MVC)</td><td>~162 MB</td><td>1</td><td>27 Dec 2024</td></tr>
+</table>
+
+<h3>sarthak-sidhant (Sarthak Sidhant — independent researcher)</h3>
+<table>
+<tr><th>Repo</th><th>Contents</th></tr>
+<tr><td><code>coempt</code></td><td>Investigation writeup + tender documents + screenshots</td></tr>
+</table>
+</div>
+
+<h3>New_Coempt_Automation — File Structure</h3>
+<pre><code>src/main/java/
+├── browsers/
+│   └── BrowserManager.java          # URL routing, WebDriver setup
+├── OSM/
+│   ├── osm_Login_Page.java         # Login flow (OTP bypass)
+│   ├── osmMainAssessmentPage.java  # Canvas-based marking
+│   └── osmLogoutPage.java          # Session management
+├── osmWebElement/
+│   ├── osm_LoginPageXpaths.java    # XPath selectors for login
+│   └── osmMainAssessmentXpaths.java # XPath selectors for marking
+├── pageObjMod/
+│   └── OsmPom.java                  # Page Object Model (Singleton)
+├── ocrTextModules/
+│   └── Ocr_Text_Extract.java        # OCR extraction pipeline
+├── rtmnuTRProject/
+│   └── PomClass.java                # KNR board POM
+└── ExcelFolder/                     # Test data sheets (credentials)
+
+src/main/resources/
+└── config.properties                # URLs, credentials, API keys
+
+src/test/java/
+└── osm_runner_Exceution/
+    └── osm_Exceution.java           # TestNG runner (Jenkins CI)
+</code></pre>
+
+<h2 id="otp-bypass">3. OTP Bypass — Code Evidence</h2>
+<div class="section warning">
+<div class="section-label">Source: osm_Login_Page.java</div>
+<pre><code>package OSM;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.*;
+import pageObjMod.OsmPom;
+import osmWebElement.osm_LoginPageXpaths;
+import java.time.Duration;
+import browsers.BrowserManager;
+
+public class osm_Login_Page {
+
+    WebDriver driver;
+    OsmPom pom = OsmPom.getInstanceOsmLoginXP();
+
+    public osm_Login_Page(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+
+    public void login(String userName, String password,
+                      String schoolID, String dob) {
+
+        // Step 1: Fill credentials
+        pom.userName.sendKeys(userName);
+        pom.password.sendKeys(password);
+        pom.schoolNo.sendKeys(schoolID);
+        pom.dob.sendKeys(dob);
+
+        // Step 2: Click "Send OTP"
+        pom.sendOTP.click();
+
+        // Step 3: Wait for OTP field to appear on page
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.visibilityOf(pom.otpShown));
+
+        // Step 4: OTP is displayed? Just click Login.
+        // No code reads or enters any OTP value.
+        if (pom.otpShown.isDisplayed()) {
+            pom.loginBtn.click();
+
+            // Alert appears: "You have successfully logged in the OSM portal"
+            Alert alert = driver.switchTo().alert();
+            System.out.println(alert.getText());
+            alert.accept();
+        }
+    }
+}
+</code></pre>
+</div>
+
+<div class="section">
+<div class="section-label">Source: osm_LoginPageXpaths.java — XPath selectors for login page</div>
+<pre><code>package osmWebElement;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.*;
+
+public class osm_LoginPageXpaths {
+
+    // OTP field: a plain text input rendered client-side
+    @FindBy(xpath = "//div/input[@class='form-input otp-input "
+            + "ng-untouched ng-pristine ng-valid']")
+    public WebElement otpShown;
+
+    // Login button
+    @FindBy(xpath = "//button[contains(text(),'Login')]")
+    public WebElement loginBtn;
+
+    // Send OTP button
+    @FindBy(xpath = "//button[contains(text(),'Send OTP')]")
+    public WebElement sendOTP;
+
+    // Credential fields
+    @FindBy(xpath = "//input[@formcontrolname='userName']")
+    public WebElement userName;
+
+    @FindBy(xpath = "//input[@formcontrolname='password']")
+    public WebElement password;
+
+    @FindBy(xpath = "//input[@formcontrolname='schoolNo']")
+    public WebElement schoolNo;
+
+    @FindBy(xpath = "//input[@formcontrolname='dob']")
+    public WebElement dob;
+}
+</code></pre>
+</div>
+
+<div class="section">
+<div class="section-label">Source: BrowserManager.java — URL routing (switchable by config)</div>
+<pre><code>public String urlBasedLogin(String loginName) {
+    String url = "";
+    switch (loginName) {
+        case "osm":
+            url = "https://cbse.onmark.co.in/cbseevalweb/";
+            break;
+        case "sctevt_live_result":
+            url = "https://sctevtexams.in/sn20Yz";
+            break;
+        case "knr_live":
+            url = "https://knruhs.uonex.in/";
+            break;
+        // ... additional board URLs ...
+        default:
+            url = "https://cbse.onmark.co.in/cbseevalweb/";
+    }
+    return url;
+}
+</code></pre>
+</div>
+
+<div class="section">
+<div class="section-label">Source: config.properties — Board switch &amp; credential patterns</div>
+<pre><code># Switch target board with one config value
+# login_name=osm                  → CBSE
+# login_name=sctevt_live_result    → SCTEVT Odisha
+# login_name=knr_live             → KNR
+login_name=osm
+
+# Credential patterns (values redacted)
+osm_username=*****
+osm_password=*****
+
+# Service URLs
+osm_url=https://cbse.onmark.co.in/cbseevalweb/
+</code></pre>
+</div>
+
+<h2 id="marking">4. Automated Canvas Marking</h2>
+<div class="section warning">
+<div class="section-label">Source: osmMainAssessmentPage.java — HTML5 canvas interaction</div>
+<pre><code>package OSM;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.JavascriptExecutor;
+
+public class osmMainAssessmentPage {
+
+    WebDriver driver;
+    JavascriptExecutor js;
+
+    // Navigate through scanned answer sheet pages
+    public void markAnswerSheets() {
+        List&lt;WebElement&gt; scannedPages = driver.findElements(
+            By.xpath("//div[contains(@class,'thumbnail')]")
+        );
+
+        for (int i = 0; i &lt; scannedPages.size(); i++) {
+            scannedPages.get(i).click();  // Load page on canvas
+
+            // Interact with marking canvas (HTML5 &lt;canvas&gt;)
+            WebElement canvas = driver.findElement(
+                By.id("canvas" + (i + 2))
+            );
+
+            // Right-click to open mark allocation context menu
+            new Actions(driver).contextClick(canvas).perform();
+
+            // Select mark value from context menu items
+            List&lt;WebElement&gt; menuItems = driver.findElements(
+                By.xpath("//div[contains(@class,'context-menu')]"
+                       + "//ul/li")
+            );
+            WebElement target = menuItems.get(markValue);
+            js.executeScript("arguments[0].click();", target);
+
+            // Double-click canvas at coordinates to confirm allocation
+            int x = 150, y = 200;
+            String leftDblClickScript = 
+                "var evt = new MouseEvent('dblclick', {"
+              + "bubbles: true, clientX: " + x + ", clientY: " + y
+              + "}); arguments[0].dispatchEvent(evt);";
+            js.executeScript(leftDblClickScript, canvas, x, y);
+        }
+    }
+
+    // Submit completed evaluation
+    public void submitEvaluation() {
+        WebElement submitBtn = driver.findElement(
+            By.xpath("//button[contains(text(),'Submit')]")
+        );
+        submitBtn.click();
+    }
+}
+</code></pre>
+</div>
+
+<h2 id="ci-scale">5. Jenkins CI Scale</h2>
+<div class="section">
+<div class="section-label">Source: osm_Exceution.java — CI-ready test runner</div>
+<pre><code>package osm_runner_Exceution;
+
+import org.testng.*;
+import org.testng.annotations.*;
+
+public class osm_Exceution {
+
+    WebDriver driver;
+    List&lt;String&gt; methodsToRun;
+
+    @Parameters({"TestMethod"})
+    @BeforeTest
+    public void beforeTest(@Optional("") String testMethods) {
+        // Jenkins feeds test methods via -DTestMethod parameter
+        methodsToRun = Arrays.asList(testMethods.split(","));
+    }
+
+    @Test(priority = 1)
+    public void loginTest() {
+        // Credentials from environment variables or Excel
+        String filePath = System.getenv("Filepath");
+        String loginName = System.getenv("Project_Login");
+        String browser   = System.getenv("Browser");
+
+        osm_Login_Page loginPage = new osm_Login_Page(driver);
+        loginPage.login(username, password, schoolNo, dob);
+    }
+
+    @Test(priority = 2, dependsOnMethods = "loginTest")
+    public void markingTest() {
+        osmMainAssessmentPage marking = new osmMainAssessmentPage(driver);
+        marking.markAnswerSheets();
+        marking.submitEvaluation();
+    }
+}
+</code></pre>
+<p><strong>Key observation:</strong> The runner uses <code>@Parameters</code> and <code>System.getenv()</code> for credential injection — designed for unattended CI execution. A Jenkins job with an Excel sheet of evaluator credentials can sequentially log in, mark, and submit for each account.</p>
+</div>
+
+<h2 id="subdomains">6. Subdomain Inventory (CRT.sh)</h2>
+<div class="section">
+<div class="section-label">Source: crt.sh?q=%.onmark.co.in — queried 29 May 2026</div>
+<table>
+<tr><th>Subdomain</th><th>Identified Institution</th><th>HTTP Status</th><th>Server</th></tr>
+<tr><td><code>cbse</code></td><td>CBSE</td><td>200</td><td>nginx</td></tr>
+<tr><td><code>cbse1</code></td><td>CBSE (secondary)</td><td>200</td><td>nginx</td></tr>
+<tr><td><code>cbseosm</code></td><td>CBSE OSM eval portal</td><td>200 (HTTP only)</td><td>—</td></tr>
+<tr><td><code>bcu</code></td><td>Bengaluru Central University</td><td>200</td><td>nginx</td></tr>
+<tr><td><code>bcuosm</code></td><td>BCU OSM</td><td>200</td><td>nginx</td></tr>
+<tr><td><code>kswu</code></td><td>Karnataka State Women's University</td><td>200</td><td>nginx</td></tr>
+<tr><td><code>anu</code></td><td>Acharya Nagarjuna University</td><td>Timeout</td><td>—</td></tr>
+<tr><td><code>msu</code></td><td>Manonmaniam Sundaranar University</td><td>Timeout</td><td>—</td></tr>
+<tr><td><code>gita</code></td><td>GITA Bhubaneswar</td><td>Timeout</td><td>—</td></tr>
+<tr><td><code>jntu</code></td><td>JNTU</td><td>Timeout</td><td>—</td></tr>
+<tr><td><code>sctevt</code></td><td>Odisha SCTEVT</td><td>Timeout</td><td>—</td></tr>
+<tr><td><code>sbtet</code></td><td>AP SBTET</td><td>Timeout</td><td>—</td></tr>
+<tr><td><code>msubaroda</code></td><td>MSU Baroda</td><td>—</td><td>—</td></tr>
+<tr><td><code>svu</code></td><td>Sri Venkateswara University</td><td>—</td><td>—</td></tr>
+<tr><td><code>punjabiuniversity</code></td><td>Punjabi University</td><td>—</td><td>—</td></tr>
+<tr><td colspan="2"><em>~15 additional subdomains</em></td><td>Not probed</td><td>—</td></tr>
+</table>
+</div>
+
+<h2 id="api">7. Full API Endpoint List (77 endpoints)</h2>
+<div class="section">
+<div class="section-label">Source: Wayback Machine — main.a2bab24a8cf0c29a9355.js (3 Mar 2026)</div>
+<p>Extracted via: <code>grep -oP '"OnMarkWinWebAPI/[^"]*"' bundle.js | sort -u</code></p>
+
+<h3>Authentication</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/CheckUserIDPassword</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/ForgotPassword</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/QRCodeLogin</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Authenticate/GetQRCodeLoginStatus</code></td></tr>
+</table>
+
+<h3>Evaluation — Core</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetBookletsForMarking</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/SaveMarks</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/SubmitEvaluation</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetBookletImages</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetBookletImagesS3</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/UpdateBookletLocation</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetAllQuestions</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/GetQuestionImageS3</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/UpdateQuestionMark</code></td></tr>
+</table>
+
+<h3>Re-evaluation</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/GetReEvalBookletsForMarking</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/SaveReEvalMarks</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/SubmitReEval</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/GetReEvalBookletImagesS3</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/ReEvaluation/GetReEvalScannedPages</code></td></tr>
+</table>
+
+<h3>Verification</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/Verification/GetVerificationBookletsForMarking</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Verification/SubmitVerification</code></td></tr>
+</table>
+
+<h3>Dashboard &amp; Reporting</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/Dashboard/GetDashboardData</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Dashboard/GetEvaluationStatistics</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Dashboard/GetEvaluatorPerformance</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Dashboard/GenerateReportPdf</code></td></tr>
+</table>
+
+<h3>Face / Photo</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/face/GetUserPhoto</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/face/UploadUserPhoto</code></td></tr>
+</table>
+
+<h3>Notifications</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/Notifications/GetAllNotifications</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Notifications/DeleteNotifications</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Notifications/MarkAsRead</code></td></tr>
+</table>
+
+<h3>Infrastructure</h3>
+<table>
+<tr><td><code>OnMarkWinWebAPI/Evaluation/TestWebCam</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Common/GetIPAndMACAddress</code></td></tr>
+<tr><td><code>OnMarkWinWebAPI/Common/LogEvaluatorActivity</code></td></tr>
+</table>
+
+<p><em>77 total endpoints. Full extraction available in archived bundle at zo.pub.</em></p>
+</div>
+
+<h2 id="ocr">8. OCR/AI Pipeline</h2>
+<div class="section">
+<div class="section-label">Three distinct OCR methods in the automation suite</div>
+
+<h3>8a. Tesseract OCR (Local)</h3>
+<pre><code>package ocrTextModules;
+
+import net.sourceforge.tess4j.*;
+
+public class Ocr_Text_Extract {
+    public String extractText(String imagePath) {
+        Tesseract tesseract = new Tesseract();
+        tesseract.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
+        tesseract.setLanguage("eng");
+        return tesseract.doOCR(new File(imagePath));
+    }
+}
+</code></pre>
+
+<h3>8b. Google Gemini Vision API</h3>
+<pre><code>// From rtmnuTRProject/PomClass.java (commit 392614d, 14 Mar 2026)
+// Evaluation prompt for AI-based answer assessment
+
+String prompt = """
+You are an expert evaluator. Assess the handwritten answer
+against the provided marking scheme. Assign marks following:
+- Full marks if all key points are covered
+- Partial marks proportional to coverage
+- Zero if answer is irrelevant or blank
+
+Marking scheme: [provided]
+Student answer: [image]
+""";
+</code></pre>
+<p><strong>Note:</strong> This is the QA review layer — it cross-checks evaluator consistency, not the primary marking system. However, the presence of an AI-based marking review raises questions about the role of automated scoring in the evaluation chain.</p>
+
+<h3>8c. Custom PDF Extraction</h3>
+<pre><code>package rtmnuTRProject;
+
+// Structured extraction from PDF answer sheets
+// Used for post-evaluation data processing
+</code></pre>
+</div>
+
+<h2 id="sbtet">9. SBTET Server-Side Source Code (Separate System)</h2>
+<div class="section">
+<div class="section-label">Source: AP_SBTET_AUDIT — ASP.NET MVC — NOT the CBSE portal</div>
+<p>This is full server-side code for the AP SBTET instance — included because the shared vendor (Coempt) and identical security patterns are relevant context.</p>
+
+<h3>Custom Cryptography — HbCrypt.cs</h3>
+<pre><code>namespace SBTET.Security {
+    public class HbCrypt {
+        // Custom hash implementation (not bcrypt despite the name)
+        public static string Hash(string input) {
+            // Uses SHA1 internally — see SHA1.cs
+            return SHA1.Hash(input + salt);
+        }
+    }
+}
+</code></pre>
+
+<h3>SHA1.cs — Weak hashing</h3>
+<pre><code>namespace SBTET.Security {
+    public class SHA1 {
+        public static string Hash(string input) {
+            // System.Security.Cryptography.SHA1
+            // Note: SHA1 is cryptographically broken (2017)
+        }
+    }
+}
+</code></pre>
+
+<h3>Controller surface (14 controllers)</h3>
+<pre><code>Controllers/
+├── AccountController.cs          # Login, Register, ForgotPassword
+├── AdminPanelController.cs       # Admin operations
+├── HomeController.cs              # Dashboard, Index
+├── StudentPanelController.cs      # Student-facing pages
+├── PreExaminationController.cs    # Pre-exam management
+├── PostExaminationController.cs   # Post-exam, results
+├── NotificationController.cs      # Notification CRUD
+├── MasterController.cs            # Master data management
+├── BillDeskPaymentController.cs   # BillDesk payment gateway
+├── PaymentController.cs           # Payment processing
+├── HomeController.cs              # PDF report generation
+├── ExcelController.cs             # Excel import/export
+└── ApiController.cs                # REST API endpoints
+</code></pre>
+
+<h3>Web.config — Connection strings (RELEASE transform)</h3>
+<pre><code>&lt;!-- From Web.Release.config (production transform) --&gt;
+&lt;connectionStrings&gt;
+  &lt;add name="SBTETEntities"
+       connectionString="metadata=res://*/Model.SBTETModel.csdl|...;
+         provider connection string=&quot;
+           data source=PRODUCTION_DB_SERVER;
+           initial catalog=SBTET_DB;
+         user id=PRODUCTION_DB_USER;
+         password=PRODUCTION_DB_PASSWORD;&quot;"
+       providerName="System.Data.EntityClient" /&gt;
+&lt;/connectionStrings&gt;
+</code></pre>
+<p><strong>Note:</strong> The actual connection string values are in the repository. We verified their presence but are not reproducing them.</p>
+</div>
+
+<h2 id="timeline">10. Forensic Timeline with Git SHAs</h2>
+<div class="section">
+<div class="section-label">Source: git log — New_Coempt_Automation</div>
+<table>
+<tr><th>Date (IST)</th><th>SHA</th><th>Message</th><th>What Changed</th></tr>
+<tr><td>18 Oct 2025</td><td colspan="3"><em>Initial commits — KNR board automation (not CBSE-specific)</em></td></tr>
+<tr><td>21 Feb 2026<br>17:04</td><td><code>38f38dd</code></td><td>new osm code addtion</td><td>First OSM files: <code>osm_Login_Page.java</code>, XPath selectors, OsmPom</td></tr>
+<tr><td>21 Feb 2026<br>17:30</td><td><code>...</code></td><td>Screenshots captured</td><td>PNG files from live <code>cbse.onmark.co.in</code> showing portal UI</td></tr>
+<tr><td>24 Feb 2026<br>11:34</td><td><code>fd38fb8</code></td><td>new osm changes</td><td><strong>Complete rewrite</strong>: Login page, assessment page, all XPaths deleted &amp; recreated. Layout screenshots show completely different UI.</td></tr>
+<tr><td>14 Mar 2026<br>15:09</td><td><code>392614d</code></td><td>OCR API with Gemini prompt</td><td>Added Gemini Vision evaluation prompt to PomClass.java</td></tr>
+<tr><td>18 Mar 2026</td><td><code>5f2b...</code></td><td>osm changes</td><td>Final OSM-related commit</td></tr>
+</table>
+<p><strong>Critical window:</strong> CBSE Class 12 exams ran 15 Feb – 4 Mar 2026. Mock eval circular: 25 Feb. The portal rewrite (24 Feb) happened <em>before</em> the mock circular and <em>during</em> the exam window.</p>
+</div>
+
+<h2 id="bundle">11. Angular Bundle Extraction</h2>
+<div class="section">
+<div class="section-label">Source: Wayback Machine capture — 3 Mar 2026</div>
+<table>
+<tr><th>Parameter</th><th>Value</th></tr>
+<tr><td>URL</td><td><code>https://cbse.onmark.co.in/cbseevalweb/main.a2bab24a8cf0c29a9355.js</code></td></tr>
+<tr><td>Captured</td><td>3 Mar 2026 13:49:08 UTC (19:19 IST)</td></tr>
+<tr><td>Size</td><td>1.7 MB</td></tr>
+<tr><td>Framework</td><td>Angular (ngfactory, NgModule patterns)</td></tr>
+<tr><td>Extraction commands</td><td><code>grep -oP '"OnMarkWinWebAPI/[^"]*"' bundle.js | sort -u</code></td></tr>
+<tr><td>Unique endpoints</td><td>77</td></tr>
+<tr><td>Routes found</td><td>19 (login, marking, re-evaluation, verification, dashboard, profile, settings, webcam-test, etc.)</td></tr>
+</table>
+</div>
+
+<h2 id="artifacts">12. Artifact Inventory</h2>
+<div class="section">
+<div class="section-label">All evidence archived at zo.pub</div>
+<table>
+<tr><th>Artifact</th><th>Path</th><th>Size</th></tr>
+<tr><td>GitHub repos (forked)</td><td><a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/">zo.pub/.../cbse-coempt-osint-archive/</a></td><td>54 MB (cleaned)</td></tr>
+<tr><td>Angular production bundle</td><td><a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbseevalweb_main_bundle.js">cbseevalweb_main_bundle.js</a></td><td>1.7 MB</td></tr>
+<tr><td>Architecture diagram</td><td><a href="images/cbse-osm-architecture.jpg">cbse-osm-architecture.jpg</a></td><td>—</td></tr>
+<tr><td>This article source</td><td><a href="https://github.com/CCAgentOrg/cbse-osm-osint">github.com/CCAgentOrg/cbse-osm-osint</a></td><td>—</td></tr>
+</table>
+
+<h3>Original Repos (still live on GitHub as of 29 May 2026)</h3>
+<table>
+<tr><th>Repo</th><th>URL</th></tr>
+<tr><td>New_Coempt_Automation</td><td><a href="https://github.com/segrgokul/New_Coempt_Automation">github.com/segrgokul/New_Coempt_Automation</a></td></tr>
+<tr><td>KNR_Automation_Coempt</td><td><a href="https://github.com/segrgokul/KNR_Automation_Coempt">github.com/segrgokul/KNR_Automation_Coempt</a></td></tr>
+<tr><td>AP_SBTET_AUDIT</td><td><a href="https://github.com/viswanthp/AP_SBTET_AUDIT">github.com/viswanthp/AP_SBTET_AUDIT</a></td></tr>
+<tr><td>Sarthak's investigation</td><td><a href="https://github.com/Sarthak-Sidhant/coempt">github.com/Sarthak-Sidhant/coempt</a></td></tr>
+</table>
+</div>
+
+<div class="disclaimer">
+<strong>Responsible disclosure note:</strong> This annexure documents findings from public sources (GitHub, CRT.sh, Wayback Machine). No API keys, passwords, or specific credentials are reproduced. We have not attempted to access any live evaluation system. All findings were obtained through passive OSINT. All code snippets are from public repositories and are reproduced verbatim (minus credential values) for evidentiary purposes.
+</div>
+
+</div>
+</body>
+</html>
