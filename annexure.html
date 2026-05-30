@@ -70,7 +70,7 @@ tr:hover td{background:#161b22}
 <tr><td>GitHub API</td><td><code>GET /users/{username}</code></td><td>Profile metadata (location, bio)</td></tr>
 <tr><td>CRT.sh</td><td><code>crt.sh/?q=%.onmark.co.in</code></td><td>SSL certificate transparency — all issued subdomains</td></tr>
 <tr><td>Wayback Machine CDX</td><td><code>web.archive.org/cdx/search/cdx?url=cbse.onmark.co.in/*</code></td><td>Archived URLs including Angular JS bundles</td></tr>
-<tr><td>Wayback Machine</td><td>Direct HTTP fetch of archived JS bundles</td><td>1.7 MB <code>main.a2bab24a8cf0c29a9355.js</code> from 3 Mar 2026</td></tr>
+<tr><td>Wayback Machine</td><td>Direct HTTP fetch of archived JS bundles</td><td>1.7 MB <code>main.a2bab24a9332a08b.js</code> from 3 Mar 2026</td></tr>
 <tr><td>curl / HTTP headers</td><td>Live probes of subdomains</td><td>Determine which onmark.co.in instances are live (HTTP status codes)</td></tr>
 <tr><td>grep / sed / jq</td><td>Local analysis of cloned repos and downloaded bundles</td><td>Extract API endpoints, XPath selectors, credential patterns</td></tr>
 </table>
@@ -386,7 +386,7 @@ public class osm_Exceution {
 
 <h2 id="api">7. Full API Endpoint List (77 endpoints)</h2>
 <div class="section">
-<div class="section-label">Source: Wayback Machine — main.a2bab24a8cf0c29a9355.js (3 Mar 2026)</div>
+<div class="section-label">Source: Wayback Machine — main.a2bab24a9332a08b.js (3 Mar 2026)</div>
 <p>Extracted via: <code>grep -oP '"OnMarkWinWebAPI/[^"]*"' bundle.js | sort -u</code></p>
 
 <h3>Authentication</h3>
@@ -641,7 +641,7 @@ String prompt = """
 <div class="section-label">Source: Wayback Machine capture — 3 Mar 2026</div>
 <table>
 <tr><th>Parameter</th><th>Value</th></tr>
-<tr><td>URL</td><td><code>https://cbse.onmark.co.in/cbseevalweb/main.a2bab24a8cf0c29a9355.js</code></td></tr>
+<tr><td>URL</td><td><code>https://cbse.onmark.co.in/cbseevalweb/main.a2bab24a9332a08b.js</code></td></tr>
 <tr><td>Captured</td><td>3 Mar 2026 13:49:08 UTC (19:19 IST)</td></tr>
 <tr><td>Size</td><td>1.7 MB</td></tr>
 <tr><td>Framework</td><td>Angular (ngfactory, NgModule patterns)</td></tr>
@@ -656,8 +656,8 @@ String prompt = """
 <div class="section-label">All evidence archived at zo.pub</div>
 <table>
 <tr><th>Artifact</th><th>Path</th><th>Size</th></tr>
-<tr><td>GitHub repos (forked)</td><td><a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/">zo.pub/.../cbse-coempt-osint-archive/</a></td><td>54 MB (cleaned)</td></tr>
-<tr><td>Angular production bundle</td><td><a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbseevalweb_main_bundle.js">cbseevalweb_main_bundle.js</a></td><td>1.7 MB</td></tr>
+<tr><td>GitHub repos (forked)</td><td><a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint/">zo.pub/.../cbse-osm-onmarks-osint/</a></td><td>13 GB (full clones)</td></tr>
+<tr><td>Angular production bundle</td><td><a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint/cbseevalweb_main_bundle.js">cbseevalweb_main_bundle.js</a></td><td>1.7 MB</td></tr>
 <tr><td>Architecture diagram</td><td><a href="images/cbse-osm-architecture.jpg">cbse-osm-architecture.jpg</a></td><td>—</td></tr>
 <tr><td>This article source</td><td><a href="https://github.com/CCAgentOrg/cbse-osm-osint">github.com/CCAgentOrg/cbse-osm-osint</a></td><td>—</td></tr>
 </table>

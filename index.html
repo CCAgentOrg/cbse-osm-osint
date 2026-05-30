@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inside the System That Graded 40 Lakh CBSE Answer Sheets — And Why It Wasn't Ready</title>
+<title>Inside the System That Graded 17.8 Lakh CBSE Answer Sheets — And Why It Wasn't Ready</title>
 <meta name="description" content="Internal QA code leaked on GitHub, 30+ board subdomains exposed via SSL certificates, and a forensic timeline reveal that the vendor's own test team was chasing a moving target while CBSE Class 12 evaluation was underway.">
-<meta property="og:title" content="Inside the System That Graded 40 Lakh CBSE Answer Sheets">
+<meta property="og:title" content="Inside the System That Graded 17.8 Lakh CBSE Answer Sheets">
 <meta property="og:description" content="Internal QA code leaked on GitHub, 30+ board subdomains exposed, and a forensic timeline reveal the OSM platform wasn't ready for CBSE evaluation.">
 <meta property="og:image" content="images/cbse-osm-architecture.jpg">
 <meta property="og:type" content="article">
@@ -45,7 +45,7 @@ code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:
 <body>
 <div class="container">
 
-<h1>Inside the System That Graded 40 Lakh CBSE Answer Sheets — And Why It Wasn't Ready</h1>
+<h1>Inside the System That Graded 17.8 Lakh CBSE Answer Sheets — And Why It Wasn't Ready</h1>
 <div class="meta">Published: 30 May 2026 &nbsp;|&nbsp; Cashless Consumer &nbsp;|&nbsp; <a href="#artifacts">Evidence &amp; Archives</a></div>
 
 <div class="tldr">
@@ -61,7 +61,7 @@ code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:
 
 <h2>Setting the Stage</h2>
 
-<p>In February 2026, over <strong>40 lakh students</strong> sat for their CBSE Class 12 board examinations. Their answer sheets — handwritten, scanned, and uploaded — were to be graded on a cloud-based platform called On-Screen Marking (OSM), operated by a Hyderabad-based company called <strong>Coempt EduTeck</strong>.</p>
+<p>In February 2026, over <strong>17.8 lakh students</strong> sat for their CBSE Class 12 board examinations. Their answer sheets — handwritten, scanned, and uploaded — were to be graded on a cloud-based platform called On-Screen Marking (OSM), operated by a Hyderabad-based company called <strong>Coempt EduTeck</strong>.</p>
 
 <p>Security researcher <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary</a> disclosed critical vulnerabilities in the OSM portal in February 2026, including authentication bypass and client-side OTP validation that was trivially exploitable. Independent researcher <a href="https://github.com/Sarthak-Sidhant/coempt">Sarthak Sidhant</a> investigated the procurement process, revealing that CBSE had rewritten tender norms to favour Coempt EduTeck.</p>
 
@@ -69,7 +69,7 @@ code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:
 
 <h2>The Vendor Left Its Keys on the Porch</h2>
 
-<p>Two Coempt EduTeck employees maintained public GitHub repositories containing the company's internal QA automation code. One account — <code>segrgokul</code>, listing Hyderabad as location — pushed code for Selenium test suites designed to exercise the live CBSE OSM evaluation portal. Another account — <code>viswanthp</code> — published full server-side source code for a different client's On-Screen Marking instance.</p>
+<p>At least two Coempt EduTeck employees maintained public GitHub repositories containing the company's internal QA automation code. One account — <code>segrgokul</code>, listing Hyderabad as location — pushed code for Selenium test suites designed to exercise the live CBSE OSM evaluation portal. Another account — <code>viswanthp</code> — published full server-side source code for a different client's On-Screen Marking instance.</p>
 
 <p>The Selenium code is not merely test infrastructure. It is, in effect, a working blueprint for automating the entire evaluation process: logging in, navigating answer sheets, clicking marks on the canvas interface, and submitting results. The code references Jenkins CI/CD integration, meaning it was designed to run unattended at scale.</p>
 
@@ -152,8 +152,8 @@ code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:
 
 <p>All raw evidence is publicly archived:</p>
 <ul>
-<li><strong>GitHub repositories</strong> (forked and archived): <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive">zo.pub/cashlessconsumer/cbse-coempt-osint-archive</a></li>
-<li><strong>Production Angular bundle</strong> (1.7 MB, Wayback Machine capture): <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbseevalweb_main_bundle.js">cbseevalweb_main_bundle.js</a></li>
+<li><strong>GitHub repositories</strong> (forked and archived): <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">zo.pub/cashlessconsumer/cbse-osm-onmarks-osint</a></li>
+<li><strong>Production Angular bundle</strong> (1.7 MB, Wayback Machine capture): <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">cbseevalweb_main_bundle.js</a></li>
 <li><strong>Full 77-endpoint API surface analysis</strong>: <a href="api-surface.html">API Surface Annexure</a></li>
 <li><strong>Code-level technical evidence</strong>: <a href="annexure.html">Technical Annexure</a></li>
 </ul>
@@ -187,9 +187,21 @@ code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:
 <ul>
 <li>Nisarga Adhikary — <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Exposing Critical Vulnerabilities in CBSE's On-Screen Marking Portal</a></li>
 <li>Sarthak Sidhant — <a href="https://github.com/Sarthak-Sidhant/coempt">How CBSE Rewrote Rules to Favor Coempt EduTeck</a></li>
-<li>Internet Freedom Foundation — <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked/">When the Exam Itself Can Be Hacked</a></li>
+<li>Internet Freedom Foundation — <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">Internet Freedom Foundation</a> — <em>When the Exam Itself Can Be Hacked</em></li>When the Exam Itself Can Be Hacked</a></li>
 <li>CBSE OSM Mock Evaluation circular — <a href="https://www.cbse.gov.in/cbsenew/documents/OSM_Mass_Mock_Evalauation_25022026.pdf">cbse.gov.in (PDF)</a></li>
 </ul>
+
+<h2>Editorial Notes</h2>
+<div class="tldr">
+<h2>Fact-check &amp; Corrections</h2>
+<ul>
+<li><strong>Student figures:</strong> 17,80,365 students registered for CBSE Class 12 (17,68,968 appeared), per official CBSE result press release, confirmed by NDTV and Times of India reporting. The earlier draft referred to "40 lakh" — this is the combined Class 10 + Class 12 figure; this article focuses on Class 12 and has been corrected.</li>
+<li><strong>"30+ subdomains":</strong> This figure comes from SSL certificate transparency logs at crt.sh, queried 29 May 2026 for <code>*.onmark.co.in</code>. Not all subdomains were live when probed; the table in the Technical Annexure shows which ones responded to HTTP requests.</li>
+<li><strong>Wayback Machine bundle:</strong> The Angular production bundle hash was corrected during editorial review. The initially referenced hash (<code>main.a2bab24a8cf0c29a9355.js</code>) does not match the Wayback capture; the correct hash is <code>main.a2bab24a9332a08b.js</code> (captured 3 March 2026, 1.7 MB). The Technical Annexure has been updated accordingly.</li>
+<li><strong>Repository count:</strong> The article references the three primary repositories by Coempt employees. Additional related repositories were also identified: <code>akhi101/SBTET_AUDIT</code> and <code>akhi101/sbtet_login_audit</code> — independent security audit repos targeting the AP SBTET instance on the same OnMark platform. These are archived but not analysed in depth here.</li>
+<li><strong>No Android app found:</strong> We searched Koodous, VirusTotal, APKPure, APKMirror, and GitHub for any Android application related to Coempt, OnMark, Globarena, or the answer-sheet scanning process. No such application was found. The OSM system is a web application (Angular SPA) with no identified mobile component.</li>
+</ul>
+</div>
 
 <div class="disclaimer">
 <strong>Responsible disclosure note:</strong> All findings were obtained through passive OSINT from public sources (GitHub, crt.sh, Wayback Machine). No live evaluation system was accessed. No API keys, passwords, or specific credentials are disclosed in this article. Technical evidence including code snippets and endpoint listings are available in the <a href="annexure.html">Technical Annexure</a> and <a href="api-surface.html">API Surface Annexure</a>.
