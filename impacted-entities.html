@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impacted Entities — CBSE OSM OSINT Investigation</title>
+<meta name="description" content="Comprehensive map of all stakeholders, institutions, state boards, universities, and vendors affected by the CBSE On-Screen Marking platform controversy.">
+<meta property="og:title" content="Impacted Entities — CBSE OSM OSINT">
+<meta property="og:description" content="Every board, university, and institution whose evaluation data passed through Coempt EduTeck's OnMark platform.">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,'Times New Roman',serif;background:#faf9f6;color:#1a1a1a;line-height:1.85;font-size:17px}
+a{color:#8b1a1a;text-decoration:none;border-bottom:1px solid #c4a0a0}a:hover{color:#5a0f0f;border-color:#8b1a1a}
+.container{max-width:680px;margin:0 auto;padding:20px 24px 80px}
+h1{font-size:1.9em;font-weight:700;margin:30px 0 10px;line-height:1.35;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.02em}
+.meta{color:#777;font-size:.88em;margin-bottom:30px;font-family:-apple-system,sans-serif}
+h2{font-size:1.35em;font-weight:700;margin:36px 0 14px;font-family:-apple-system,sans-serif;color:#2a2a2a}
+h3{font-size:1.1em;font-weight:600;margin:24px 0 8px;font-family:-apple-system,sans-serif;color:#3a3a3a}
+p{margin:10px 0 16px}
+ul,ol{margin:8px 0 16px 20px}li{margin:4px 0}
+blockquote{border-left:3px solid #c4a0a0;padding:8px 16px;margin:16px 0;color:#555;font-style:italic;font-size:.95em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.85em;font-family:-apple-system,sans-serif;background:#fff;border:1px solid #e0dcd4;border-radius:4px}
+th{text-align:left;background:#f5f2eb;color:#555;padding:8px 12px;border-bottom:2px solid #d0ccc4;font-weight:600;text-transform:uppercase;font-size:.8em;letter-spacing:.04em}
+td{padding:8px 12px;border-bottom:1px solid #eee}
+tr:hover td{background:#faf7f2}
+code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:#8b1a1a;font-family:SFMono-Regular,Menlo,monospace}
+.tldr{background:#f9f5ee;border-left:4px solid #8b1a1a;padding:16px 20px;margin:20px 0 30px;border-radius:0 8px 8px 0;font-family:-apple-system,sans-serif}
+.tldr h2{color:#8b1a1a;font-size:1em;margin-bottom:8px;font-family:-apple-system,sans-serif}
+.tldr ul{padding-left:20px}.tldr li{margin:4px 0;font-size:.92em;line-height:1.6}
+.important{background:#fdf6f0;border-left:4px solid #d4770b;padding:14px 18px;margin:20px 0;border-radius:0 6px 6px 0;font-family:-apple-system,sans-serif;font-size:.92em}
+.important strong{color:#d4770b}
+.entity-card{background:#fff;border:1px solid #e0dcd4;border-radius:6px;padding:16px 20px;margin:16px 0;font-family:-apple-system,sans-serif}
+.entity-card h3{margin-top:0;color:#8b1a1a;font-size:1em;border-bottom:1px solid #eee;padding-bottom:8px}
+.entity-card .role{color:#888;font-size:.85em;margin-top:4px}
+.entity-card p{font-size:.92em;line-height:1.6;margin:8px 0 0}
+.tag{display:inline-block;background:#f0ece4;color:#6b6b6b;padding:2px 8px;border-radius:3px;font-size:.78em;margin:2px;font-family:-apple-system,sans-serif}
+.tag-critical{background:#fde8e8;color:#8b1a1a}
+.tag-high{background:#fdf6f0;color:#b35a1a}
+.tag-medium{background:#f9f5ee;color:#6b5b2a}
+.section-intro{color:#555;font-size:.92em;margin-bottom:20px;font-style:italic}
+.disclaimer{color:#888;font-size:.82em;border-top:1px solid #ddd;padding-top:16px;margin-top:50px;font-style:italic}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5em}.container{padding:16px 16px 60px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Impacted Entities: Who Is Affected</h1>
+<div class="meta">CBSE OSM OSINT Investigation &nbsp;|&nbsp; Published: 30 May 2026 &nbsp;|&nbsp; <a href="index.html">← Back to Main Article</a></div>
+
+<div class="tldr">
+<h2>At a Glance</h2>
+<ul>
+<li><strong>1 vendor</strong> (Coempt EduTeck) operates a multi-tenant evaluation platform (<code>*.onmark.co.in</code>) hosting at least <strong>30+ institutions</strong>.</li>
+<li><strong>17.8 lakh CBSE Class 12 students</strong> had handwritten answer sheets scanned and uploaded to this platform for marking.</li>
+<li><strong>Crores of students</strong> across state boards and universities may have their evaluation data on the same infrastructure.</li>
+<li>Three platform-wide vulnerabilities (IDOR, password-less reset, unauthenticated photos) affect <strong>every instance</strong>, not just CBSE.</li>
+</ul>
+</div>
+
+<h2>1. Primary Regulatory &amp; Government Bodies</h2>
+
+<div class="entity-card">
+<h3>Central Board of Secondary Education (CBSE)</h3>
+<div class="role">Regulatory body &middot; Platform operator (client)</div>
+<p>Awarded the OSM contract to Coempt EduTeck via e-procurement on the Central Public Procurement portal (RFP floated 28 Aug 2025). Responsible for oversight of the evaluation pipeline for Class 10 and Class 12 board examinations. The platform hosted evaluation for <strong>17,80,365 registered Class 12 students</strong> in 2026.</p>
+<p><span class="tag tag-critical">Examination integrity</span> <span class="tag tag-critical">Data protection</span> <span class="tag tag-high">Procurement oversight</span></p>
+</div>
+
+<div class="entity-card">
+<h3>Ministry of Education, Government of India</h3>
+<div class="role">Parent ministry &middot; Policy authority</div>
+<p>Received formal correspondence from the Internet Freedom Foundation (IFF) raising concerns about the CBSE OSM platform's security. Responsible for national examination policy and digital infrastructure standards for education.</p>
+<p><span class="tag tag-high">Policy accountability</span></p>
+</div>
+
+<div class="entity-card">
+<h3>Indian Computer Emergency Response Team (CERT-In)</h3>
+<div class="role">National cyber security agency</div>
+<p>Notified by IFF regarding vulnerabilities in the CBSE OSM portal. CERT-In is mandated under Section 70B of the IT Act to coordinate cyber incident response for critical infrastructure. No public acknowledgment of action has been confirmed.</p>
+<p><span class="tag tag-critical">Cyber security response</span></p>
+</div>
+
+<h2>2. The Vendor: Coempt EduTeck Pvt. Ltd.</h2>
+
+<div class="entity-card">
+<h3>Coempt EduTeck Pvt. Ltd. (formerly Globarena Technologies Pvt. Ltd.)</h3>
+<div class="role">Platform vendor &middot; System integrator</div>
+<p>Hyderabad-based EdTech company with 25+ years in examination solutions. Operates the OnMark platform at <code>onmark.co.in</code>. Products include <strong>OneX, Onmark, EzyTest, Learning, Digital Labs, and DigiTab</strong>. Company website at <code>coempt.in</code>. GitHub org: <code>github.com/coempt</code> (empty since 2020).</p>
+<p>The company and its CEO were previously investigated in a 2019 Telangana case, reportedly cleared by courts. The current CBSE OSM contract was awarded in 2025.</p>
+<p><span class="tag tag-critical">Vendor accountability</span> <span class="tag tag-critical">Code leak</span> <span class="tag tag-high">Due diligence</span></p>
+</div>
+
+<div class="important">
+<strong>Key internal identifiers found via OSINT:</strong> At least two Coempt employees — GitHub user <code>segrgokul</code> (Hyderabad, likely K. Naga Raju) and <code>viswanthp</code> — published internal QA automation code and server-side source code to public GitHub repositories. The automation code references internal project codenames: <strong>GITA</strong> (likely Gujarat), <strong>KNR</strong> (Karnataka), <strong>NIZAM</strong> (Telangana), <strong>SCTEVT</strong> (State Council for Technical Education &amp; Vocational Training).
+</div>
+
+<h2>3. State Boards on the OnMark Platform</h2>
+
+<p class="section-intro">Confirmed via SSL certificate transparency logs (crt.sh for <code>*.onmark.co.in</code>), GitHub source code references, and HTTP probing. Not all subdomains were live at time of verification.</p>
+
+<table>
+<tr><th>Entity</th><th>Subdomain</th><th>Source</th><th>Confidence</th></tr>
+<tr><td>CBSE</td><td><code>cbseosm.onmark.co.in</code></td><td>Active, confirmed</td><td>✅ Verified</td></tr>
+<tr><td>CBSE</td><td><code>cbse.onmark.co.in</code></td><td>SSL cert + active</td><td>✅ Verified</td></tr>
+<tr><td>CBSE</td><td><code>cbseeval.onmark.co.in</code></td><td>SSL cert</td><td>✅ Verified</td></tr>
+<tr><td>Andhra Pradesh SBTET</td><td><code>sbtet.onmark.co.in</code></td><td>Server-side source leak (ASP.NET)</td><td>✅ Verified</td></tr>
+<tr><td>Bengaluru Central University</td><td><code>bcuosm.onmark.co.in</code></td><td>SSL cert + HTTP active</td><td>✅ Verified</td></tr>
+<tr><td>Karnataka State Women's University</td><td><code>kswuosm.onmark.co.in</code></td><td>SSL cert</td><td>✅ Verified</td></tr>
+<tr><td>Acharya Nagarjuna University</td><td><code>anu.onmark.co.in</code></td><td>SSL cert</td><td>✅ Verified</td></tr>
+<tr><td>JNTU (Jawaharlal Nehru Technological University)</td><td><code>jntu*.onmark.co.in</code></td><td>SSL cert</td><td>✅ Verified</td></tr>
+<tr><td>Gujarat board (GITA project)</td><td>Internal codename <code>gita</code></td><td>GitHub automation code</td><td>⚠️ Inferred</td></tr>
+<tr><td>Karnataka evaluation (KNR project)</td><td>Internal codename <code>knr</code></td><td>GitHub automation code</td><td>⚠️ Inferred</td></tr>
+<tr><td>Telangana / Nizam evaluation</td><td>Internal codename <code>nizam</code></td><td>GitHub automation code</td><td>⚠️ Inferred</td></tr>
+<tr><td>State Council for Technical Education &amp; VT</td><td>Internal codename <code>sctevt</code></td><td>GitHub automation code</td><td>⚠️ Inferred</td></tr>
+</table>
+
+<div class="tldr">
+<h2>Total Blast Radius</h2>
+<p>At least <strong>30+ SSL certificates</strong> issued for <code>*.onmark.co.in</code> subdomains indicate the platform serves dozens of educational institutions. Every institution shares the same base platform code, meaning platform-level vulnerabilities affect all simultaneously.</p>
+</div>
+
+<h2>4. Directly Impacted Individuals</h2>
+
+<div class="entity-card">
+<h3>CBSE Class 12 Students (2026 batch)</h3>
+<div class="role">Data subjects &middot; 17,80,365 registered (17,68,968 appeared)</div>
+<p>Handwritten answer sheets were scanned and uploaded to the OnMark platform. The IDOR vulnerability in the answer-sheet PDF download endpoint means graded answer sheets — with marks, annotations, and evaluator comments — may have been accessible via sequential ID guessing.</p>
+<p><span class="tag tag-critical">Personal data exposure</span> <span class="tag tag-critical">Academic integrity</span></p>
+</div>
+
+<div class="entity-card">
+<h3>Evaluators / Examiners</h3>
+<div class="role">Platform users &middot; Thousands across boards</div>
+<p>Evaluator credentials (user IDs, school codes, passwords) were exposed through the vendor's public GitHub automation code. Evaluator photographs — used for exam-duty identity verification — were served via an unauthenticated API endpoint. Password changes required no old password verification.</p>
+<p><span class="tag tag-critical">Credential exposure</span> <span class="tag tag-high">Identity data</span></p>
+</div>
+
+<h2>5. Security Researchers &amp; Whistleblowers</h2>
+
+<div class="entity-card">
+<h3>Nisarga Adhikary</h3>
+<div class="role">Security researcher &middot; Vulnerability discoverer</div>
+<p>19-year-old ethical hacker who independently identified and disclosed critical vulnerabilities in the CBSE OSM portal in February 2026: authentication bypass, client-side OTP validation, hardcoded master password in the Angular bundle, password reset without old password, and IDOR. Published detailed writeup at <a href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga.com</a>.</p>
+<p><span class="tag tag-medium">Researcher</span></p>
+</div>
+
+<div class="entity-card">
+<h3>Sarthak Sidhant</h3>
+<div class="role">Independent researcher &middot; Procurement investigator</div>
+<p>Investigated the CBSE procurement process for the OSM contract. Published findings on GitHub revealing that CBSE had rewritten tender norms to favour Coempt EduTeck, including deletion of prior experience requirements that would have eliminated the vendor.</p>
+<p><span class="tag tag-medium">Researcher</span></p>
+</div>
+
+<h2>6. Civil Society &amp; Advocacy</h2>
+
+<div class="entity-card">
+<h3>Internet Freedom Foundation (IFF)</h3>
+<div class="role">Digital rights organization &middot; Advocacy</div>
+<p>Issued formal letter to the Ministry of Education and CERT-In demanding disclosure and action on the CBSE OSM vulnerabilities. Framed the issue as a national examination integrity concern. Published detailed article: <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">"When the Exam Itself Can Be Hacked"</a>.</p>
+<p><span class="tag tag-medium">Advocacy</span></p>
+</div>
+
+<h2>7. Vendor Employees Identified via OSINT</h2>
+
+<table>
+<tr><th>GitHub Handle</th><th>Location</th><th>Repositories</th><th>What Was Leaked</th></tr>
+<tr><td><code>segrgokul</code></td><td>Hyderabad</td><td><code>KNR_Automation_Coempt</code>, <code>coempt_Automation</code></td><td>Selenium QA automation for 4 board instances (GITA, KNR, NIZAM, SCTEVT). Includes login flows, page object models matching live portal DOM, config with service URLs, Jenkins integration.</td></tr>
+<tr><td><code>viswanthp</code></td><td>India</td><td><code>AP_SBTET_AUDIT</code></td><td>Full server-side ASP.NET source code for AP State Board of Technical Education's OSM instance. Includes custom cryptography, payment integrations, authentication design.</td></tr>
+<tr><td><code>akhi101</code></td><td>India</td><td><code>SBTET_AUDIT</code>, <code>sbtet_login_audit</code></td><td>Independent security audit repos targeting the AP SBTET instance. Archived but not analysed in depth.</td></tr>
+</table>
+
+<div class="important">
+<strong>Employment link:</strong> <code>segrgokul</code>'s GitHub profile lists Hyderabad — Coempt EduTeck's headquarters. The repository names (<code>KNR_Automation_Coempt</code>) explicitly reference the company. The Selenium page-object models match the live CBSE OSM portal's exact DOM structure and Angular route paths (e.g., <code>/cbseevalweb/</code>).
+</div>
+
+<h2>8. Media Coverage</h2>
+
+<table>
+<tr><th>Publication</th><th>Angle</th><th>Link</th></tr>
+<tr><td>Hindustan Times</td><td>Telangana firm Coempt EduTeck in focus amid CBSE OSM row; Rahul Gandhi</td><td><a href="https://www.hindustantimes.com/india-news/telangana-firm-coempt-edutech-in-focus-amid-cbse-osm-row-rahul-gandhi-101779942293536.html">HT</a></td></tr>
+<tr><td>Moneycontrol</td><td>Coempt CEO denies platform breach, cites 2019 Telangana case cleared by courts</td><td><a href="https://www.moneycontrol.com/technology/cbse-tech-vendor-coempt-edutek-ceo-denies-platform-breach-says-2019-telangana-case-cleared-by-courts-article-13933407.html">Moneycontrol</a></td></tr>
+<tr><td>Indian Express</td><td>CBSE Class 12 digital evaluation / OSM background</td><td><a href="https://indianexpress.com/article/education/cbse-class-12th-result-2026-digital-evaluation-osm-on-screen-marking-faster-result-date-cbse-gov-in-cbseresults-nic-in-10647901">IE</a></td></tr>
+<tr><td>Careers360</td><td>CBSE OSM portal hacker Nisarga Adhikary — vulnerabilities explained</td><td><a href="https://news.careers360.com/cbse-osm-portal-hacker-nisarga-adhikary-vulnerabilities-report-meaning-class-12-checking-result-onmark-co-in-cybersecurity">Careers360</a></td></tr>
+<tr><td>Free Press Journal</td><td>Meet Nisarga — the 19-year-old ethical hacker who flagged alleged CBSE portal issues</td><td><a href="https://www.freepressjournal.in/education/fpj-exclusive-meet-nisarga-the-19-year-old-ethical-hacker-who-flagged-alleged-cbse-portal-issues-in-february-2026">FPJ</a></td></tr>
+<tr><td>MediNama</td><td>CERT-In and CBSE OSM portal vulnerabilities</td><td><a href="https://www.medianama.com/2026/05/223-cert-in-vulnerabilities-cbse-online-marking-portal/">MediNama</a></td></tr>
+</table>
+
+<h2>9. Platform Domain Infrastructure</h2>
+
+<table>
+<tr><th>Domain</th><th>Purpose</th><th>Status</th></tr>
+<tr><td><code>onmark.co.in</code></td><td>Coempt's OnMark platform root</td><td>Active</td></tr>
+<tr><td><code>cbse.onmark.co.in</code></td><td>CBSE OSM evaluation portal</td><td>Active</td></tr>
+<tr><td><code>cbseosm.onmark.co.in</code></td><td>CBSE OSM production instance</td><td>Active</td></tr>
+<tr><td><code>cbseeval.onmark.co.in</code></td><td>CBSE evaluator interface</td><td>Active</td></tr>
+<tr><td><code>sbtet.onmark.co.in</code></td><td>AP State Board of Technical Education</td><td>Active (ASP.NET)</td></tr>
+<tr><td><code>bcuosm.onmark.co.in</code></td><td>Bengaluru Central University</td><td>Active (confirmed HTTP)</td></tr>
+<tr><td><code>coempt.in</code></td><td>Coempt EduTeck corporate site</td><td>Active (Angular SPA, JS-required)</td></tr>
+<tr><td><code>github.com/coempt</code></td><td>Coempt GitHub organization</td><td>Empty since 2020</td></tr>
+</table>
+
+<div class="disclaimer">
+<strong>Methodology note:</strong> All entity information was compiled from public OSINT sources — GitHub repositories, SSL certificate transparency logs (crt.sh), HTTP probing, web archives (Wayback Machine), and media reports. No live systems were accessed. No private or classified information is included. GitHub usernames listed are those found with public repositories containing Coempt-related code; employment with Coempt is inferred from repository content, naming conventions, and profile information, not confirmed through direct channels.
+</div>
+
+<div class="nav-footer">
+<a href="index.html">Main Article</a> · <a href="terms-of-reference.html">Demands for Disclosure</a> · <a href="annexure.html">Technical Annexure</a> · <a href="api-surface.html">API Surface</a>
+</div>
+
+</div>
+</body>
+</html>
