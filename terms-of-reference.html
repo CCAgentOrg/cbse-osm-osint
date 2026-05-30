@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Reference for Investigation — CBSE OSM OSINT</title>
+<meta name="description" content="A framework for formal investigation and disclosure demands concerning the CBSE On-Screen Marking controversy, grounded in RTI Act, IT Act, and digital rights principles.">
+<meta property="og:title" content="Terms of Reference for Investigation — CBSE OSM">
+<meta property="og:description" content="Framework for formal investigation into the CBSE OSM controversy — vendor due diligence, infrastructure audit, data protection, and disclosure demands.">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,'Times New Roman',serif;background:#faf9f6;color:#1a1a1a;line-height:1.85;font-size:17px}
+a{color:#8b1a1a;text-decoration:none;border-bottom:1px solid #c4a0a0}a:hover{color:#5a0f0f;border-color:#8b1a1a}
+.container{max-width:680px;margin:0 auto;padding:20px 24px 80px}
+h1{font-size:1.9em;font-weight:700;margin:30px 0 10px;line-height:1.35;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.02em}
+.meta{color:#777;font-size:.88em;margin-bottom:30px;font-family:-apple-system,sans-serif}
+h2{font-size:1.35em;font-weight:700;margin:36px 0 14px;font-family:-apple-system,sans-serif;color:#2a2a2a}
+h3{font-size:1.1em;font-weight:600;margin:24px 0 8px;font-family:-apple-system,sans-serif;color:#3a3a3a}
+p{margin:10px 0 16px}
+ul,ol{margin:8px 0 16px 20px}li{margin:4px 0}
+blockquote{border-left:3px solid #c4a0a0;padding:8px 16px;margin:16px 0;color:#555;font-style:italic;font-size:.95em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.85em;font-family:-apple-system,sans-serif;background:#fff;border:1px solid #e0dcd4;border-radius:4px}
+th{text-align:left;background:#f5f2eb;color:#555;padding:8px 12px;border-bottom:2px solid #d0ccc4;font-weight:600;text-transform:uppercase;font-size:.8em;letter-spacing:.04em}
+td{padding:8px 12px;border-bottom:1px solid #eee}
+tr:hover td{background:#faf7f2}
+code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:#8b1a1a;font-family:SFMono-Regular,Menlo,monospace}
+.tldr{background:#f9f5ee;border-left:4px solid #8b1a1a;padding:16px 20px;margin:20px 0 30px;border-radius:0 8px 8px 0;font-family:-apple-system,sans-serif}
+.tldr h2{color:#8b1a1a;font-size:1em;margin-bottom:8px;font-family:-apple-system,sans-serif}
+.tldr ul{padding-left:20px}.tldr li{margin:4px 0;font-size:.92em;line-height:1.6}
+.important{background:#fdf6f0;border-left:4px solid #d4770b;padding:14px 18px;margin:20px 0;border-radius:0 6px 6px 0;font-family:-apple-system,sans-serif;font-size:.92em}
+.important strong{color:#d4770b}
+.demand{background:#f0f5ee;border-left:4px solid #2a6e3f;padding:14px 18px;margin:20px 0;border-radius:0 6px 6px 0;font-family:-apple-system,sans-serif;font-size:.92em}
+.demand strong{color:#2a6e3f}
+.legal{background:#f5f0f8;border-left:4px solid #5a3a7a;padding:14px 18px;margin:20px 0;border-radius:0 6px 6px 0;font-family:-apple-system,sans-serif;font-size:.92em}
+.legal strong{color:#5a3a7a}
+.nav{padding:16px 0 24px;border-bottom:1px solid #e0dcd4;margin-bottom:30px;font-family:-apple-system,sans-serif;font-size:.85em;display:flex;gap:16px;flex-wrap:wrap}
+.nav a{border-bottom:none;padding:4px 0;white-space:nowrap}
+.nav a:hover{border-bottom:2px solid #8b1a1a}
+.disclaimer{color:#888;font-size:.82em;border-top:1px solid #ddd;padding-top:16px;margin-top:50px;font-style:italic}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5em}.container{padding:16px 16px 60px}.nav{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="nav">
+<a href="index.html">&larr; Main Article</a>
+<a href="annexure.html">Technical Annexure</a>
+<a href="api-surface.html">API Surface</a>
+<a href="terms-of-reference.html"><strong>Terms of Reference</strong></a>
+</div>
+
+<h1>Terms of Reference for Investigation &amp; Demands for Disclosure</h1>
+<div class="meta">Published: 30 May 2026 &nbsp;|&nbsp; Cashless Consumer &nbsp;|&nbsp; <a href="index.html">Main Article</a></div>
+
+<div class="tldr">
+<h2>Purpose</h2>
+<p>This document proposes a formal framework for investigating the CBSE On-Screen Marking (OSM) controversy. It is grounded in India's Right to Information Act, 2005; the Information Technology Act, 2000; the Digital Personal Data Protection Act, 2023; and internationally recognised principles of democratic oversight of digital public infrastructure.</p>
+<p>It is not a legal document. It is a citizen's framework &mdash; one that any journalist, parliamentarian, student, parent, or civil-society body may adopt, adapt, and file.</p>
+</div>
+
+<h2>I. Background &amp; Scope</h2>
+
+<h3>1.1 What happened</h3>
+<p>In February&ndash;March 2026, the Central Board of Secondary Education (CBSE) conducted Class 12 board examinations for 17,80,365 registered students. Answer sheets were graded on an On-Screen Marking platform operated by Coempt EduTeck Pvt. Ltd., a Hyderabad-based company, at <code>cbse.onmark.co.in</code>.</p>
+<p>Independent security researchers disclosed critical vulnerabilities in the platform, including authentication bypass, client-side OTP validation, and unauthorised access to evaluation interfaces. OSINT analysis revealed that the vendor's own employees had published internal QA automation code on public GitHub repositories, and that the same OnMark platform serves at least 30 state boards and universities on identical infrastructure.</p>
+
+<h3>1.2 Why a formal investigation is warranted</h3>
+<ol>
+<li><strong>Scale of impact:</strong> 17.8 lakh students' exam results depend on the integrity of a single vendor's platform.</li>
+<li><strong>Multi-board reuse:</strong> The same platform is used by state boards across India &mdash; a vulnerability or misconfiguration in one instance potentially compromises all.</li>
+<li><strong>Procurement irregularities:</strong> Evidence suggests CBSE amended tender criteria to favour Coempt EduTeck, removing blacklist and cooling-off period requirements before awarding the contract.</li>
+<li><strong>Vendor track record:</strong> Coempt's 2019 Telangana university evaluation contract was cancelled after grading complaints, and the company was blacklisted by the Telangana government before being cleared by courts.</li>
+<li><strong>Data sovereignty:</strong> Answer sheets of minor students &mdash; containing personally identifiable handwritten data &mdash; are processed on a private vendor's cloud infrastructure with no publicly disclosed data-residency or data-protection audit.</li>
+<li><strong>Leaked internal code:</strong> The vendor's own QA automation code, containing page-object models matching the live portal's DOM structure, was published on GitHub by Coempt employees &mdash; indicating poor internal security culture.</li>
+</ol>
+
+<h3>1.3 Scope of this document</h3>
+<p>This framework covers four domains:</p>
+<ol>
+<li><strong>Procurement &amp; due diligence</strong> &mdash; Was the contract awarded lawfully? Was the vendor properly vetted?</li>
+<li><strong>Technical &amp; security audit</strong> &mdash; Is the platform secure? Was it tested before deployment?</li>
+<li><strong>Data protection &amp; privacy</strong> &mdash; How are student answer sheets stored, processed, and protected?</li>
+<li><strong>Democratic accountability &amp; transparency</strong> &mdash; What must the government disclose, and under what legal authority?</li>
+</ol>
+
+<h2>II. Investigation Terms of Reference</h2>
+
+<h3>2.1 Procurement &amp; Due Diligence</h3>
+
+<table>
+<tr><th>#</th><th>Question</th><th>Document / Evidence Sought</th></tr>
+<tr><td>1</td><td>What was the original tender specification for the OSM contract? What were the technical qualification criteria?</td><td>Original tender document (2025_MHRD_858645_1), corrigenda, and all amendments</td></tr>
+<tr><td>2</td><td>When and why were the blacklist and cooling-off period clauses removed from the tender?</td><td>Corrigendum or amendment document, internal noting file, decision-making chain</td></tr>
+<tr><td>3</td><td>Who approved the removal of these clauses? Was the approval documented?</td><td>File notings, approval chain, minutes of relevant committee meetings</td></tr>
+<tr><td>4</td><td>How many bids were received? What were the technical scores of each bidder?</td><td>Bid evaluation committee report, technical scoring sheets</td></tr>
+<tr><td>5</td><td>Was Coempt EduTeck &mdash; or its predecessor entity Globarena Technologies &mdash; declared ineligible by any government body at the time of bidding?</td><td>Blacklist/greylist records from GeM, State procurement portals, Telangana government</td></tr>
+<tr><td>6</td><td>What due diligence was performed on Coempt's past performance, including the 2019 Telangana cancellation?</td><td>Due diligence report, vendor assessment questionnaire</td></tr>
+<tr><td>7</td><td>What is the financial relationship between Coempt EduTeck and Globarena Technologies? Are they the same legal entity under different names?</td><td>Corporate filings (MCA-21), Tofler/Zaubacorp company profiles, shareholding patterns</td></tr>
+<tr><td>8</td><td>What is the total contract value? What are the payment milestones?</td><td>Contract document, purchase order, payment records</td></tr>
+<tr><td>9</td><td>Were any intermediaries, consultants, or agents involved in the procurement process?</td><td>Declaration of interest forms, consultant agreements</td></tr>
+</table>
+
+<h3>2.2 Technical &amp; Security Audit</h3>
+
+<table>
+<tr><th>#</th><th>Question</th><th>Document / Evidence Sought</th></tr>
+<tr><td>10</td><td>Was a security audit conducted on the OSM platform before deployment? By whom?</td><td>Audit report, auditor credentials (CERT-In empanelled?), audit scope and methodology</td></tr>
+<tr><td>11</td><td>Were the vulnerabilities disclosed by Nisarga Adhikary known to CBSE or Coempt before public disclosure?</td><td>Internal vulnerability management records, CERT-In reporting correspondence</td></tr>
+<tr><td>12</td><td>What was the timeline of platform changes between mock evaluation (24 February) and live evaluation?</td><td>Deployment logs, change management records, release notes</td></tr>
+<tr><td>13</td><td>Is the platform's source code subject to any security review by CBSE, NIC, or CERT-In?</td><td>Source code escrow agreement, code review reports</td></tr>
+<tr><td>14</td><td>What authentication mechanisms protect evaluator access? Is multi-factor authentication enforced?</td><td>Architecture documentation, security configuration records</td></tr>
+<tr><td>15</td><td>Are evaluator credentials shared, reused, or rotated? How are compromised credentials handled?</td><td>Credential management policy, incident response procedures</td></tr>
+<tr><td>16</td><td>Is there rate-limiting, anomaly detection, or intrusion monitoring on the OSM portal?</td><td>Security operations documentation, WAF/IDS configuration</td></tr>
+<tr><td>17</td><td>What infrastructure does the platform run on? Cloud provider, geographic location of servers, data residency?</td><td>Infrastructure architecture document, SLA with cloud provider</td></tr>
+<tr><td>18</td><td>Was the platform penetration-tested by an independent third party? What were the findings?</td><td>Pentest report (redacted if necessary), remediation tracker</td></tr>
+</table>
+
+<h3>2.3 Data Protection &amp; Privacy</h3>
+
+<table>
+<tr><th>#</th><th>Question</th><th>Document / Evidence Sought</th></tr>
+<tr><td>19</td><td>What categories of personal data are collected and processed by the OSM platform?</td><td>Data flow diagram, data inventory register</td></tr>
+<tr><td>20</td><td>Answer sheets contain handwritten names, roll numbers, school names, and photographs. Are these classified as personally identifiable data under the DPDPA, 2023?</td><td>Data classification policy, DPIA (Data Protection Impact Assessment)</td></tr>
+<tr><td>21</td><td>Where is the data stored? Is it stored within India? Is it encrypted at rest and in transit?</td><td>Infrastructure documentation, encryption policy, data residency certification</td></tr>
+<tr><td>22</td><td>Who has access to the raw answer sheet images? Are access logs maintained?</td><td>Access control matrix, audit logs (last 12 months)</td></tr>
+<tr><td>23</td><td>How long are answer sheet images retained after results are declared? What is the deletion policy?</td><td>Data retention policy, deletion certificates</td></tr>
+<tr><td>24</td><td>Were students and parents informed about the use of a private vendor's platform for processing their examination data?</td><td>Privacy notice, consent mechanism (if any)</td></tr>
+<tr><td>25</td><td>Is there a data breach notification procedure? Has any breach been reported?</td><td>Incident response plan, breach notification records</td></tr>
+<tr><td>26</td><td>Does the contract include provisions for CBSE/NIC to audit the vendor's data practices?</td><td>Contract clauses on audit rights, data access, breach notification</td></tr>
+</table>
+
+<h3>2.4 Democratic Accountability &amp; Transparency</h3>
+
+<table>
+<tr><th>#</th><th>Question</th><th>Document / Evidence Sought</th></tr>
+<tr><td>27</td><td>What is CBSE's policy on engaging private vendors for mission-critical examination infrastructure?</td><td>Vendor engagement policy, risk assessment framework</td></tr>
+<tr><td>28</td><td>Was the Ministry of Education consulted or informed about the security disclosures?</td><td>Ministry correspondence, inter-ministerial notes</td></tr>
+<tr><td>29</td><td>Did CBSE report the vulnerabilities to CERT-In as required under the IT Act?</td><td>CERT-In reporting records, acknowledgement from CERT-In</td></tr>
+<tr><td>30</td><td>Is there a Business Continuity / Disaster Recovery plan for the OSM platform? Was it tested?</td><td>BCP/DR documentation, test results</td></tr>
+<tr><td>31</td><td>What is the exit strategy if the vendor relationship is terminated? Can CBSE migrate to an alternative platform?</td><td>Exit clause in contract, data migration plan, source code escrow</td></tr>
+<tr><td>32</td><td>Are other boards using the same OnMark platform aware of the security disclosures?</td><td>Communication records with state boards</td></tr>
+<tr><td>33</td><td>What oversight mechanisms exist for ongoing platform security &mdash; during and between examination cycles?</td><td>Governance framework, security review schedule</td></tr>
+</table>
+
+<h2>III. Demands for Disclosure</h2>
+
+<div class="demand">
+<strong>Demand 1: Full procurement disclosure</strong>
+<p>Under the RTI Act, 2005 (Section 4(1)(b)), CBSE must proactively disclose all tender documents, bid evaluations, and contract award decisions. We demand:</p>
+<ul>
+<li>Publication of the complete tender file, including all corrigenda and amendments</li>
+<li>Publication of the bid evaluation committee's technical scoring for all bidders</li>
+<li>Disclosure of the file notings documenting the removal of blacklist/cooling-off clauses</li>
+<li>Full contract document with Coempt EduTeck (redacting only commercially sensitive pricing if necessary, subject to RTI scrutiny)</li>
+</ul>
+</div>
+
+<div class="demand">
+<strong>Demand 2: Independent security audit</strong>
+<p>Under Section 70B of the IT Act, 2000, CERT-In is designated as the national nodal agency for cyber security. We demand:</p>
+<ul>
+<li>CERT-In conduct or commission a full penetration test and source code review of the OSM platform, covering all board instances &mdash; not just CBSE</li>
+<li>The audit report be published in redacted form, with executive summary and severity ratings for each finding</li>
+<li>The audit cover: authentication, authorisation, data encryption, access logging, infrastructure security, and vulnerability management</li>
+<li>A timeline for remediation of all critical and high-severity findings, with public progress updates</li>
+</ul>
+</div>
+
+<div class="demand">
+<strong>Demand 3: Data protection compliance disclosure</strong>
+<p>Under the DPDPA, 2023, and pending Data Protection Board rules, we demand:</p>
+<ul>
+<li>A complete Data Protection Impact Assessment for the OSM platform, covering all personal data categories processed</li>
+<li>Disclosure of data residency &mdash; the geographic location(s) where answer sheet images are stored</li>
+<li>Publication of the data retention and deletion policy for answer sheet images</li>
+<li>Disclosure of whether students/parents were provided a privacy notice before their data was processed on a private vendor's platform</li>
+<li>Publication of the data breach notification procedure and confirmation that no unreported breaches have occurred</li>
+</ul>
+</div>
+
+<div class="demand">
+<strong>Demand 4: Multi-board notification</strong>
+<p>Given that the OnMark platform serves at least 30 state boards and universities, we demand:</p>
+<ul>
+<li>CBSE notify all other boards using the OnMark platform of the security findings</li>
+<li>The Ministry of Education issue an advisory to all state education boards on vendor security due diligence for digital examination platforms</li>
+<li>Each board disclose whether it has conducted its own security audit of its OnMark instance</li>
+</ul>
+</div>
+
+<div class="demand">
+<strong>Demand 5: Vendor accountability</strong>
+<p>Coempt EduTeck's internal QA code was published on public GitHub repositories, containing page-object models matching the live evaluation portal. This indicates a failure of internal information security practices. We demand:</p>
+<ul>
+<li>CBSE investigate the circumstances under which Coempt employees published internal code on public repositories</li>
+<li>Coempt EduTeck provide an incident report explaining how this occurred and what remedial actions have been taken</li>
+<li>CBSE evaluate whether Coempt EduTeck has complied with contractual information security requirements</li>
+<li>If contractual security requirements were not met, CBSE invoke applicable penalty clauses</li>
+</ul>
+</div>
+
+<div class="demand">
+<strong>Demand 6: Parliamentary oversight</strong>
+<p>Examination integrity is a fundamental public interest. We demand:</p>
+<ul>
+<li>The Parliamentary Standing Committee on Education take up the matter for formal review</li>
+<li>The committee examine CBSE's vendor management practices for all mission-critical examination technology</li>
+<li>The committee assess whether existing procurement rules are adequate for digital examination platforms</li>
+<li>Consider a framework for mandatory security auditing of all digital examination infrastructure used by public examination bodies in India</li>
+</ul>
+</div>
+
+<h2>IV. Legal Basis for Disclosure Demands</h2>
+
+<div class="legal">
+<h3>Right to Information Act, 2005</h3>
+<p>Section 4(1)(b) requires public authorities to proactively disclose: (ii) the powers and duties of its officers and employees; (iii) the procedure followed in the decision-making process; (iv) the norms set by it for the discharge of its functions; (v) the rules, regulations, instructions, manuals and records used by its employees; and (vi) a statement of the categories of documents held by it.</p>
+<p>Tender documents and contract details for CBSE &mdash; a public authority under the RTI Act &mdash; are mandatorily disclosable. The Supreme Court of India has held in <em>CBSE v. Aditya Bandopadhyay</em> (2011) that examination-related information must be disclosed unless it falls under a specific exemption under Section 8.</p>
+</div>
+
+<div class="legal">
+<h3>Information Technology Act, 2000</h3>
+<p>Section 70A mandates that designated entities (including critical information infrastructure) comply with prescribed security practices. Section 43A requires that any body corporate handling sensitive personal data implement reasonable security practices. Section 72A criminalises disclosure of personal information in breach of a lawful contract.</p>
+<p>The handling of minor students' examination data &mdash; handwritten answer sheets containing personally identifiable information &mdash; by a private vendor triggers both Section 43A (reasonable security practices) and, arguably, Section 70A obligations for CBSE as the data fiduciary.</p>
+</div>
+
+<div class="legal">
+<h3>Digital Personal Data Protection Act, 2023</h3>
+<p>The DPDPA imposes obligations on data fiduciaries (CBSE, as the entity determining the purpose of processing) and data processors (Coempt EduTeck, as the entity processing on CBSE's behalf). Key obligations include:</p>
+<ul>
+<li><strong>Notice (Section 5):</strong> Students/parents must be notified of the collection and processing of their personal data</li>
+<li><strong>Purpose limitation (Section 6):</strong> Data may only be processed for the purpose for which it was collected</li>
+<li><strong>Data retention (Section 8):</strong> Data must not be retained beyond the purpose for which it was collected</li>
+<li><strong>Security safeguards (Section 8):</strong> Reasonable security safeguards must be implemented</li>
+<li><strong>Breach notification (Section 8(7)):</strong> The data fiduciary must notify the Data Protection Board and affected individuals of breaches</li>
+</ul>
+</div>
+
+<div class="legal">
+<h3>Constitutional Framework</h3>
+<p>The Supreme Court of India has recognised the right to privacy as a fundamental right under Article 21 in <em>K.S. Puttaswamy v. Union of India</em> (2017). The processing of examination data of minor students &mdash; a category requiring heightened protection under the DPDPA &mdash; engages both the right to privacy and the right to education (Article 21A). Any failure to protect this data is a failure of the state's duty to safeguard fundamental rights.</p>
+</div>
+
+<h2>V. International Standards for Reference</h2>
+
+<p>While this investigation is specific to India, the following international frameworks provide useful benchmarks:</p>
+
+<table>
+<tr><th>Framework</th><th>Relevance</th></tr>
+<tr><td><strong>OECD Principles on AI</strong> (2024 update)</td><td>Transparency, accountability, and security requirements for AI systems deployed in public services &mdash; including automated grading</td></tr>
+<tr><td><strong>ISO 27001</strong></td><td>International standard for information security management systems &mdash; relevant for evaluating Coempt's security posture</td></tr>
+<tr><td><strong>ISO 27701</strong></td><td>Extension to ISO 27001 for privacy information management &mdash; directly applicable to processing of student examination data</td></tr>
+<tr><td><strong>GDPR</strong> (EU)</td><td>While not binding in India, GDPR's requirements for DPIA, data protection by design, and breach notification provide useful comparative standards</td></tr>
+<tr><td><strong>UN Guiding Principles on Business and Human Rights</strong></td><td>Establishes the responsibility of business enterprises (including Coempt) to respect human rights, including the right to privacy</td></tr>
+</table>
+
+<h2>VI. How to File RTI Applications</h2>
+
+<p>Below are suggested RTI queries that citizens can file. Each query should be filed with the relevant Central Public Information Officer (CPIO) of CBSE. Queries may be adapted for state boards using the OnMark platform.</p>
+
+<div class="important">
+<strong>Note:</strong> RTI applications can be filed online at <a href="https://rtionline.gov.in/">rtionline.gov.in</a> for a fee of &rupee;10. The CPIO is required to respond within 30 days (Section 7(1)). Appeals lie with the First Appellate Authority and subsequently the Central Information Commission.
+</div>
+
+<h3>6.1 Suggested RTI Queries &mdash; Procurement</h3>
+<ol>
+<li>"Please provide the complete tender document, including all corrigenda and amendments, for the On-Screen Marking (OSM) system contract awarded to Coempt EduTeck Pvt. Ltd. for CBSE Class 12 evaluation, 2026."</li>
+<li>"Please provide the bid evaluation committee's report, including technical scoring for each bidder, for the above tender."</li>
+<li>"Please provide the file notings documenting the removal of the blacklist/cooling-off period clause from the OSM tender specifications."</li>
+<li>"Please provide the due diligence report prepared by CBSE on Coempt EduTeck Pvt. Ltd. prior to contract award."</li>
+</ol>
+
+<h3>6.2 Suggested RTI Queries &mdash; Security</h3>
+<ol start="5">
+<li>"Please provide all security audit reports conducted on the OSM platform (cbse.onmark.co.in) prior to and during the 2026 evaluation cycle."</li>
+<li>"Please provide the timeline of platform changes (deployments, patches, configuration changes) between the mock evaluation on 24 February 2026 and the start of live evaluation."</li>
+<li>"Please provide the complete list of vulnerabilities reported to CBSE or CERT-In regarding the OSM platform, along with remediation status."</li>
+<li>"Please provide the disaster recovery / business continuity plan for the OSM platform."</li>
+</ol>
+
+<h3>6.3 Suggested RTI Queries &mdash; Data Protection</h3>
+<ol start="9">
+<li>"Please provide the Data Protection Impact Assessment (DPIA) for the OSM platform, covering the processing of student answer sheet data."</li>
+<li>"Please provide the data retention and deletion policy for answer sheet images processed on the OSM platform."</li>
+<li>"Please provide the privacy notice provided to students and parents regarding the processing of their examination data on the OSM platform."</li>
+<li>"Please provide the data breach notification records, if any, for the OSM platform since deployment."</li>
+</ol>
+
+<h2>VII. For Journalists &amp; Researchers</h2>
+
+<p>This investigation is open-source. All evidence is archived and published:</p>
+
+<ul>
+<li><strong>Full writeup:</strong> <a href="index.html">Main Article</a></li>
+<li><strong>Technical evidence:</strong> <a href="annexure.html">Technical Annexure</a></li>
+<li><strong>API surface documentation:</strong> <a href="api-surface.html">API Surface Annexure</a></li>
+<li><strong>Evidence archive:</strong> <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">zo.pub/cashlessconsumer/cbse-osm-onmarks-osint</a></li>
+</ul>
+
+<p>GitHub repositories referenced in this investigation (all public as of 30 May 2026; archived locally with full git history):</p>
+<ul>
+<li><strong>segrgokul</strong> (Coempt employee, Hyderabad): KNR_Automation_Coempt, coempt_Automation, New_Coempt_Automation, Coempt_Automation_2024, Coempt_Automation_New, OCR_To_Text_Automation, coempt_Automation_For_Facebook_Login, Ocr_To_Text_Automation_Read_PDF_Write_Excel</li>
+<li><strong>akhi101</strong> (independent researcher): SBTET_AUDIT, sbtet_login_audit</li>
+<li><strong>viswanthp</strong> (independent researcher): AP_SBTET_AUDIT</li>
+<li><strong>Sarthak-Sidhant</strong> (student researcher): coempt (tender analysis + Tofler reports)</li>
+<li><strong>coempt</strong> (organisation): coempt</li>
+</ul>
+
+<p>Cite this document as: Cashless Consumer, "Terms of Reference for Investigation: CBSE On-Screen Marking Controversy," 30 May 2026.</p>
+
+<div class="disclaimer">
+<strong>Disclaimer:</strong> This document is published for public interest and journalistic purposes. It does not constitute legal advice. The suggested RTI queries are templates and should be adapted by the filer. The authors have not accessed any live evaluation system; all findings are based on passive OSINT from public sources.
+</div>
+
+</div>
+</body>
+</html>
