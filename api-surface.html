@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Surface Analysis — CBSE OSM / OnMark Platform</title>
+<meta name="description" content="Complete API endpoint inventory extracted from the OnMark Angular bundle, with authentication context and vulnerability classification.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.7;font-size:15px}
+a{color:#58a6ff;text-decoration:none}a:hover{color:#79c0ff}
+.container{max-width:900px;margin:0 auto;padding:30px 24px 80px}
+h1{font-size:1.8em;font-weight:700;margin:30px 0 6px;color:#f0f6fc}
+.subtitle{font-size:1em;color:#8b949e;margin-bottom:20px}
+h2{font-size:1.3em;color:#f0f6fc;margin:40px 0 16px;border-bottom:1px solid #30363d;padding-bottom:8px}
+h3{font-size:1.05em;color:#e6edf3;margin:24px 0 10px}
+p{margin:10px 0}
+hr{border:none;border-top:1px solid #21262d;margin:24px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82em}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid #21262d}
+th{background:#161b22;color:#8b949e;font-weight:600;text-transform:uppercase;letter-spacing:.3px;font-size:.85em}
+td{font-family:'SF Mono',SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace}
+td:not(:first-child){font-size:.85em}
+code{background:#161b22;padding:2px 6px;border-radius:4px;font-size:.88em;font-family:'SF Mono',SFMono-Regular,Consolas,monospace;color:#e6edf3}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;font-size:.8em;line-height:1.5;margin:12px 0}
+pre code{background:none;padding:0}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.75em;font-weight:600;text-transform:uppercase}
+.badge-red{background:#3d1f1f;color:#f85149}
+.badge-yellow{background:#3d2e00;color:#d29922}
+.badge-green{background:#0f3d1f;color:#3fb950}
+.badge-blue{background:#1c2d41;color:#58a6ff}
+.nav-links{display:flex;gap:12px;margin-bottom:24px;font-size:.85em}
+.nav-links a{padding:6px 14px;border:1px solid #30363d;border-radius:6px;color:#8b949e}
+.nav-links a:hover{border-color:#58a6ff;color:#58a6ff}
+.section-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px 20px;margin:16px 0}
+.vuln-card{background:#1c1016;border:1px solid #5c2d2d;border-radius:8px;padding:16px 20px;margin:16px 0}
+.vuln-card h3{color:#f85149;margin-top:0}
+.note{color:#8b949e;font-size:.9em;font-style:italic}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>API Surface &amp; Vulnerability Analysis</h1>
+<p class="subtitle">Complete endpoint inventory from the OnMark Angular production bundle, with authentication context and vulnerability classification.</p>
+
+<div class="nav-links">
+<a href="index.html">← Article</a>
+<a href="annexure.html">Technical Annexure</a>
+</div>
+
+<hr>
+
+<h2>1. Platform Overview</h2>
+
+<p>The OnMark evaluation platform is an ASP.NET MVC application serving an Angular SPA. The API surface is accessed through a single base URL constructed client-side:</p>
+
+<pre><code>// Base URL construction (Angular bundle)
+apiurl = "https://" + window.location.hostname + "/" + ExamSeries_ApiUrl + "/"
+
+// Example: https://cbseosm.onmark.co.in/cbseevalweb/
+// ExamSeries_ApiUrl is derived from a server-side config value
+</code></pre>
+
+<p>All API calls go through an <code>OnMarkWinWebAPI</code> controller, with file downloads served from <code>/Download/</code> and uploads to <code>/upload/</code>.</p>
+
+<h2>2. Shared Infrastructure Evidence</h2>
+
+<table>
+<tr><th>Instance</th><th>Status</th><th>Server</th><th>Path</th></tr>
+<tr><td>cbseosm.onmark.co.in</td><td>503 (Maintenance)</td><td>Microsoft IIS/10.0, ASP.NET</td><td>/cbseevalweb/</td></tr>
+<tr><td>bcuosm.onmark.co.in</td><td>200 (Active)</td><td>Microsoft IIS/10.0, ASP.NET MVC 5.2</td><td>/cbseevalweb/</td></tr>
+</table>
+
+<p class="note">30+ additional subdomains were observed in SSL certificate transparency logs (crt.sh). Both confirmed-live instances serve the same Angular SPA with the same API controller prefix.</p>
+
+<h2>3. Authentication Architecture</h2>
+
+<p>The bundle reveals two distinct auth patterns:</p>
+
+<div class="section-box">
+<p><strong>Pattern A — Authenticated (most endpoints):</strong></p>
+<pre><code>httpClient.post(Pi_apiurl + endpoint, payload, {
+  withCredentials: true,
+  headers: (new Headers).set("Content-Type", "application/json")
+})
+</code></pre>
+<p>Sends cookies/XSRF tokens with each request. This is the standard pattern for CRUD operations.</p>
+</div>
+
+<div class="section-box">
+<p><strong>Pattern B — Unauthenticated (photo &amp; file endpoints):</strong></p>
+<pre><code>getImage(url) {
+  return this.http.get(url, { responseType: "blob" })
+  // No withCredentials, no headers, no token
+}
+</code></pre>
+<p>Used for photo retrieval and some file downloads. Relies entirely on server-side access control — if missing, content is publicly accessible.</p>
+</div>
+
+<h2>4. Complete API Endpoint Inventory</h2>
+
+<h3>4a. Authentication (Auth Controller)</h3>
+<table>
+<tr><th>Endpoint</th><th>Method</th><th>Auth</th><th>Purpose</th><th>Note</th></tr>
+<tr><td>Auth/CheckUserIDPassword</td><td>POST</td><td>No</td><td>Login</td><td>Returns OTP in response body</td></tr>
+<tr><td>Auth/GetForgotPassword</td><td>GET</td><td>No</td><td>Forgot password</td><td>Returns password reset data</td></tr>
+<tr><td>Auth/InsertUpdateloginstatus</td><td>POST</td><td>No</td><td>Login status tracking</td><td>Records IP/MAC/client info</td></tr>
+</table>
+
+<h3>4b. Evaluation Core (OnMarkWinEVal Controller)</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th><th>Auth</th></tr>
+<tr><td>GetScriptData_Edit</td><td>Load answer script for marking</td><td>Yes</td></tr>
+<tr><td>InsertUpdateValuationDetails</td><td>Save marks for a question</td><td>Yes</td></tr>
+<tr><td>InsertUpdateValuationDetails_RC</td><td>Save marks (RC variant)</td><td>Yes</td></tr>
+<tr><td>InsertUpdateValuationDetails_RC_New</td><td>Save marks (new RC variant)</td><td>Yes</td></tr>
+<tr><td>GetTotalMarksTable</td><td>Get summary marks for a script</td><td>Yes</td></tr>
+<tr><td>GetQuestionWiseMarks</td><td>Get per-question marks</td><td>Yes</td></tr>
+<tr><td>GetSubjectSchema</td><td>Get marking scheme structure</td><td>Yes</td></tr>
+<tr><td>GetSubjectStepsSchema</td><td>Get step-wise marking scheme</td><td>Yes</td></tr>
+<tr><td>GetBundleDetailsById</td><td>Get bundle (set of scripts) details</td><td>Yes</td></tr>
+<tr><td>GetSectionWise</td><td>Get section-wise marks</td><td>Yes</td></tr>
+<tr><td>GetParentSectionWise</td><td>Get parent section marks</td><td>Yes</td></tr>
+<tr><td>GetSubCompleteCount</td><td>Get completed scripts count</td><td>Yes</td></tr>
+</table>
+
+<h3>4c. Head Evaluator (HE) Operations</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th></tr>
+<tr><td>HEApproveEval</td><td>Approve evaluator's marks</td></tr>
+<tr><td>HEAssignedEvaluators</td><td>List evaluators assigned to HE</td></tr>
+<tr><td>HEValuatorDashboard</td><td>HE dashboard data</td></tr>
+<tr><td>HeBundles</td><td>Bundles assigned to HE</td></tr>
+<tr><td>GenerateHENewScript</td><td>Generate new script for HE review</td></tr>
+<tr><td>RejectorReleaseScript</td><td>Reject or release a script back</td></tr>
+<tr><td>GetHENotifications</td><td>HE notification list</td></tr>
+<tr><td>GetHeBundleStatusDashboard</td><td>HE bundle status summary</td></tr>
+<tr><td>AssignEvaluatortoAHE</td><td>Assign evaluator to AHE</td></tr>
+<tr><td>AssignAHE</td><td>Assign AHE role</td></tr>
+<tr><td>GetAHEByCollegeId</td><td>Get AHE by college</td></tr>
+<tr><td>GetEvaluatorsAHEByCollegeId</td><td>Get evaluators by college (AHE view)</td></tr>
+</table>
+
+<h3>4d. Script &amp; PDF Generation</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th><th>Vuln?</th></tr>
+<tr><td>GenerateEvaluatedScriptPDF</td><td>Generate marked PDF</td><td></td></tr>
+<tr><td>GenerateScannedScriptPDF</td><td>Generate scan PDF</td></tr>
+<tr><td>GenerateNewScript</td><td>Generate new blank script</td></tr>
+<tr><td>GenerateNewScript_Verification</td><td>Generate script for verification</td></tr>
+<tr><td>ExtractImages</td><td>Extract images from script</td></tr>
+<tr><td>ExtractImagesS3</td><td>Extract images from S3 storage</td></tr>
+<tr><td>DeleteSciptImages</td><td>Delete script images</td><td><span class="badge badge-yellow">IDOR risk</span></td></tr>
+<tr><td>GetAnnotations</td><td>Get marking annotations</td></tr>
+<tr><td>GetCommentsByScriptId</td><td>Get evaluator comments</td></tr>
+<tr><td>GetNotesByScriptId</td><td>Get notes on a script</td></tr>
+<tr><td>GetQNoComments</td><td>Get question-specific comments</td></tr>
+</table>
+
+<h3>4e. Reports</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th></tr>
+<tr><td>ValuatorDashboard</td><td>Evaluator dashboard summary</td></tr>
+<tr><td>GetEValuatorScriptReport</td><td>Evaluator script-level report</td></tr>
+<tr><td>GetValuatorScriptReport</td><td>Alternate script report</td></tr>
+<tr><td>GetValuatorSubjectwiseReport</td><td>Subject-wise report</td></tr>
+<tr><td>GetValuatorDaywiseReport</td><td>Day-wise marking report</td></tr>
+<tr><td>GetRejectionReport</td><td>Rejected scripts report</td></tr>
+<tr><td>RefreshEvalMarksReport</td><td>Refresh evaluation marks</td></tr>
+<tr><td>RefreshEvaluatorwiseMarksReport</td><td>Refresh evaluator marks</td></tr>
+<tr><td>RefreshMarksReport</td><td>Refresh general marks</td></tr>
+<tr><td>getrcbarcode_winterseries</td><td>Get RC barcode for winter series</td></tr>
+</table>
+
+<h3>4f. Evaluator Management</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th></tr>
+<tr><td>GetEvaluators</td><td>List all evaluators</td></tr>
+<tr><td>GetEvaluatorsById</td><td>Get evaluator by ID</td></tr>
+<tr><td>GetEvaluatorsByCollegeId</td><td>Get evaluators by college</td></tr>
+<tr><td>GetValuatorwithID</td><td>Get valuator with ID</td></tr>
+<tr><td>AddEvaluatorDetails</td><td>Add new evaluator</td></tr>
+<tr><td>UpdateEvaluator</td><td>Update evaluator info</td></tr>
+<tr><td>UpdateEvaluatorDetails</td><td>Update evaluator details</td></tr>
+<tr><td>UpdateEvaluatorBank</td><td>Update evaluator bank details</td></tr>
+<tr><td>UpdateFVProfile</td><td>Update face verification profile</td></tr>
+<tr><td>GetSchoolsBySchlCode</td><td>Get school by code</td></tr>
+<tr><td>GetSubjects</td><td>List subjects</td></tr>
+<tr><td>GetSubjectListByPogramme</td><td>Subjects by programme</td></tr>
+<tr><td>GetPogramme</td><td>List programmes</td></tr>
+</table>
+
+<h3>4g. Verification &amp; Re-evaluation</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th></tr>
+<tr><td>GenerateAllVerification</td><td>Generate verification for all</td></tr>
+<tr><td>GetAllVerificationScripts</td><td>List verification scripts</td></tr>
+<tr><td>EnableEditOptionForEval</td><td>Enable mark editing</td></tr>
+<tr><td>GetEditHistory</td><td>Get mark edit history</td></tr>
+<tr><td>UpdateMasterSet</td><td>Update master mark set</td></tr>
+</table>
+
+<h3>4h. Notifications &amp; Session</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th></tr>
+<tr><td>GetNotifications</td><td>Get user notifications</td></tr>
+<tr><td>GetHENotifications</td><td>Get HE notifications</td></tr>
+<tr><td>DeleteNotifications</td><td>Delete notifications</td></tr>
+<tr><td>UpdateNotificationData</td><td>Update notification</td></tr>
+<tr><td>InsertUpdateloginstatus</td><td>Update login status</td></tr>
+<tr><td>ChangePassword</td><td>Change evaluator password</td></tr>
+<tr><td>GenerateLoginQRCode</td><td>Generate QR code for login</td></tr>
+<tr><td>CheckQRCodeLogin</td><td>Verify QR code login</td></tr>
+</table>
+
+<h3>4i. File Downloads</h3>
+<table>
+<tr><th>Endpoint</th><th>Purpose</th><th>Auth</th></tr>
+<tr><td>Download/finalpdf/{id}.pdf</td><td>Download marked answer sheet</td><td>None in client</td></tr>
+<tr><td>Download/QP_Files/{filename}</td><td>Download question paper</td><td>None in client</td></tr>
+<tr><td>Download/Schema_Files/{filename}</td><td>Download marking scheme</td><td>None in client</td></tr>
+<tr><td>OnMarkWinWebAPI/face/GetUserPhoto/{code}.jpg</td><td>Download evaluator photo</td><td>None in client</td></tr>
+<tr><td>upload/{code}.jpg</td><td>Upload evaluator photo</td><td>Yes</td></tr>
+</table>
+
+<h3>4j. Angular Routes (Client-side)</h3>
+<table>
+<tr><th>Route</th><th>Purpose</th><th>Guard?</th></tr>
+<tr><td>/login</td><td>Login page</td><td>No</td></tr>
+<tr><td>/dashboard</td><td>Evaluator dashboard</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/evalscriptsview</td><td>View scripts for marking</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/heallscripts</td><td>HE: all scripts</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/evaluatordetails</td><td>Evaluator details</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/verificationdashboard</td><td>Verification dashboard</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/profile</td><td>User profile</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/webcamtest</td><td>Webcam test page</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/contactdetails</td><td>Contact details</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/recheck</td><td>Recheck page</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/viewscript</td><td>View script</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/viewscript-rc</td><td>View script (RC)</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/viewscriptverf</td><td>View verification script</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/selectseries</td><td>Exam series selection</td><td>No</td></tr>
+<tr><td>/notifications</td><td>Notifications</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/evaluators</td><td>Manage evaluators</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/marksreport</td><td>Marks report</td><td><span class="badge badge-red">No guard</span></td></tr>
+<tr><td>/UFMReport</td><td>Unfair means report</td><td><span class="badge badge-red">No guard</span></td></tr>
+</table>
+
+<hr>
+
+<h2>5. Vulnerability Classification</h2>
+
+<div class="vuln-card">
+<h3>🔴 V-01: IDOR — Predictable Answer-Sheet PDF Download</h3>
+<p><strong>Endpoint:</strong> <code>Download/finalpdf/{total_marks_id}.pdf</code></p>
+<p><strong>Evidence:</strong> Bundle contains hardcoded ID <code>93836</code>. URL constructed client-side with no access-control token. Opens in new 800×600 window.</p>
+<p><strong>Impact:</strong> Any authenticated user could enumerate sequential integer IDs to download other evaluators' marked answer sheets, exposing student handwriting, evaluator annotations, and final marks.</p>
+<p><strong>Prevalence:</strong> Affects all OnMark instances sharing this controller.</p>
+</div>
+
+<div class="vuln-card">
+<h3>🔴 V-02: Password Change Without Old Password Verification</h3>
+<p><strong>Endpoint:</strong> <code>OnMarkWinWebAPI/OnMarkWinEVal/ChangePassword</code></p>
+<p><strong>Evidence:</strong> Payload is <code>{ValuatorID, pin_NewPassword}</code> — no old password field in client form or API payload.</p>
+<p><strong>Impact:</strong> Account takeover. Any authenticated user who knows another evaluator's <code>ValuatorID</code> can reset their password, locking them out or impersonating them during evaluation.</p>
+<p><strong>Note:</strong> Partially disclosed by Nisarga Adhikary. Confirmed here with exact payload structure.</p>
+</div>
+
+<div class="vuln-card">
+<h3>🔴 V-03: Unauthenticated Photo Retrieval</h3>
+<p><strong>Endpoint:</strong> <code>OnMarkWinWebAPI/face/GetUserPhoto/{user_code}.jpg</code></p>
+<p><strong>Evidence:</strong> Called via <code>http.get(url, {responseType: "blob"})</code> with no <code>withCredentials</code>, no auth headers, no token. Other endpoints in the same bundle explicitly use <code>withCredentials: true</code>.</p>
+<p><strong>Impact:</strong> Evaluator photographs — potentially government ID photos — could be accessible to anyone who guesses a <code>user_code</code>. User codes follow a predictable pattern (e.g., <code>K82XXXXXXX</code>).</p>
+<p><strong>Prevalence:</strong> Affects all OnMark instances using the same <code>/face/</code> path.</p>
+</div>
+
+<div class="section-box">
+<h3>🟡 Additional Observations (Lower Confidence — Server-Side Verification Needed)</h3>
+<p><strong>IP/MAC Tracking:</strong> Login status endpoint (<code>InsertUpdateloginstatus</code>) records the client's IP address, MAC address, browser user-agent, and OS. This data is transmitted in the login response and could be accessible to other users if the status endpoint has IDOR issues.</p>
+
+<p><strong>QR Code Login:</strong> A <code>GenerateLoginQRCode</code> / <code>CheckQRCodeLogin</code> flow exists. The bundle polls <code>CheckQRCodeLogin</code> every 5 seconds. The security of this QR-based session transfer depends on server-side implementation.</p>
+
+<p><strong>Face Verification:</strong> A <code>/webcamtest</code> route and <code>CheckPhoto</code> / <code>RegisterPhoto</code> API endpoints exist for facial recognition-based attendance verification. The photos are stored at <code>/upload/{user_code}.jpg</code>.</p>
+
+<p><strong>Draft Mode:</strong> An <code>EnableEditOptionForEval</code> endpoint exists alongside <code>GetEditHistory</code>, suggesting marks can be edited after initial submission. The edit history is queryable, but the controls around who can enable/disable editing are unclear.</p>
+
+<p><strong>Question Paper Downloads:</strong> <code>Download/QP_Files/{filename}</code> serves question papers. Like the PDF download, this uses no client-side auth — security depends entirely on server-side access control.</p>
+</div>
+
+<h2>6. Source Attribution</h2>
+
+<table>
+<tr><th>Evidence</th><th>Source</th><th>Date</th></tr>
+<tr><td>Angular production bundle (1.7 MB)</td><td>Wayback Machine — cbse.onmark.co.in</td><td>3 Mar 2026</td></tr>
+<tr><td>Selenium automation code</td><td>GitHub — segrgokul/New_Coempt_Automation</td><td>Cloned May 2026</td></tr>
+<tr><td>SSL certificates (30+ subdomains)</td><td>crt.sh — *.onmark.co.in</td><td>Queried May 2026</td></tr>
+<tr><td>Live HTTP headers</td><td>Direct curl to cbseosm/bcuosm.onmark.co.in</td><td>30 May 2026</td></tr>
+</table>
+
+<p class="note">All evidence archived at <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive">zo.pub/cashlessconsumer/cbse-coempt-osint-archive</a> (1,400+ files).</p>
+
+<hr>
+
+<div class="nav-links">
+<a href="index.html">← Article</a>
+<a href="annexure.html">Technical Annexure</a>
+</div>
+
+</div>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

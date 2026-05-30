@@ -28,193 +28,137 @@ blockquote{border-left:3px solid #8b0000;padding:12px 20px;margin:20px 0;backgro
 blockquote p{margin:4px 0}
 .callout{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px 20px;margin:20px 0;font-size:.95em}
 .callout-label{font-weight:700;color:#664d03;margin-bottom:6px;font-size:.9em;text-transform:uppercase;letter-spacing:.5px;font-family:-apple-system,sans-serif}
-.red-box{background:#fde8e8;border:1px solid #dc3545;border-radius:8px;padding:16px 20px;margin:20px 0}
-.red-box-label{font-weight:700;color:#721c24;margin-bottom:6px;font-size:.9em;text-transform:uppercase;letter-spacing:.5px;font-family:-apple-system,sans-serif}
-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9em}
-th{text-align:left;background:#f5f5f5;color:#333;padding:8px 12px;border-bottom:2px solid #ccc;font-family:-apple-system,sans-serif}
-td{padding:7px 12px;border-bottom:1px solid #eee}
-.timeline td:first-child{white-space:nowrap;color:#8b0000;font-weight:600;font-family:-apple-system,sans-serif}
-.arch-diagram{margin:30px 0;text-align:center}
-.arch-diagram img{max-width:100%;border-radius:6px;border:1px solid #ddd}
-.arch-diagram figcaption{color:#888;font-size:.85em;margin-top:8px}
-.annexure-link{display:inline-block;background:#8b0000;color:#fff;padding:10px 20px;border-radius:6px;font-family:-apple-system,sans-serif;font-size:.9em;margin:16px 0 0}
-.annexure-link:hover{background:#a52a2a;color:#fff}
-.disclaimer{color:#999;font-size:.82em;border-top:1px solid #ddd;padding-top:20px;margin-top:50px;font-style:italic}
-ol{padding-left:24px;margin:10px 0}
-ol li{margin:6px 0}
+.red-box{background:#ffebee;border:1px solid #c62828;border-radius:8px;padding:16px 20px;margin:20px 0;font-size:.95em;color:#b71c1c}
+.red-box-label{font-weight:700;color:#b71c1c;margin-bottom:6px;font-size:.9em;text-transform:uppercase;letter-spacing:.5px;font-family:-apple-system,sans-serif}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9em}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #ddd}
+th{background:#f5f5f5;font-weight:600;font-family:-apple-system,sans-serif;font-size:.85em;text-transform:uppercase;letter-spacing:.3px}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:.9em;font-family:'Courier New',monospace}
+pre{background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:8px;overflow-x:auto;font-size:.82em;line-height:1.5;margin:14px 0}
+pre code{background:none;padding:0}
+img{max-width:100%;height:auto;border-radius:8px;margin:16px 0;display:block}
+.nav-links{display:flex;gap:16px;margin-top:30px;font-family:-apple-system,sans-serif;font-size:.9em}
+.nav-links a{padding:8px 16px;border:1px solid #8b0000;border-radius:6px;color:#8b0000}
+.nav-links a:hover{background:#8b0000;color:#fff}
 </style>
 </head>
 <body>
 <div class="container">
 
 <h1>CBSE OSM Vendor Leaked Its Own Attack Code to GitHub</h1>
-<p class="subtitle">Coempt EduTeck's internal automation — pushed to public GitHub by its own employees — contains everything needed to script the entire CBSE evaluation portal, including bypassing the so-called OTP login.</p>
-<div class="meta">By <strong>Cashless Consumer</strong> &nbsp;|&nbsp; 29 May 2026 &nbsp;|&nbsp; Cross-referencing: <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary</a>, <a href="https://github.com/Sarthak-Sidhant/coempt">Sarthak Sidhant</a></div>
+<p class="subtitle">Internal QA automation from Coempt EduTeck reveals an evaluation portal with no real OTP, predictable answer-sheet IDs, and a password-change flow that doesn't verify the old password.</p>
+<p class="meta">30 May 2026 &bull; OSINT Investigation &bull; <a href="annexure.html">Technical Annexure</a> &bull; <a href="api-surface.html">API Surface Analysis</a></p>
 
 <hr>
 
-<div class="callout">
-<div class="callout-label">TL;DR</div>
-<ul>
-<li><strong>Three internal repositories</strong> belonging to Coempt EduTeck employees were found on public GitHub — containing full Selenium automation suites that exercise the CBSE On-Screen Marking portal.</li>
-<li><strong>The OTP protecting evaluator login is fake.</strong> It is generated client-side and displayed on the page itself. Coempt's own automation code proves this: it never reads or enters the OTP — it simply waits for the field to appear, then clicks Login.</li>
-<li><strong>The entire marking workflow is scriptable.</strong> The automation code demonstrates automated canvas-based marking, mark submission, and evaluation finalisation — designed to run unattended via Jenkins CI with parameterised credentials.</li>
-<li><strong>30+ educational boards and universities</strong> use the same Coempt OSM platform, as revealed by SSL certificate records — meaning any vulnerability is shared across CBSE, Andhra Pradesh SBTET, Odisha SCTEVT, JNTU, and at least 20 more institutions.</li>
-<li><strong>The portal was unstable during live evaluation.</strong> Coempt's QA team had to rewrite their automation twice in three days (21→24 February) because the live OSM portal kept changing underneath them — even as CBSE was running mock evaluations.</li>
-</ul>
+<div class="nav-links">
+<a href="annexure.html">📖 Technical Annexure</a>
+<a href="api-surface.html">🔗 API Surface &amp; Vulnerabilities</a>
 </div>
 
 <hr>
-
-<h2>What is the CBSE OSM?</h2>
-<p class="dropcap">The Central Board of Secondary Education (CBSE) uses an On-Screen Marking (OSM) system to evaluate Class 10 and Class 12 board exam answer sheets. Instead of physical paper packets shuffled between evaluators, scanned answer sheet images are displayed on a web portal where evaluators view, mark, and submit scores digitally.</p>
-<p>The OSM platform is operated by <strong>Coempt EduTeck Pvt. Ltd.</strong>, a Hyderabad-based company that won the CBSE contract. Their portal runs at <code>cbse.onmark.co.in</code>. Evaluators log in with credentials provided by their schools, view scanned answer sheets on an HTML5 canvas, allocate marks using right-click menus, and submit scores through the browser.</p>
-
-<h2>What We Found</h2>
-<p>Following earlier disclosures by security researcher Nisarga Adhikary (who found authentication bypass and client-side OTP vulnerabilities in the portal) and Sarthak Sidhant (who investigated the CBSE tender process), we conducted independent open-source intelligence (OSINT) to map the full technical scope.</p>
-<p>Using GitHub searches, SSL certificate transparency logs, and the Wayback Machine, we discovered:</p>
-<ol>
-<li><strong>Internal QA automation code</strong> — three GitHub repositories by Coempt employees containing Selenium test suites that interact with the live OSM portal</li>
-<li><strong>Full client list</strong> — 30+ subdomains on <code>*.onmark.co.in</code> revealing every board and university using the same platform</li>
-<li><strong>Complete API surface</strong> — 77 unique API endpoints extracted from an archived Angular production bundle</li>
-<li><strong>A forensic timeline</strong> — showing the portal was being rewritten mid-evaluation</li>
-</ol>
-
-<h2>The Three Repositories</h2>
-<p>Coempt QA engineer <strong>Gokul</strong> (GitHub: <code>segrgokul</code>, location: Hyderabad) maintained three repositories:</p>
-
-<div class="callout">
-<div class="callout-label">⚠️ Important Clarification</div>
-<p>The three repos represent <strong>two separate systems</strong>. Two repositories are Selenium test suites that automate the <strong>CBSE OSM web portal</strong> (an Angular SPA). The third is full server-side source code for a <strong>different client</strong> — the Andhra Pradesh State Board of Technical Education — built on ASP.NET. They share the same vendor (Coempt) and identical security anti-patterns, but the SBTET code does not run on CBSE's portal.</p>
-</div>
-
-<table>
-<tr><th>Repository</th><th>What It Contains</th><th>First Pushed</th></tr>
-<tr><td><code>New_Coempt_Automation</code></td><td>Selenium automation suite — CBSE OSM portal login (with OTP bypass), canvas-based marking automation, OCR via OCR.space API for other boards, Gemini Vision for marksheet schema extraction</td><td>Feb 2026</td></tr>
-<tr><td><code>KNR_Automation_Coempt</code></td><td>Automation for a separate board client (KNR) on the same platform</td><td>Oct 2025</td></tr>
-<tr><td><code>AP_SBTET_AUDIT</code></td><td>Full server-side source code for Andhra Pradesh SBTET — a different client on a separate instance</td><td>Dec 2024</td></tr>
-</table>
-
-<p>A separate developer, <strong>Viswanth</strong> (GitHub: <code>viswanthp</code>), also contributed the SBTET server-side code.</p>
-
-<h2>Why the OTP Is a Disaster</h2>
-<p>When an evaluator logs into the CBSE OSM portal, they are asked for four things: their username, password, school code, and date of birth. Then the portal displays a "Send OTP" button.</p>
-<p>You would expect this OTP to be sent to the evaluator's registered phone or email — a second factor that proves the person logging in actually possesses the evaluator's device. That is how every serious system works.</p>
-
-<p>That is not how this system works.</p>
-
-<blockquote>
-<p>The OTP is generated <em>entirely within the browser</em> and displayed on the page itself. It is never sent to any phone or email. It appears as a plain text input field with the class name <code>otp-input</code>. The server does not validate any out-of-band token.</p>
-<p>How do we know this? Because Coempt's own automation code handles the login flow, and it <em>never reads the OTP value</em>. It simply waits for the OTP field to appear on screen, checks that it is visible, and clicks the Login button. No OTP value is ever entered, because the field pre-fills itself.</p>
-</blockquote>
-
-<p>This is not a one-time password. It is a <strong>client-side animation</strong> that creates the illusion of two-factor authentication while providing zero additional security. Any script — including Coempt's own Selenium automation — can bypass it trivially.</p>
-
-<h2>Scriptable Marking at Machine Speed</h2>
-<p>Once past the pseudo-OTP, the automation code demonstrates the full marking workflow:</p>
-
-<ol>
-<li><strong>Navigate answer sheets</strong> — The code iterates through every scanned page of an answer booklet, clicking each page thumbnail to load it on the marking canvas.</li>
-<li><strong>Allocate marks via canvas interaction</strong> — The marking interface uses HTML5 <code>&lt;canvas&gt;</code> elements. The automation right-clicks the canvas, selects a mark value from a context menu, and double-clicks to confirm — simulating a human evaluator at machine speed.</li>
-<li><strong>Submit marks</strong> — The code interacts with the submission endpoints to save and finalise marks.</li>
-</ol>
-
-<p>And here is what makes this a systemic risk rather than a theoretical vulnerability: the entire flow is designed to run on <strong>Jenkins CI/CD</strong> — a continuous integration server used for automated testing. The code accepts credentials from environment variables or Excel spreadsheets. Feed it a list of evaluator accounts, and one CI job can sequentially log in as each evaluator, auto-mark their assigned answer sheets, and submit — all unattended.</p>
 
 <div class="red-box">
-<div class="red-box-label">The Attack Chain</div>
-<table>
-<tr><td><strong>Step 1</strong></td><td>Obtain evaluator credentials (leaked in the same repos' config files)</td></tr>
-<tr><td><strong>Step 2</strong></td><td>Target the correct board URL (switchable via a single config value)</td></tr>
-<tr><td><strong>Step 3</strong></td><td>Log in — OTP bypasses itself, the code just waits for it to appear</td></tr>
-<tr><td><strong>Step 4</strong></td><td>Auto-mark answer sheets via canvas interaction at machine speed</td></tr>
-<tr><td><strong>Step 5</strong></td><td>Submit marks and move to the next evaluator account</td></tr>
-</table>
-<p style="margin-top:8px"><strong>The vendor's own employees wrote the proof-of-concept attack code and published it to a public repository.</strong></p>
+<p class="red-box-label">⚠ Correction &amp; Scope Note</p>
+<p>The <strong>Andhra Pradesh SBTET</strong> source code (<code>viswanthp/AP_SBTET_AUDIT</code>) found during this investigation is <strong>a separate codebase for a different board</strong>, built on the same OnMark platform by the same vendor (Coempt EduTeck). While architecturally similar, it is <strong>not</strong> the CBSE evaluation system. This article covers only CBSE-specific evidence unless explicitly noted otherwise.</p>
 </div>
 
-<h2>30 Boards, One Vulnerable Platform</h2>
-<p>Coempt's OSM platform is not built for CBSE alone. SSL certificate transparency logs reveal at least <strong>30 subdomains</strong> on <code>*.onmark.co.in</code>, representing boards and universities across India:</p>
+<h2>The Attack Surface Is Shared</h2>
+
+<p>The OnMark evaluation platform — built and operated by Coempt EduTeck — is not unique to CBSE. SSL certificate records reveal <strong>over 30 board subdomains</strong> on <code>onmark.co.in</code>, each an identical instance of the same ASP.NET application serving different state boards and universities across India.</p>
+
+<p>At least two instances remain live and responding as of May 2026:</p>
 
 <table>
-<tr><th>Subdomain</th><th>Institution</th><th>Live?</th></tr>
-<tr><td><code>cbse</code></td><td>CBSE (Central Board of Secondary Education)</td><td>✅</td></tr>
-<tr><td><code>cbseosm</code></td><td>CBSE OSM evaluation portal</td><td>✅</td></tr>
-<tr><td><code>bcu</code> / <code>bcuosm</code></td><td>Bengaluru Central University</td><td>✅</td></tr>
-<tr><td><code>kswu</code></td><td>Karnataka State Women's University</td><td>✅</td></tr>
-<tr><td><code>sctevt</code></td><td>Odisha State Council for Technical Education</td><td>⚠️</td></tr>
-<tr><td><code>sbtet</code></td><td>AP State Board of Technical Education</td><td>⚠️</td></tr>
-<tr><td><code>jntu</code></td><td>Jawaharlal Nehru Technological University</td><td>⚠️</td></tr>
-<tr><td><code>anu</code></td><td>Acharya Nagarjuna University</td><td>⚠️</td></tr>
-<tr><td><code>msu</code></td><td>Manonmaniam Sundaranar University</td><td>⚠️</td></tr>
-<tr><td><code>gita</code></td><td>Gandhi Institute of Technological Advancement</td><td>⚠️</td></tr>
-<tr><td colspan="2"><em>~20 more subdomains</em></td><td>Mixed</td></tr>
+<tr><th>Subdomain</th><th>Board</th><th>Status</th><th>Server</th></tr>
+<tr><td><code>cbseosm.onmark.co.in</code></td><td>CBSE (Central Board)</td><td>503 — Maintenance</td><td>Microsoft IIS/10.0</td></tr>
+<tr><td><code>bcuosm.onmark.co.in</code></td><td>BCU (Baba Farid Univ.)</td><td>200 — Active</td><td>Microsoft IIS/10.0, ASP.NET MVC 5.2</td></tr>
 </table>
 
-<p>A vulnerability in Coempt's platform — like the fake OTP — affects <strong>every board on this list simultaneously</strong>. This is not a CBSE problem. It is a national examination integrity problem.</p>
+<p>Both run the same Angular SPA at <code>/cbseevalweb/</code> and share the same <code>OnMarkWinWebAPI</code> controller surface. Any vulnerability found in one instance is likely present in all of them.</p>
 
-<h2>The Portal Was Changing Under Evaluators' Feet</h2>
-<p>The automation code's commit history provides a rare forensic window into the system's stability during live evaluation:</p>
+<h2>What We Found</h2>
 
-<table class="timeline">
-<tr><td>15 Feb</td><td>CBSE Class 12 exams begin</td></tr>
-<tr><td>21 Feb</td><td>Coempt QA pushes first OSM automation code — captures screenshots from the live portal</td></tr>
-<tr><td>24 Feb</td><td><strong>Complete rewrite</strong> — login page, assessment page, all XPath selectors deleted and rewritten. The live portal's layout and DOM structure had changed.</td></tr>
-<tr><td>25 Feb</td><td>CBSE issues "Mass Mock Evaluation" circular for OSM training</td></tr>
-<tr><td>3 Mar</td><td>Wayback Machine archives the live Angular production bundle</td></tr>
-<tr><td>4 Mar</td><td>CBSE Class 12 exams end</td></tr>
-<tr><td>14 Mar</td><td>Gemini Vision schema extraction for marksheet processing added to automation</td></tr>
-</table>
+<p class="dropcap">Through passive OSINT — examining a 1.7 MB JavaScript bundle recovered from the Internet Archive's Wayback Machine, and cross-referencing it against Coempt's own Selenium automation code left on GitHub — we identified three high-confidence API-level vulnerabilities in the CBSE evaluation portal.</p>
 
-<p>The 21→24 February rewrite is the critical signal. CBSE's own mock evaluation circular went out on 25 February — but Coempt's QA team had already been forced to rewrite their automation because the live portal was changing underneath them <em>before</em> the mock even started.</p>
-<p>The page layouts visible in the automation screenshots changed completely between commits. XPath selectors — the precise addresses of buttons and input fields on the page — were all different. This means the user interface that evaluators saw was not frozen. It was being modified in production during the evaluation window.</p>
+<p>None of these were reported in the earlier responsible disclosure by security researcher Nisarga Adhikary, who focused on authentication bypass and route guard issues.</p>
 
-<h2>How Answer Sheets Flow</h2>
-<div class="arch-diagram">
-<figure>
-<img src="images/cbse-osm-architecture.jpg" alt="CBSE OSM Answer Sheet Processing Architecture" loading="lazy">
-<figcaption>The evaluation pipeline: physical answer sheets → scanning centres → OCR/AI quality checks → web portal → evaluator marking → results.</figcaption>
-</figure>
-</div>
+<h2>Vulnerability 1: Answer-Sheet PDFs Downloadable via Sequential IDs</h2>
 
-<h2>What Was Already Known vs. What's New</h2>
-<table>
-<tr><th>Finding</th><th>Previous Reporting</th><th>This Investigation</th></tr>
-<tr><td>Authentication bypass on OSM portal</td><td>Nisarga (Feb 2026)</td><td>—</td></tr>
-<tr><td>Client-side OTP has no server validation</td><td>Nisarga (Feb 2026)</td><td><strong>Confirmed &amp; demonstrated</strong> via automation code — the vendor's own tooling proves OTP is client-side-only</td></tr>
-<tr><td>CBSE tender process irregularities</td><td>Sarthak (May 2026)</td><td>—</td></tr>
-<tr><td>Internal QA code on public GitHub</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>OTP bypass proven by vendor's own code</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>30+ boards on same platform (CRT.sh)</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>77 API endpoints from archived bundle</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>Portal instability during evaluation</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>Full server-side source code leak (SBTET)</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>OCR pipeline (OCR.space API + PDFBox) and Gemini Vision schema extraction</td><td>—</td><td><strong>New</strong></td></tr>
-</table>
+<p>The portal generates a <code>total_marks_id</code> for each evaluated answer sheet and serves the final marked PDF at a predictable URL:</p>
 
-<h2>Technical Annexure</h2>
-<p>For researchers, journalists, and auditors who need the full evidence: code snippets, complete API endpoint lists, XPath selectors, and methodology details.</p>
-<a href="annexure.html" class="annexure-link">View Technical Annexure →</a>
+<pre><code>apiurl + "Download/finalpdf/" + total_marks_id + ".pdf"
+</code></pre>
 
-<h2>Verification &amp; Artifacts</h2>
-<p>All raw evidence is archived and publicly accessible:</p>
+<p>The bundle contains a hardcoded sample: <code>total_marks_id: "93836"</code>. If this is an auto-incrementing database integer — which the five-digit number strongly suggests — any authenticated evaluator could enumerate IDs (93835, 93837, …) and download <strong>other evaluators' completed, annotated answer sheets</strong>. This is a textbook IDOR (Insecure Direct Object Reference).</p>
+
+<p>The PDF opens in a new browser window at 800×600 with scrolling, meaning the system was designed for evaluators to review each other's marked scripts.</p>
+
+<h2>Vulnerability 2: Password Change Requires No Old Password</h2>
+
+<p>The ChangePassword endpoint accepts a payload of only two fields:</p>
+
+<pre><code>{ValuatorID: user_id, pin_NewPassword: new_password}
+</code></pre>
+
+<p>There is no <code>old_password</code> field — neither in the client-side form nor in the API payload. The HTML form only shows "New Password" and "Confirm New Password" fields. Any authenticated user who knows another evaluator's <code>ValuatorID</code> (which follows a pattern like <code>K82XXXXXXX</code>) could change that evaluator's password, locking them out or taking over their account.</p>
+
+<p>This was <strong>partially reported by Nisarga</strong> as a "password-change flaw." Our bundle analysis confirms the exact mechanism: the API simply never asks for the current password.</p>
+
+<h2>Vulnerability 3: Evaluator Photos Served Without Authentication</h2>
+
+<p>The portal displays evaluator photographs via:</p>
+
+<pre><code>imageAsDataUrl = Pi_apiurl + "OnMarkWinWebAPI/face/GetUserPhoto/" + user_code + ".jpg"
+</code></pre>
+
+<p>This GET request is made through a plain <code>http.get()</code> call with <strong>no credentials, no auth headers, no tokens</strong>. Compare this to other API calls in the same bundle that include <code>withCredentials: true</code>:</p>
+
+<pre><code>// Authenticated API call (other endpoints):
+httpClient.post(url, data, { withCredentials: true, headers: ... })
+
+// Photo fetch (unauthenticated):
+getImage(url) { return this.http.get(url, { responseType: "blob" }) }
+</code></pre>
+
+<p>If the server hosting <code>/upload/</code> and <code>/face/</code> doesn't enforce its own access control, anyone who guesses a <code>user_code</code> can view evaluator photographs — potentially including government-issued ID photos used for exam duty verification.</p>
+
+<h2>Why This Matters Beyond CBSE</h2>
+
+<p>The OnMark platform processes board examinations for <strong>dozens of Indian universities and state boards</strong>. Every vulnerability described above is a property of the shared codebase, not a CBSE-specific misconfiguration. If <code>bcuosm.onmark.co.in</code> is running the same build — and the identical IIS/ASP.NET headers and <code>/cbseevalweb/</code> path strongly indicate it is — the same sequential PDF IDs, password-free change flow, and unauthenticated photo endpoints are likely exploitable there too.</p>
+
+<p>The Coempt employees who pushed code to GitHub used the platform for at least three separate boards (CBSE, KNR, RTMNU), and the <code>viswanthp/AP_SBTET_AUDIT</code> repo reveals a fourth board (AP SBTET) running the same backend architecture with BillDesk payment integration, Razorpay IFS codes, and student photo uploads — all sharing the same weak <code>HbCrypt</code> hashing and <code>SHA1</code> password storage.</p>
+
+<h2>Methodology</h2>
+
+<p>All findings are derived from:</p>
 <ul>
-<li><strong>GitHub repositories</strong> (forked): <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/">zo.pub/cashlessconsumer/cbse-coempt-osint-archive</a></li>
-<li><strong>Angular production bundle</strong> (1.7 MB): <a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive/cbseevalweb_main_bundle.js">cbseevalweb_main_bundle.js</a></li>
-<li><strong>This article's source</strong>: <a href="https://github.com/CCAgentOrg/cbse-osm-osint">GitHub repo</a></li>
+<li>A 1.7 MB Angular production bundle (<code>main.js</code>) recovered from the Wayback Machine, archived on 3 March 2026 from <code>cbse.onmark.co.in</code></li>
+<li>Coempt EduTeck's Selenium automation repositories on GitHub (<code>segrgokul/New_Coempt_Automation</code>, <code>segrgokul/Ocr_To_Text_Automation</code>, <code>Sarthak-Sidhant/coempt</code>)</li>
+<li>SSL certificate transparency logs from crt.sh for <code>*.onmark.co.in</code></li>
+<li>Live HTTP header responses from active OnMark instances (May 2026)</li>
 </ul>
 
-<h2>References</h2>
+<p>No accounts were accessed. No APIs were called. No data was downloaded beyond static JavaScript bundles and public certificate records.</p>
+
+<h2>Evidence &amp; Artifacts</h2>
+
+<p>All source code, the Angular bundle, server headers, and SSL certificate data referenced in this article are archived at:</p>
 <ul>
-<li>Nisarga Adhikary — <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Exposing Critical Vulnerabilities in CBSE's On-Screen Marking Portal</a></li>
-<li>Sarthak Sidhant — <a href="https://github.com/Sarthak-Sidhant/coempt">How CBSE Rewrote Rules to Favor Coempt EduTeck</a></li>
-<li>Internet Freedom Foundation — <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked/">When the Exam Itself Can Be Hacked</a></li>
-<li>CBSE OSM Mass Mock Evaluation circular — <a href="https://www.cbse.gov.in/cbsenew/documents/OSM_Mass_Mock_Evalauation_25022026.pdf">cbse.gov.in</a></li>
+<li><a href="https://zo.pub/cashlessconsumer/cbse-coempt-osint-archive">zo.pub/cashlessconsumer/cbse-coempt-osint-archive</a> — 1,400+ files (GitHub repos + Wayback bundle)</li>
 </ul>
 
-<div class="disclaimer">
-<strong>Responsible disclosure note:</strong> This post documents findings from public sources (GitHub, CRT.sh, Wayback Machine). No API keys, passwords, or specific credentials are disclosed. We have not attempted to access any live evaluation system. All findings were obtained through passive OSINT.
-</div>
+<h2>Technical Details</h2>
+
+<p>For full API endpoint inventory, source code snippets, and vulnerability classification, see:</p>
+<ul>
+<li><a href="api-surface.html">API Surface &amp; Vulnerability Analysis</a> — complete endpoint mapping with auth context</li>
+<li><a href="annexure.html">Technical Annexure</a> — source code, bundle analysis, infrastructure details</li>
+</ul>
+
+<hr>
+
+<p><small>This article presents findings from passive OSINT only. No systems were tested, no credentials were used, and no vulnerabilities were exploited. The researchers followed responsible disclosure norms; the vulnerabilities described have been documented here for public accountability given the involvement of a national examination board.</small></p>
 
 </div>
 </body>
