@@ -458,24 +458,26 @@ public class osm_Exceution {
 
 <h2 id="ocr">8. OCR/AI Pipeline</h2>
 <div class="section">
-<div class="section-label">Three distinct OCR methods in the automation suite</div>
+<div class="section-label">Two distinct OCR/AI methods in the automation suite</div>
 
-<h3>8a. Tesseract OCR (Local)</h3>
-<pre><code>package ocrTextModules;
+<h3>8a. OCR.space API (Cloud-based)</h3>
+<p><strong>Source:</strong> <code>ocrTextModules/Ocr_Text_Extraction_Using_API_Key.java</code> — used for SCTEVT marksheet text extraction, not CBSE OSM. Shown here because it demonstrates Coempt's broader OCR processing capability.</p>
+<pre><code>// From ocrTextModules/Ocr_Text_Extraction_Using_API_Key.java
+// Uses cloud OCR.space API with key from config.properties
 
-import net.sourceforge.tess4j.*;
+String url = "https://api.ocr.space/parse/image";
+con.setRequestProperty("apikey", apiKey);
 
-public class Ocr_Text_Extract {
-    public String extractText(String imagePath) {
-        Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
-        tesseract.setLanguage("eng");
-        return tesseract.doOCR(new File(imagePath));
-    }
-}
+String postData =
+    "language=eng" +
+    "&isOverlayRequired=true" +
+    "&isTable=true" +
+    "&scale=true" +
+    "&detectOrientation=true" +
+    "&OCREngine=2";
 </code></pre>
 
-<h3>8b. Google Gemini Vision API</h3>
+<h3>8b. Google Gemini Vision API — Marksheet Schema Extraction</h3>
 <pre><code>// From nizamProject/SchemaExtractor.java (commit 392614d, 14 Mar 2026)
 // Extracts marking schema from university marksheets using Gemini Vision
 

@@ -90,7 +90,7 @@ ol li{margin:6px 0}
 
 <table>
 <tr><th>Repository</th><th>What It Contains</th><th>First Pushed</th></tr>
-<tr><td><code>New_Coempt_Automation</code></td><td>Selenium automation suite for the CBSE OSM portal — login, answer sheet navigation, canvas-based marking, OCR quality checks, Gemini AI review</td><td>Feb 2026</td></tr>
+<tr><td><code>New_Coempt_Automation</code></td><td>Selenium automation suite — CBSE OSM portal login (with OTP bypass), canvas-based marking automation, OCR via OCR.space API for other boards, Gemini Vision for marksheet schema extraction</td><td>Feb 2026</td></tr>
 <tr><td><code>KNR_Automation_Coempt</code></td><td>Automation for a separate board client (KNR) on the same platform</td><td>Oct 2025</td></tr>
 <tr><td><code>AP_SBTET_AUDIT</code></td><td>Full server-side source code for Andhra Pradesh SBTET — a different client on a separate instance</td><td>Dec 2024</td></tr>
 </table>
@@ -163,7 +163,7 @@ ol li{margin:6px 0}
 <tr><td>25 Feb</td><td>CBSE issues "Mass Mock Evaluation" circular for OSM training</td></tr>
 <tr><td>3 Mar</td><td>Wayback Machine archives the live Angular production bundle</td></tr>
 <tr><td>4 Mar</td><td>CBSE Class 12 exams end</td></tr>
-<tr><td>14 Mar</td><td>Gemini AI OCR integration added to automation</td></tr>
+<tr><td>14 Mar</td><td>Gemini Vision schema extraction for marksheet processing added to automation</td></tr>
 </table>
 
 <p>The 21→24 February rewrite is the critical signal. CBSE's own mock evaluation circular went out on 25 February — but Coempt's QA team had already been forced to rewrite their automation because the live portal was changing underneath them <em>before</em> the mock even started.</p>
@@ -189,7 +189,7 @@ ol li{margin:6px 0}
 <tr><td>77 API endpoints from archived bundle</td><td>—</td><td><strong>New</strong></td></tr>
 <tr><td>Portal instability during evaluation</td><td>—</td><td><strong>New</strong></td></tr>
 <tr><td>Full server-side source code leak (SBTET)</td><td>—</td><td><strong>New</strong></td></tr>
-<tr><td>OCR/AI pipeline (Tesseract + Gemini)</td><td>—</td><td><strong>New</strong></td></tr>
+<tr><td>OCR pipeline (OCR.space API + PDFBox) and Gemini Vision schema extraction</td><td>—</td><td><strong>New</strong></td></tr>
 </table>
 
 <h2>Technical Annexure</h2>
