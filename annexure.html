@@ -476,21 +476,79 @@ public class Ocr_Text_Extract {
 </code></pre>
 
 <h3>8b. Google Gemini Vision API</h3>
-<pre><code>// From rtmnuTRProject/PomClass.java (commit 392614d, 14 Mar 2026)
-// Evaluation prompt for AI-based answer assessment
+<pre><code>// From nizamProject/SchemaExtractor.java (commit 392614d, 14 Mar 2026)
+// Extracts marking schema from university marksheets using Gemini Vision
 
 String prompt = """
-You are an expert evaluator. Assess the handwritten answer
-against the provided marking scheme. Assign marks following:
-- Full marks if all key points are covered
-- Partial marks proportional to coverage
-- Zero if answer is irrelevant or blank
+    You are analyzing the FIRST PAGE of a university marksheet PDF.
 
-Marking scheme: [provided]
-Student answer: [image]
-""";
+    Extract the marking schema, subjects, and grade conversion table.
+
+    Return strictly valid JSON:
+    {
+      "university_name": "",
+      "exam_title": "",
+      "num_subjects": 0,
+      "total_credit": 0,
+      "max_marks": 0,
+      "min_marks": 0,
+
+      "subjects": [
+        {
+          "sr": 0,
+          "abbr": "",
+          "subject_name": "",
+          "tu": 0,
+          "ti": 0,
+          "pu": 0,
+          "pi": 0,
+          "tumin": 0,
+          "pumin": 0,
+          "total": 0,
+          "min": 0,
+          "exmp": 0,
+          "credit": 0
+        }
+      ],
+
+      "theory_grading": [
+        {
+          "grade": "<grade symbol>",
+          "description": "<Outstanding, Excellent, etc.>",
+          "range_min": <min percentage or absolute>,
+          "range_max": <max percentage or absolute>,
+          "grade_point": <point>
+        }
+      ],
+
+      "practical_grading": [
+        {
+          "grade": "<grade symbol>",
+          "description": "<Outstanding, Excellent, etc.>",
+          "range_min": <min percentage>,
+          "range_max": <max percentage>,
+          "grade_point": <point>
+        }
+      ]
+    }
+
+    Rules:
+    - Extract ALL subjects
+    - Extract TU, TI, PU, PI marks
+    - Extract TUmin and PUmin
+    - Extract TOTAL and MIN marks
+    - Extract EXMP if present
+    - Extract CREDIT
+    - If a value is "-" return null
+    - Return ONLY JSON
+    - GRADING RANGES: Use the exact boundary value (e.g., 90) for
+      'range_max' even if the PDF says '< 90'.
+    - PRINT THE GRADE VALUE AS IT IS LIKE IF IT HAS 05 IN IT
+      PRINT 05 AND IF IT HAS 5.5 PRINT 5.5 DONT ROUND IT UP
+    - Return ONLY valid JSON.
+    """;
 </code></pre>
-<p><strong>Note:</strong> This is the QA review layer — it cross-checks evaluator consistency, not the primary marking system. However, the presence of an AI-based marking review raises questions about the role of automated scoring in the evaluation chain.</p>
+<p><strong>Note:</strong> The file was <code>src/main/java/nizamProject/SchemaExtractor.java</code> — first added in commit <code>392614d</code>. In the current <code>main</code> branch the Gemini prompt still exists but the API key was moved to <code>config.properties</code>. The hardcoded key in the original commit has since been removed from the file on <code>main</code>, but remains accessible in git history. No keys or credentials are disclosed in this post.</p>
 
 <h3>8c. Custom PDF Extraction</h3>
 <pre><code>package rtmnuTRProject;
@@ -570,7 +628,7 @@ Student answer: [image]
 <tr><td>21 Feb 2026<br>17:04</td><td><code>38f38dd</code></td><td>new osm code addtion</td><td>First OSM files: <code>osm_Login_Page.java</code>, XPath selectors, OsmPom</td></tr>
 <tr><td>21 Feb 2026<br>17:30</td><td><code>...</code></td><td>Screenshots captured</td><td>PNG files from live <code>cbse.onmark.co.in</code> showing portal UI</td></tr>
 <tr><td>24 Feb 2026<br>11:34</td><td><code>fd38fb8</code></td><td>new osm changes</td><td><strong>Complete rewrite</strong>: Login page, assessment page, all XPaths deleted &amp; recreated. Layout screenshots show completely different UI.</td></tr>
-<tr><td>14 Mar 2026<br>15:09</td><td><code>392614d</code></td><td>OCR API with Gemini prompt</td><td>Added Gemini Vision evaluation prompt to PomClass.java</td></tr>
+<tr><td>14 Mar 2026<br>15:09</td><td><code>392614d</code></td><td>OCR API with Gemini prompt</td><td>Added Gemini Vision schema-extraction prompt to SchemaExtractor.java</td></tr>
 <tr><td>18 Mar 2026</td><td><code>5f2b...</code></td><td>osm changes</td><td>Final OSM-related commit</td></tr>
 </table>
 <p><strong>Critical window:</strong> CBSE Class 12 exams ran 15 Feb – 4 Mar 2026. Mock eval circular: 25 Feb. The portal rewrite (24 Feb) happened <em>before</em> the mock circular and <em>during</em> the exam window.</p>
