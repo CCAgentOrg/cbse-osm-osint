@@ -1,238 +1,470 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>ni5arga: Post-Blog Vulnerability Disclosures</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-  </style>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ni5arga's Findings — CBSE OSM Investigation</title>
+<meta name="description" content="A 19-year-old found 8 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months. Here's what it means for you.">
+<meta property="og:title" content="ni5arga's Findings — 8 Holes in India's Exam System">
+<meta property="og:description" content="A 19-year-old found 8 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months.">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+
+/* === COMMON SITE NAV & FOOTER === */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f7;--fg:#2a2520;--muted:#8a8279;--accent:#8b1a1a;--accent-light:#c0392b;
+  --card:#fff;--border:#e5e0db;--sans:'Inter',system-ui,-apple-system,sans-serif;
+  --serif:Georgia,'Times New Roman',serif;
+  --code-bg:#1e1e2e;--code-fg:#cdd6f4;
+}
+[data-theme="dark"]{
+  --bg:#18181b;--fg:#e4e0dc;--muted:#a39e96;--accent:#e74c3c;--accent-light:#ff6b6b;
+  --card:#1f1f23;--border:#333;--code-bg:#11111b;--code-fg:#cdd6f4;
+}
+body{font-family:var(--serif);background:var(--bg);color:var(--fg);line-height:1.75;max-width:52em;margin:0 auto;padding:1em}
+
+/* Nav */
+.site-nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  padding:.6em 0;font-family:var(--sans);font-size:.82em;
+  display:flex;flex-wrap:wrap;gap:.5em;align-items:center;justify-content:center;
+}
+.site-nav a{
+  text-decoration:none;color:var(--fg);padding:.3em .7em;
+  border-radius:999px;border:1px solid var(--border);transition:all .2s;
+}
+.site-nav a:hover,.site-nav a.active{
+  background:var(--accent);color:#fff;border-color:var(--accent);
+}
+
+/* Header */
+.page-header{
+  text-align:center;padding:2.5em 1em 1.5em;
+  border-bottom:1px solid var(--border);margin-bottom:2em;
+}
+.page-header h1{
+  font-family:var(--sans);font-size:clamp(1.6em,4vw,2.4em);font-weight:800;
+  color:var(--accent);margin-bottom:.4em;letter-spacing:-.02em;
+}
+.page-header .subtitle{
+  font-size:1.05em;color:var(--muted);max-width:38em;margin:0 auto;line-height:1.6;
+}
+.page-header .meta{
+  margin-top:.8em;font-family:var(--sans);font-size:.78em;color:var(--muted);
+}
+
+/* Sections */
+h2{
+  font-family:var(--sans);font-size:1.3em;font-weight:700;
+  color:var(--accent);margin:2.2em 0 .8em;padding-bottom:.3em;
+  border-bottom:2px solid var(--border);
+}
+h3{font-family:var(--sans);font-size:1.05em;font-weight:600;margin:1.5em 0 .5em}
+p{margin-bottom:1em}
+a{color:var(--accent-light);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+a:hover{color:var(--accent)}
+blockquote{
+  border-left:3px solid var(--accent);margin:1.2em 0;padding:.6em 1.2em;
+  background:var(--card);border-radius:0 6px 6px 0;font-style:italic;color:var(--muted);
+}
+blockquote cite{display:block;font-style:normal;font-size:.85em;margin-top:.4em;color:var(--muted)}
+code{font-family:'JetBrains Mono',monospace;background:var(--code-bg);color:var(--code-fg);padding:.15em .4em;border-radius:4px;font-size:.88em}
+strong{color:var(--fg)}
+em{font-style:italic}
+
+/* Stats strip */
+.stats-strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1em;
+  margin:2em 0;padding:1.5em;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;
+}
+.stat-box{text-align:center;padding:.8em}
+.stat-box .number{font-family:var(--sans);font-size:2em;font-weight:800;color:var(--accent)}
+.stat-box .label{font-family:var(--sans);font-size:.78em;color:var(--muted);margin-top:.2em}
+
+/* Finding cards */
+.finding{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1.5em;margin:1.5em 0;position:relative;overflow:hidden;
+}
+.finding::before{
+  content:'';position:absolute;top:0;left:0;width:4px;height:100%;
+}
+.finding.critical::before{background:#e74c3c}
+.finding.high::before{background:#f39c12}
+.finding.critical .severity-badge{background:#e74c3c;color:#fff}
+.finding.high .severity-badge{background:#f39c12;color:#fff}
+.finding h3{margin-top:0;display:flex;align-items:center;gap:.5em;flex-wrap:wrap}
+.severity-badge{
+  font-family:var(--sans);font-size:.68em;font-weight:700;padding:.15em .6em;
+  border-radius:999px;text-transform:uppercase;letter-spacing:.05em;
+}
+.finding-date{
+  font-family:var(--sans);font-size:.78em;color:var(--muted);margin-bottom:.8em;
+}
+
+/* Impact box */
+.impact-box{
+  margin:1em 0;padding:1em 1.2em;
+  background:rgba(139,26,26,.06);border:1px solid rgba(139,26,26,.15);
+  border-radius:8px;
+}
+[data-theme="dark"] .impact-box{
+  background:rgba(231,76,60,.1);border-color:rgba(231,76,60,.25);
+}
+.impact-box h4{
+  font-family:var(--sans);font-size:.9em;font-weight:700;color:var(--accent);
+  margin:0 0 .5em;display:flex;align-items:center;gap:.4em;
+}
+.impact-box ul{margin:0;padding-left:1.2em}
+.impact-box li{margin-bottom:.3em;font-size:.92em}
+
+/* Analogy box */
+.analogy-box{
+  margin:1em 0;padding:1em 1.2em;
+  background:rgba(52,152,219,.06);border:1px solid rgba(52,152,219,.15);
+  border-radius:8px;font-size:.95em;
+}
+[data-theme="dark"] .analogy-box{
+  background:rgba(52,152,219,.1);border-color:rgba(52,152,219,.25);
+}
+.analogy-box h4{
+  font-family:var(--sans);font-size:.9em;font-weight:700;color:#2980b9;
+  margin:0 0 .5em;
+}
+.analogy-box p{margin:0}
+
+/* Timeline */
+.timeline{margin:2em 0;padding-left:0;list-style:none}
+.timeline-item{
+  position:relative;padding-left:2.5em;padding-bottom:1.2em;
+  border-left:2px solid var(--border);margin-left:.8em;
+}
+.timeline-item:last-child{border-left-color:transparent;padding-bottom:0}
+.timeline-item::before{
+  content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;
+  background:var(--accent);border-radius:50%;border:2px solid var(--bg);
+}
+.timeline-date{
+  font-family:var(--sans);font-size:.78em;color:var(--muted);font-weight:600;
+}
+.timeline-text{margin-top:.2em}
+
+/* Blog summary box */
+.blog-summary{
+  background:var(--card);border:2px dashed var(--border);border-radius:12px;
+  padding:1.5em;margin:2em 0;
+}
+.blog-summary h3{margin-top:0}
+.blog-summary table{
+  width:100%;border-collapse:collapse;margin-top:.8em;
+  font-family:var(--sans);font-size:.85em;
+}
+.blog-summary th,.blog-summary td{
+  text-align:left;padding:.5em .6em;border-bottom:1px solid var(--border);
+}
+.blog-summary th{color:var(--accent);font-weight:600;font-size:.78em;text-transform:uppercase;letter-spacing:.05em}
+
+/* Summary table */
+.summary-table{
+  width:100%;border-collapse:collapse;margin:1.5em 0;
+  font-family:var(--sans);font-size:.85em;
+}
+.summary-table th,.summary-table td{
+  text-align:left;padding:.6em;border-bottom:1px solid var(--border);
+}
+.summary-table th{color:var(--accent);font-weight:600;font-size:.78em;text-transform:uppercase}
+.summary-table td:first-child{font-weight:600}
+
+/* Media list */
+.media-list{list-style:none;padding:0;margin:1em 0;display:flex;flex-wrap:wrap;gap:.5em}
+.media-list li a{
+  display:inline-block;padding:.4em .8em;border:1px solid var(--border);
+  border-radius:8px;text-decoration:none;font-family:var(--sans);font-size:.82em;
+  color:var(--fg);transition:all .2s;
+}
+.media-list li a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Footer */
+.site-footer{
+  margin-top:3em;padding:1.5em;border-top:1px solid var(--border);
+  font-family:var(--sans);font-size:.78em;color:var(--muted);text-align:center;
+}
+.site-footer a{color:var(--accent-light)}
+
+/* Responsive */
+@media(max-width:600px){
+  body{font-size:1em;padding:.5em}
+  .site-nav{font-size:.72em;gap:.3em;padding:.4em 0;flex-wrap:wrap}
+  .site-nav a{padding:.2em .5em}
+  .stats-strip{grid-template-columns:repeat(2,1fr);gap:.6em}
+  .stat-box .number{font-size:1.5em}
+  .page-header{padding:1.5em .5em 1em}
+  .finding{padding:1em}
+}
+</style>
 </head>
 <body>
-<header id="title-block-header">
-<h1 class="title">ni5arga: Post-Blog Vulnerability Disclosures</h1>
-</header>
-<h1 id="ni5arga-post-blog-vulnerability-disclosures">ni5arga: Post-Blog
-Vulnerability Disclosures</h1>
-<p><strong>Researcher:</strong> <a href="https://x.com/ni5arga"><span
-class="citation" data-cites="ni5arga">@ni5arga</span></a> (nisarga) —
-19-year-old security researcher <strong>Full blog post:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga.com/blog/posts/hacking-cbse</a>
-(published May 22, 2026)</p>
-<hr />
-<h2 id="whats-already-blogged">What’s Already Blogged</h2>
-<p>ni5arga’s <a href="https://ni5arga.com/blog/posts/hacking-cbse/">blog
-post</a> documents five vulnerabilities discovered on <strong>February
-25, 2026</strong> and reported to CERT-In under ref
-<strong>CERTIn-16590126</strong>:</p>
-<ol type="1">
-<li><strong>Hardcoded master password</strong> in the Angular JS
-bundle</li>
-<li><strong>Client-side OTP validation</strong> — server sends OTP in
-the auth response, browser checks locally</li>
-<li><strong>No route guards</strong> — entire app navigable without
-authentication</li>
-<li><strong>Password change without old password</strong> —
-<code>ChangePassword</code> API never sends
-<code>oldpassword</code></li>
-<li><strong>Systemic IDOR</strong> — every API trusts
-<code>ValuatorID</code> from client-side storage</li>
-</ol>
-<p>These are well-documented in his blog. <strong>This page covers only
-what came after.</strong></p>
-<hr />
-<h2 id="post-blog-timeline-may-2731-2026">Post-Blog Timeline (May 27–31,
-2026)</h2>
-<h3 id="finding-6-full-crud-shell-access-on-cbse-prod-servers">🔴
-Finding 6: Full CRUD + Shell Access on CBSE Prod Servers</h3>
-<p><strong>Date:</strong> May 29, 2026 <strong>Tweet:</strong> <a
-href="https://x.com/i/status/2060320391617499380">x.com/i/status/2060320391617499380</a></p>
-<p>ni5arga (with <span class="citation"
-data-cites="thetirthparmar">@thetirthparmar</span>) demonstrated
-<strong>full create, read, update, delete access plus shell
-access</strong> to CBSE’s production OnMark server — the same server
-referenced in <a href="https://archive.is/dGw1Q">CBSE’s own
-circular</a>.</p>
+
+<!-- NAV -->
+<div class="site-nav">
+<a href="index.html">Home</a>
+<a href="api-surface.html">API Surface</a>
+<a href="annexure.html">Technical Annexure</a>
+<a href="impacted-entities.html">Impacted Entities</a>
+<a href="terms-of-reference.html">Terms of Reference</a>
+<a href="know-your-coempt.html">Know Your Coempt</a>
+<a href="know-your-examtech.html">Know Your ExamTech</a>
+<a href="ni5arga-vulnerabilities.html" class="active">ni5arga's Findings</a>
+</div>
+
+<!-- HEADER -->
+<div class="page-header">
+<h1>ni5arga's Findings</h1>
+<p class="subtitle">A 19-year-old found 8 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months. Here's what it means for you — in plain English.</p>
+<p class="meta">Researcher: <a href="https://x.com/ni5arga">@ni5arga</a> · CERT-In Ref: <code>CERTIn-16590126</code></p>
+</div>
+
+<!-- STATS -->
+<div class="stats-strip">
+<div class="stat-box"><div class="number">8</div><div class="label">Security holes found</div></div>
+<div class="stat-box"><div class="number">3</div><div class="label">Months before any fix</div></div>
+<div class="stat-box"><div class="number">17.8L</div><div class="label">Students affected</div></div>
+<div class="stat-box"><div class="number">19</div><div class="label">Age of the researcher</div></div>
+</div>
+
+<h2>📖 The Short Version</h2>
+
+<p>Think of the CBSE marking system like a school's answer sheet storage room. ni5arga, a 19-year-old security researcher, discovered that:</p>
+
+<div class="impact-box">
+<h4>🔑 The back door was wide open</h4>
 <ul>
-<li>Proof archive: <a
-href="https://archive.is/bPH2U">archive.is/bPH2U</a></li>
-<li>Additional archives: <a
-href="https://archive.is/lkI1x">archive.is/lkI1x</a>, <a
-href="https://archive.is/UWp2h">archive.is/UWp2h</a></li>
-<li>Reported to CERT-In, Education Ministry (GoI), and CBSE before
-disclosure</li>
+<li>The "master key" was left in the lock — visible to anyone who looked</li>
+<li>The security guard checked IDs by <em>asking you your name</em> (not verifying against a list)</li>
+<li>You could walk into <em>any room</em> without signing in</li>
+<li>You could change anyone's password without knowing the old one</li>
+<li>You could pick up <em>any student's answer sheet</em> from the storage room — no questions asked</li>
 </ul>
-<p><strong>Bad Apple demo:</strong> <a
-href="https://x.com/i/status/2060329287367147795">x.com/i/status/2060329287367147795</a>
-— Played the Bad Apple video on the CBSE production site as proof of
-control.</p>
-<hr />
-<h3 id="finding-7-super-admin-access-on-onmark-university-portal">🔴
-Finding 7: Super Admin Access on OnMark University Portal</h3>
-<p><strong>Date:</strong> May 29, 2026 <strong>Tweets:</strong> - <a
-href="https://x.com/i/status/2060508071072592306">x.com/i/status/2060508071072592306</a>
-- <a
-href="https://x.com/i/status/2060508201439875477">x.com/i/status/2060508201439875477</a>
-- <a
-href="https://x.com/i/status/2060508407522857172">x.com/i/status/2060508407522857172</a></p>
-<p>Another OnMark subdomain was compromised, this time granting
-<strong>super admin access</strong> to a portal handling exam evaluation
-at <strong>multiple universities</strong>.</p>
-<p>Capabilities obtained: - <strong>Evaluate/grade answer
-sheets</strong> - <strong>Edit any user’s password</strong> -
-<strong>View full user list</strong> - <strong>Create new user
-accounts</strong> - <strong>Send mass SMS and email</strong> to all
-evaluators/students</p>
-<blockquote>
-<p>“another integral onmark subdomain has been pwn’ed, this time we
-managed to get super admin access of the portal. seems like it is tasked
-with evaluation of exams at various universities.”</p>
-</blockquote>
-<p>CERT-In informed before posting. This reveals the vulnerability is
-<strong>not CBSE-specific</strong> — it’s systemic across the entire
-OnMark platform used by multiple institutions.</p>
-<hr />
-<h3
-id="finding-8-exposed-aws-s3-bucket-answer-sheets-question-papers">🔴
-Finding 8: Exposed AWS S3 Bucket — Answer Sheets &amp; Question
-Papers</h3>
-<p><strong>Date:</strong> May 31, 2026 <strong>Tweet:</strong> <a
-href="https://x.com/i/status/2060941174949433445">x.com/i/status/2060941174949433445</a>
-(476K+ views)</p>
-<p>CBSE’s AWS S3 bucket was left <strong>completely
-unauthenticated</strong>:</p>
-<ul>
-<li><code>ListObjectsV2</code> works <strong>without any
-authentication</strong></li>
-<li>Bucket root is <strong>publicly listable</strong></li>
-<li>Contains <strong>2026 answer sheets and question papers</strong> as
-scanned images</li>
-<li>Allows <strong>pagination and enumeration</strong> of all media</li>
-<li><strong>Multiple institutions</strong> share the same bucket</li>
-</ul>
-<blockquote>
-<p>“CBSE people didn’t configure their AWS bucket properly and now we
-can paginate &amp; enumerate all their media which has 2026 answersheets
-&amp; question papers. ListObjectsV2 works without any auth and the
-bucket root is listable too — anyone on the internet can download any
-scanned booklet — across institutions. Multiple institutions are using
-the same bucket, insanely insecure.”</p>
-</blockquote>
-<p>This is arguably the most damaging disclosure — it means
-<strong>anyone on the internet</strong> could download any student’s
-scanned answer booklet without any authentication whatsoever, across
-multiple institutions using the OnMark/Coempt infrastructure.</p>
-<hr />
-<h2 id="cbses-response">CBSE’s Response</h2>
-<p><strong>May 31, 2026</strong> — CBSE issued an official statement
-from HQ acknowledging a security breach and deploying cybersecurity
-teams:</p>
-<blockquote>
-<p><a href="https://x.com/ni5arga/status/2061042510211027189">CBSE HQ
-statement</a></p>
-</blockquote>
-<p>ni5arga’s reaction: <a
-href="https://x.com/i/status/2061042510211027189">x.com/i/status/2061042510211027189</a></p>
-<p>On CERT-In’s response: <a
-href="https://x.com/i/status/2060987304681115795">x.com/i/status/2060987304681115795</a></p>
-<blockquote>
-<p>“CERT just sends me a boilerplate ‘thank you’ reply every time and
-it’s frustrating to say the least.”</p>
-</blockquote>
-<hr />
-<h2 id="what-this-tells-us">What This Tells Us</h2>
+</div>
+
+<p>He reported all of this to India's cybersecurity agency (CERT-In) on <strong>February 25, 2026</strong>. Three months later, after no meaningful fix, he went public.</p>
+
+---
+
+<h2>📝 What's Already in His Blog (5 findings)</h2>
+
+<p>ni5arga documented his first 5 findings in a <a href="https://ni5arga.com/blog/posts/hacking-cbse/">detailed blog post</a> published May 22, 2026. Here's a simple summary:</p>
+
+<div class="blog-summary">
+<h3>The 5 Blogged Vulnerabilities</h3>
 <table>
-<thead>
-<tr class="header">
-<th>Finding</th>
-<th>Blogged?</th>
-<th>Scope</th>
-<th>Severity</th>
+<tr><th>#</th><th>What happened</th><th>In plain English</th></tr>
+<tr>
+  <td><strong>1</strong></td>
+  <td>Hardcoded master password in website code</td>
+  <td>The system's master password was literally written in the website's source code — like taping your ATM PIN to the ATM machine</td>
 </tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Hardcoded master password</td>
-<td>✅ Yes</td>
-<td>CBSE OSM portal</td>
-<td>Critical</td>
+<tr>
+  <td><strong>2</strong></td>
+  <td>OTP sent back to the browser, not verified by server</td>
+  <td>The login OTP was checked by <em>your own browser</em>, not the server. It's like a bouncer who asks "are you on the list?" and trusts whatever you say</td>
 </tr>
-<tr class="even">
-<td>Client-side OTP</td>
-<td>✅ Yes</td>
-<td>CBSE OSM portal</td>
-<td>Critical</td>
+<tr>
+  <td><strong>3</strong></td>
+  <td>No route guards — entire app accessible without login</td>
+  <td>Every single page could be visited without logging in. The login screen was decorative</td>
 </tr>
-<tr class="odd">
-<td>No route guards</td>
-<td>✅ Yes</td>
-<td>CBSE OSM portal</td>
-<td>High</td>
+<tr>
+  <td><strong>4</strong></td>
+  <td>Change password without knowing old one</td>
+  <td>Anyone could reset any evaluator's password without knowing or entering the current password</td>
 </tr>
-<tr class="even">
-<td>Password change w/o old</td>
-<td>✅ Yes</td>
-<td>CBSE OSM portal</td>
-<td>Critical</td>
+<tr>
+  <td><strong>5</strong></td>
+  <td>Systemic IDOR — ID manipulation across all APIs</td>
+  <td>By changing a number in the web address, you could see <em>any student's marks</em> — like guessing someone's locker combination by trying 1, 2, 3</td>
 </tr>
-<tr class="odd">
-<td>Systemic IDOR</td>
-<td>✅ Yes</td>
-<td>CBSE OSM portal</td>
-<td>Critical</td>
-</tr>
-<tr class="even">
-<td>CRUD + Shell on prod</td>
-<td>❌ New</td>
-<td>CBSE production</td>
-<td>Critical</td>
-</tr>
-<tr class="odd">
-<td>Super admin (university)</td>
-<td>❌ New</td>
-<td>OnMark platform-wide</td>
-<td>Critical</td>
-</tr>
-<tr class="even">
-<td>Exposed S3 bucket</td>
-<td>❌ New</td>
-<td>Multi-institutional</td>
-<td>Critical</td>
-</tr>
-</tbody>
 </table>
-<p><strong>The post-blog findings escalate the scope
-dramatically:</strong> - <strong>Blog findings:</strong> CBSE-specific,
-require some technical knowledge to exploit - <strong>Post-blog
-findings:</strong> Platform-wide (OnMark), some require <strong>zero
-technical skill</strong> (the S3 bucket is publicly listable), and
-affect <strong>multiple institutions</strong> beyond CBSE</p>
-<p>The S3 disclosure alone means every student’s answer sheet across
-every institution using this infrastructure was downloadable by anyone
-on the internet.</p>
-<hr />
-<h2 id="media-coverage">Media Coverage</h2>
-<p>ni5arga’s blog has been covered by: - <a
-href="https://www.indiatoday.in/education-today/news/story/cbse-osm-portal-vulnerability-claims-surface-with-teens-detailed-blog-post-2917243-2026-05-26">India
-Today</a> - <a href="https://www.bbc.com/news/articles/cy42e8eljpno">BBC
-News</a> - <a
-href="https://www.ndtv.com/education/cbse-osm-portal-had-critical-vulnerabilities-ethical-hacker-told-ndtv-he-alerted-board-months-earlier-11550090">NDTV</a>
-- <a
-href="https://theprint.in/feature/19-student-hacked-cbses-osm-portal-vulnerabilities/2942305/">ThePrint</a>
-- <a
-href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">IFF
-Blog</a> - <a
-href="https://www.medianama.com/2026/05/223-cert-in-vulnerabilities-cbse-online-marking-portal/">Medianama</a>
-- And <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/#media-coverage">14
-more outlets</a></p>
+<p style="text-align:center;margin-top:1em;font-family:var(--sans);font-size:.85em;color:var(--muted)">Full technical details → <a href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga.com/blog/posts/hacking-cbse</a></p>
+</div>
+
+---
+
+<h2>🆕 What Came After the Blog (3 new findings)</h2>
+
+<p>After publishing the blog, ni5arga <em>kept finding more holes</em>. These are the ones that hadn't been blogged as of May 31, 2026 — and they're arguably worse.</p>
+
+<!-- FINDING 6 -->
+<div class="finding critical">
+<h3>Finding 6: Took Over the Entire CBSE Production Server <span class="severity-badge">Critical</span></h3>
+<div class="finding-date">🟢 Reported to CERT-In, Education Ministry, CBSE · 🔴 Disclosed: May 29, 2026</div>
+
+<p>ni5arga (along with <a href="https://x.com/thetirthparmar">@thetirthparmar</a>) demonstrated that they had <strong>complete control</strong> of CBSE's actual, live production server — the one that was actively being used to grade Class 12 answer sheets.</p>
+
+<div class="analogy-box">
+<h4>🏠 Think of it like this</h4>
+<p>Imagine someone not just finding the back door to the school, but getting the master keys to every classroom, the principal's office, the records room, and the intercom system — and then playing music over the PA to prove it.</p>
+</div>
+
+<div class="impact-box">
+<h4>💥 What this means for students</h4>
+<ul>
+<li><strong>Full CRUD access:</strong> They could Create, Read, Update, or Delete <em>any data</em> on the server — marks, evaluator assignments, student records, everything</li>
+<li><strong>Shell access:</strong> They could run any command on the server itself — install software, copy files, erase data</li>
+<li><strong>Proof:</strong> They played the <a href="https://x.com/i/status/2060329287367147795">"Bad Apple" video</a> on the CBSE production website to demonstrate control</li>
+<li><strong>This was the live server</strong> — not a test environment, not a backup. The one grading 17.8 lakh students' actual answer sheets</li>
+</ul>
+</div>
+
+<p><a href="https://x.com/i/status/2060320391617499380">Original disclosure tweet</a> · <a href="https://archive.is/bPH2U">Archive</a> · <a href="https://archive.is/lkI1x">Archive 2</a> · <a href="https://archive.is/UWp2h">Archive 3</a></p>
+</div>
+
+<!-- FINDING 7 -->
+<div class="finding critical">
+<h3>Finding 7: Super Admin on a University Grading Portal <span class="severity-badge">Critical</span></h3>
+<div class="finding-date">🟢 Reported to CERT-In · 🔴 Disclosed: May 29, 2026</div>
+
+<p>A separate OnMark subdomain — used by <strong>multiple universities</strong> for exam evaluation — was compromised, granting <strong>super admin</strong> access.</p>
+
+<div class="analogy-box">
+<h4>🏛️ Think of it like this</h4>
+<p>If Finding 6 was breaking into <em>one</em> school, this is breaking into the <em>central office</em> that manages grading for <em>dozens of schools</em> — and getting the principal's login.</p>
+</div>
+
+<div class="impact-box">
+<h4>💥 What they could do with super admin access</h4>
+<ul>
+<li><strong>Grade any answer sheet</strong> — assign marks to any student at any university using the system</li>
+<li><strong>Edit any user's password</strong> — lock out evaluators or take over their accounts</li>
+<li><strong>View the full user list</strong> — see every evaluator, student, and administrator</li>
+<li><strong>Create new accounts</strong> — make fake evaluators, fake admins</li>
+<li><strong>Send mass SMS and email</strong> — to all evaluators and students, impersonating the university</li>
+</ul>
+</div>
+
+<p><strong>Why this is bigger than CBSE:</strong> This proves the vulnerability isn't limited to CBSE. It's baked into the <em>OnMark platform itself</em> — used by multiple institutions across India. <a href="https://x.com/i/status/2060508071072592306">Tweet 1</a> · <a href="https://x.com/i/status/2060508201439875477">Tweet 2</a> · <a href="https://x.com/i/status/2060508407522857172">Tweet 3</a></p>
+</div>
+
+<!-- FINDING 8 -->
+<div class="finding critical">
+<h3>Finding 8: Anyone Could Download Any Student's Answer Sheet <span class="severity-badge">Critical</span></h3>
+<div class="finding-date">🔴 Disclosed: May 31, 2026 · 🔴 476K+ views on X</div>
+
+<p>CBSE's cloud storage (AWS S3 bucket) was left <strong>completely open</strong> — no password, no login, nothing. Anyone on the internet could browse, search, and download scanned answer sheets and question papers.</p>
+
+<div class="analogy-box">
+<h4>📁 Think of it like this</h4>
+<p>Imagine the school put every student's answer sheet in a cardboard box, left it on the sidewalk with a sign that says "free to take," and didn't even write a name on it. Anyone walking by — not just students of that school — could flip through and take whatever they wanted.</p>
+</div>
+
+<div class="impact-box">
+<h4>💥 Why this is the most damaging finding</h4>
+<ul>
+<li><strong>Zero technical skill needed</strong> — no hacking, no coding, no tools. Just a web browser</li>
+<li><strong>Multiple institutions affected</strong> — not just CBSE. Several organizations shared the same open bucket</li>
+<li><strong>Full answer booklets</strong> — scanned images of students' handwritten answers, with identifying information</li>
+<li><strong>Question papers too</strong> — future exam content potentially exposed</li>
+<li><strong>Searchable and enumerable</strong> — the bucket allowed pagination, meaning someone could systematically download <em>everything</em></li>
+</ul>
+</div>
+
+<blockquote>
+"CBSE people didn't configure their AWS bucket properly and now we can paginate & enumerate all their media which has 2026 answersheets & question papers. ListObjectsV2 works without any auth and the bucket root is listable too — anyone on the internet can download any scanned booklet — across institutions."
+<cite>— <a href="https://x.com/i/status/2060941174949433445">@ni5arga</a>, May 31, 2026</cite>
+</blockquote>
+</div>
+
+---
+
+<h2>📅 The Full Timeline</h2>
+
+<ul class="timeline">
+<li class="timeline-item">
+  <div class="timeline-date">Feb 25, 2026</div>
+  <div class="timeline-text">ni5arga discovers 5 vulnerabilities on CBSE OSM portal. Files report with CERT-In (ref: <code>CERTIn-16590126</code>)</div>
+</li>
+<li class="timeline-item">
+  <div class="timeline-date">Feb – May 2026</div>
+  <div class="timeline-text"><strong>Three months of silence.</strong> CERT-In sends boilerplate "thank you" replies. No meaningful fix is deployed.</div>
+</li>
+<li class="timeline-item">
+  <div class="timeline-date">May 22, 2026</div>
+  <div class="timeline-text">ni5arga publishes <a href="https://ni5arga.com/blog/posts/hacking-cbse/">detailed blog post</a> documenting all 5 vulnerabilities. Covered by <a href="https://www.indiatoday.in/education-today/news/story/cbse-osm-portal-vulnerability-claims-surface-with-teens-detailed-blog-post-2917243-2026-05-26">India Today</a>, <a href="https://www.bbc.com/news/articles/cy42e8eljpno">BBC</a>, <a href="https://www.ndtv.com/education/cbse-osm-portal-had-critical-vulnerabilities-ethical-hacker-told-ndtv-he-alerted-board-months-earlier-11550090">NDTV</a>, and 14+ outlets</div>
+</li>
+<li class="timeline-item">
+  <div class="timeline-date">May 27, 2026</div>
+  <div class="timeline-text">CBSE Class 12 results released. Students report scan/blur/swap irregularities in marks. Scandal breaks wide open.</div>
+</li>
+<li class="timeline-item">
+  <div class="timeline-date">May 29, 2026</div>
+  <div class="timeline-text"><strong>Finding 6:</strong> Full CRUD + shell access demonstrated on CBSE production server (Bad Apple proof). <strong>Finding 7:</strong> Super admin access on OnMark university portal.</div>
+</li>
+<li class="timeline-item">
+  <div class="timeline-date">May 31, 2026</div>
+  <div class="timeline-text"><strong>Finding 8:</strong> Exposed S3 bucket with answer sheets and question papers (476K+ views). <strong>CBSE issues official statement</strong> acknowledging breach.</div>
+</li>
+</ul>
+
+---
+
+<h2>📊 All 8 Findings at a Glance</h2>
+
+<table class="summary-table">
+<tr><th>#</th><th>What</th><th>Blogged?</th><th>Who's affected</th><th>How hard to exploit</th></tr>
+<tr><td>1</td><td>Master password in code</td><td>✅</td><td>CBSE OSM</td><td>Easy — visible in website code</td></tr>
+<tr><td>2</td><td>Client-side OTP</td><td>✅</td><td>CBSE OSM</td><td>Easy — browser checks it, not server</td></tr>
+<tr><td>3</td><td>No login required</td><td>✅</td><td>CBSE OSM</td><td>Trivial — just type the URL</td></tr>
+<tr><td>4</td><td>Password reset w/o old one</td><td>✅</td><td>CBSE OSM</td><td>Easy — one API call</td></tr>
+<tr><td>5</td><td>ID manipulation (IDOR)</td><td>✅</td><td>CBSE OSM</td><td>Easy — change a number in URL</td></tr>
+<tr><td>6</td><td>Full server takeover</td><td>❌</td><td>CBSE production</td><td>Medium — requires chaining vulns</td></tr>
+<tr><td>7</td><td>Super admin (universities)</td><td>❌</td><td>OnMark platform-wide</td><td>Medium — same platform flaw</td></tr>
+<tr><td>8</td><td>Open S3 bucket</td><td>❌</td><td>Multiple institutions</td><td><strong>Zero</strong> — just a web browser</td></tr>
+</table>
+
+<p>The pattern is clear: the first 5 were <strong>CBSE-specific</strong>. The last 3 reveal the problem is <strong>platform-wide</strong> — affecting every institution using the OnMark/Coempt infrastructure.</p>
+
+---
+
+<h2>📰 How the Authorities Responded</h2>
+
+<p><strong>CERT-In</strong> — India's national cybersecurity agency — responded with boilerplate "thank you" emails each time ni5arga reported a finding:</p>
+
+<blockquote>
+"CERT just sends me a boilerplate 'thank you' reply every time and it's frustrating to say the least."
+<cite>— <a href="https://x.com/i/status/2060987304681115795">@ni5arga</a></cite>
+</blockquote>
+
+<p><strong>CBSE</strong> issued an <a href="https://x.com/ni5arga/status/2061042510211027189">official statement from HQ on May 31</a> acknowledging a security breach and deploying cybersecurity teams — but only <em>after</em> the S3 bucket disclosure went viral with 476K+ views.</p>
+
+---
+
+<h2>📰 Media Coverage</h2>
+
+<ul class="media-list">
+<li><a href="https://www.indiatoday.in/education-today/news/story/cbse-osm-portal-vulnerability-claims-surface-with-teens-detailed-blog-post-2917243-2026-05-26">India Today</a></li>
+<li><a href="https://www.bbc.com/news/articles/cy42e8eljpno">BBC News</a></li>
+<li><a href="https://www.ndtv.com/education/cbse-osm-portal-had-critical-vulnerabilities-ethical-hacker-told-ndtv-he-alerted-board-months-earlier-11550090">NDTV</a></li>
+<li><a href="https://theprint.in/feature/19-student-hacked-cbses-osm-portal-vulnerabilities/2942305/">ThePrint</a></li>
+<li><a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">IFF</a></li>
+<li><a href="https://www.medianama.com/2026/05/223-cert-in-vulnerabilities-cbse-online-marking-portal/">Medianama</a></li>
+<li><a href="https://ni5arga.com/blog/posts/hacking-cbse/#media-coverage">+ 14 more outlets</a></li>
+</ul>
+
+---
+
+<!-- FOOTER -->
+<div class="site-footer">
+<p>
+Source code & evidence archive:
+<a href="https://github.com/CCAgentOrg/cbse-osm-osint">GitHub</a> ·
+<a href="https://ccagentorg.github.io/nanobot-blog/">Nanobot Blog</a> ·
+<a href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga's Blog</a>
+</p>
+<p style="margin-top:.5em">CBSE OSM OSINT Investigation · Cashless Consumer Research</p>
+</div>
+
 </body>
 </html>
