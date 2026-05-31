@@ -3,229 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inside the System That Graded 17.8 Lakh CBSE Answer Sheets — And Why It Wasn't Ready</title>
-<meta name="description" content="Internal QA code leaked on GitHub, 30+ board subdomains exposed via SSL certificates, and a forensic timeline reveal that the vendor's own test team was chasing a moving target while CBSE Class 12 evaluation was underway.">
-<meta property="og:title" content="Inside the System That Graded 17.8 Lakh CBSE Answer Sheets">
-<meta property="og:description" content="Internal QA code leaked on GitHub, 30+ board subdomains exposed, and a forensic timeline reveal the OSM platform wasn't ready for CBSE evaluation.">
+<title>CBSE OSM Investigation — Cashless Consumer</title>
+<meta name="description" content="OSINT investigation into Coempt EduTeck, the vendor behind CBSE's On-Screen Marking system. Technical vulnerabilities, corporate network analysis, and structural reform questions.">
+<meta property="og:title" content="CBSE OSM Investigation">
+<meta property="og:description" content="OSINT investigation into Coempt EduTeck, the vendor behind CBSE's On-Screen Marking system.">
 <meta property="og:image" content="images/cbse-osm-architecture.jpg">
-<meta property="og:type" content="article">
+<meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Georgia,'Times New Roman',serif;background:#faf9f6;color:#1a1a1a;line-height:1.85;font-size:17px}
-a{color:#8b1a1a;text-decoration:none;border-bottom:1px solid #c4a0a0}a:hover{color:#5a0f0f;border-color:#8b1a1a}
-.container{max-width:680px;margin:0 auto;padding:20px 24px 80px}
-h1{font-size:1.9em;font-weight:700;margin:30px 0 10px;line-height:1.35;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.02em}
-.meta{color:#777;font-size:.88em;margin-bottom:30px;font-family:-apple-system,sans-serif}
-.tldr{background:#f9f5ee;border-left:4px solid #8b1a1a;padding:16px 20px;margin:20px 0 30px;border-radius:0 8px 8px 0;font-family:-apple-system,sans-serif}
-.tldr h2{color:#8b1a1a;font-size:1em;margin-bottom:8px;font-family:-apple-system,sans-serif}
-.tldr ul{padding-left:20px}.tldr li{margin:4px 0;font-size:.92em;line-height:1.6}
-h2{font-size:1.35em;font-weight:700;margin:36px 0 14px;font-family:-apple-system,sans-serif;color:#2a2a2a}
-h3{font-size:1.1em;font-weight:600;margin:24px 0 8px;font-family:-apple-system,sans-serif;color:#3a3a3a}
-p{margin:10px 0 16px}
-blockquote{border-left:3px solid #c4a0a0;padding:8px 16px;margin:16px 0;color:#555;font-style:italic;font-size:.95em}
-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.85em;font-family:-apple-system,sans-serif;background:#fff;border:1px solid #e0dcd4;border-radius:4px}
-th{text-align:left;background:#f5f2eb;color:#555;padding:8px 12px;border-bottom:2px solid #d0ccc4;font-weight:600;text-transform:uppercase;font-size:.8em;letter-spacing:.04em}
-td{padding:8px 12px;border-bottom:1px solid #eee}
-tr:hover td{background:#faf7f2}
-code{background:#f0ece4;padding:2px 6px;border-radius:3px;font-size:.88em;color:#8b1a1a;font-family:SFMono-Regular,Menlo,monospace}
-.important{background:#fdf6f0;border-left:4px solid #d4770b;padding:14px 18px;margin:20px 0;border-radius:0 6px 6px 0;font-family:-apple-system,sans-serif;font-size:.92em}
-.important strong{color:#d4770b}
-.impact-box{background:#f5f0e8;padding:18px 20px;margin:20px 0;border-radius:6px;border:1px solid #e0d8cc}
-.impact-box h3{margin-top:0;color:#8b1a1a;font-size:1em}
-.arch-diagram{margin:28px 0;text-align:center}
-.arch-diagram img{max-width:100%;border-radius:6px;border:1px solid #e0dcd4}
-.arch-diagram figcaption{color:#777;font-size:.85em;margin-top:8px}
-.disclaimer{color:#888;font-size:.82em;border-top:1px solid #ddd;padding-top:16px;margin-top:50px;font-style:italic}
-.footnote{color:#888;font-size:.82em;margin-top:8px}
-.tag{display:inline-block;background:#f0ece4;color:#6b6b6b;padding:2px 8px;border-radius:3px;font-size:.78em;margin:2px;font-family:-apple-system,sans-serif}
-@media(max-width:600px){body{font-size:16px}h1{font-size:1.5em}.container{padding:16px 16px 60px}.justice-banner p{font-size:.8em}.justice-banner a{font-size:.75em;padding:5px 10px}.nav-menu a{font-size:.75em;padding:6px 0}}
+:root{
+  --bg:#faf9f6;--fg:#1a1a1a;--muted:#777;--accent:#8b1a1a;--accent-hover:#5a0f0f;
+  --card-bg:#fff;--card-border:#e0dcd4;--card-shadow:0 2px 8px rgba(0,0,0,.06);
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --serif:Georgia,'Times New Roman',Times,serif;
+  --radius:8px;--container:960px
+}
+body{font-family:var(--serif);background:var(--bg);color:var(--fg);line-height:1.7}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #c4a0a0}
+a:hover{color:var(--accent-hover);border-color:var(--accent)}
+
+/* ── Top Banner ── */
+.top-banner{
+  background:linear-gradient(135deg,#2a0a0a 0%,#5a1515 100%);
+  color:#fff;text-align:center;padding:18px 24px;
+  font-family:var(--sans);font-size:.92em;line-height:1.5
+}
+.top-banner strong{color:#ffd6d6}
+.top-banner a{color:#ffd6d6;border-bottom:1px dashed #ffd6d6}
+.top-banner a:hover{color:#fff}
+
+/* ── Header ── */
+.site-header{
+  text-align:center;padding:40px 24px 10px
+}
+.site-header h1{
+  font-family:var(--sans);font-size:2.4em;font-weight:800;
+  letter-spacing:-.03em;color:var(--fg);margin-bottom:6px
+}
+.site-header .subtitle{
+  font-family:var(--sans);color:var(--muted);font-size:1em;margin-bottom:4px
+}
+.site-header .byline{
+  font-family:var(--sans);color:var(--muted);font-size:.82em
+}
+
+/* ── Nav ── */
+.site-nav{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:4px;
+  padding:12px 24px 0;max-width:var(--container);margin:0 auto;
+  font-family:var(--sans);font-size:.84em
+}
+.site-nav a{
+  padding:6px 14px;border-radius:20px;
+  background:#f0ece4;color:#555;border:none;
+  transition:all .2s
+}
+.site-nav a:hover,.site-nav a.active{
+  background:var(--accent);color:#fff;text-decoration:none
+}
+
+/* ── Hero ── */
+.hero{
+  max-width:var(--container);margin:32px auto 0;padding:0 24px
+}
+.hero-card{
+  background:var(--card-bg);border-radius:var(--radius);
+  border:1px solid var(--card-border);padding:28px 32px;
+  box-shadow:var(--card-shadow)
+}
+.hero-card h2{
+  font-family:var(--sans);font-size:1.35em;font-weight:700;
+  color:var(--fg);margin-bottom:12px;line-height:1.35
+}
+.hero-card p{
+  font-size:.95em;color:#444;margin-bottom:16px
+}
+.hero-stats{
+  display:flex;flex-wrap:wrap;gap:12px;margin-top:16px
+}
+.stat{
+  flex:1 1 140px;background:#f9f5ee;border-radius:6px;
+  padding:14px 16px;text-align:center
+}
+.stat .number{
+  font-family:var(--sans);font-size:1.6em;font-weight:800;color:var(--accent)
+}
+.stat .label{
+  font-family:var(--sans);font-size:.72em;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.04em;margin-top:2px
+}
+
+/* ── Section ── */
+.section{
+  max-width:var(--container);margin:36px auto 0;padding:0 24px
+}
+.section-label{
+  font-family:var(--sans);font-size:.75em;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:14px;
+  padding-left:4px
+}
+
+/* ── Card Grid ── */
+.card-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px
+}
+.card{
+  background:var(--card-bg);border-radius:var(--radius);
+  border:1px solid var(--card-border);padding:24px;
+  transition:box-shadow .2s,transform .2s;
+  display:flex;flex-direction:column
+}
+.card:hover{
+  box-shadow:0 4px 16px rgba(0,0,0,.1);transform:translateY(-2px)
+}
+.card-icon{font-size:1.8em;margin-bottom:10px}
+.card h3{
+  font-family:var(--sans);font-size:1.05em;font-weight:700;
+  color:var(--fg);margin-bottom:8px
+}
+.card p{
+  font-size:.88em;color:#666;line-height:1.6;margin-bottom:14px;flex:1
+}
+.card-link{
+  font-family:var(--sans);font-size:.82em;font-weight:600;
+  color:var(--accent);display:inline-flex;align-items:center;gap:4px
+}
+.card-link:hover{border-bottom-color:var(--accent)}
+.card-tag{
+  display:inline-block;background:#f0ece4;color:#888;padding:2px 8px;
+  border-radius:3px;font-size:.7em;font-family:var(--sans);
+  margin-left:4px;vertical-align:middle
+}
+.card.accent{border-left:4px solid var(--accent)}
+.card.amber{border-left:4px solid #d4770b}
+.card.teal{border-left:4px solid #2a7a6e}
+.card.slate{border-left:4px solid #5a6a8a}
+
+/* ── Featured Card ── */
+.featured{
+  background:var(--card-bg);border-radius:var(--radius);
+  border:1px solid var(--card-border);padding:28px 32px;
+  box-shadow:var(--card-shadow);margin-bottom:16px
+}
+.featured h3{
+  font-family:var(--sans);font-size:1.15em;font-weight:700;
+  color:var(--fg);margin-bottom:10px
+}
+.featured p{font-size:.92em;color:#555;line-height:1.65;margin-bottom:14px}
+
+/* ── Two-col featured ── */
+.featured-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0
+}
+.featured-grid .featured{margin-bottom:0}
+
+/* ── Timeline ── */
+.timeline{
+  position:relative;padding-left:28px;
+  font-family:var(--sans);font-size:.85em
+}
+.timeline::before{
+  content:'';position:absolute;left:8px;top:4px;bottom:4px;
+  width:2px;background:#e0dcd4
+}
+.timeline-item{position:relative;margin-bottom:16px}
+.timeline-item::before{
+  content:'';position:absolute;left:-24px;top:6px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--accent);border:2px solid var(--card-bg)
+}
+.timeline-item .date{color:var(--muted);font-size:.82em;margin-bottom:2px}
+.timeline-item .event{color:var(--fg);line-height:1.5}
+
+/* ── Footer ── */
+.site-footer{
+  max-width:var(--container);margin:48px auto 0;
+  padding:24px;border-top:1px solid var(--card-border);
+  font-family:var(--sans);font-size:.78em;color:var(--muted);
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px
+}
+.site-footer a{color:var(--muted);border-bottom:1px solid #ccc}
+.site-footer a:hover{color:var(--accent)}
+
+/* ── Responsive ── */
+@media(max-width:700px){
+  .site-header h1{font-size:1.7em}
+  .hero-card{padding:20px}
+  .hero-stats{flex-direction:column}
+  .card-grid{grid-template-columns:1fr}
+  .featured-grid{grid-template-columns:1fr}
+  .section{margin:28px auto 0}
+  .site-nav{gap:3px}
+  .site-nav a{font-size:.76em;padding:5px 10px}
+}
+@media(min-width:701px) and (max-width:900px){
+  .card-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
-<div class="justice-banner">
-<p>17.8 Lakh CBSE Class 12 results graded on a single vendor's vulnerable platform. <a href="terms-of-reference.html">Read our Demands for Disclosure →</a></p>
-</div>
-<div class="nav-menu">
-<div class="container">
-<a href="index.html"><strong>Investigation</strong></a>
-<a href="know-your-coempt.html">🏷️ Know Your Coempt</a>
-<a href="know-your-examtech.html">🔬 Know Your ExamTech</a>
-<a href="terms-of-reference.html">⚡ Demands for Disclosure</a>
-<a href="annexure.html">Technical Evidence</a>
-<a href="api-surface.html">API Surface</a>
-<a href="impacted-entities.html">📋 Impacted Entities</a>
-</div>
-</div>
-<div class="container">
 
-<h1>Inside the System That Graded 17.8 Lakh CBSE Answer Sheets — And Why It Wasn't Ready</h1>
-<div class="meta">Published: 30 May 2026 &nbsp;|&nbsp; Cashless Consumer &nbsp;|&nbsp; <a href="#artifacts">Evidence &amp; Archives</a></div>
-
-<div class="tldr">
-<h2>Summary</h2>
-<ul>
-<li>Three internal repositories from Coempt EduTeck — the vendor behind CBSE's On-Screen Marking portal — were found on GitHub, containing the vendor's own quality-assurance automation code.</li>
-<li>The platform serves <strong>at least 30 Indian universities and state boards</strong> on identical infrastructure, not just CBSE.</li>
-<li>Three vulnerabilities were identified in the platform's API surface: answer-sheet PDFs downloadable via predictable sequential IDs, password changes requiring no old password, and evaluator photos served without authentication.</li>
-<li>The vendor's own test team had to <strong>completely rewrite their automation code on 24 February</strong> because the live evaluation portal changed underneath them — during the same week CBSE was conducting mock evaluation training.</li>
-<li>All evidence was obtained through passive OSINT. No live systems were accessed.</li>
-</ul>
+<div class="top-banner">
+  <strong>17.8 lakh CBSE Class 12 results</strong> graded on a single vendor's vulnerable platform.
+  <a href="terms-of-reference.html">Read our Demands for Disclosure →</a>
 </div>
 
-<h2>Setting the Stage</h2>
+<header class="site-header">
+  <h1>CBSE OSM Investigation</h1>
+  <div class="subtitle">Inside the System That Graded 17.8 Lakh Answer Sheets — And Why It Wasn't Ready</div>
+  <div class="byline">Cashless Consumer · Published May 2026 · All findings from public OSINT sources</div>
+</header>
 
-<p>In February 2026, over <strong>17.8 lakh students</strong> sat for their CBSE Class 12 board examinations. Their answer sheets — handwritten, scanned, and uploaded — were to be graded on a cloud-based platform called On-Screen Marking (OSM), operated by a Hyderabad-based company called <strong>Coempt EduTeck</strong>.</p>
+<nav class="site-nav">
+  <a href="index.html" class="active">Home</a>
+  <a href="know-your-coempt.html">Know Your Coempt</a>
+  <a href="know-your-examtech.html">Know Your ExamTech</a>
+  <a href="terms-of-reference.html">Demands</a>
+  <a href="annexure.html">Technical</a>
+  <a href="api-surface.html">API Surface</a>
+  <a href="impacted-entities.html">Entities</a>
+</nav>
 
-<p>Security researcher <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary</a> disclosed critical vulnerabilities in the OSM portal in February 2026, including authentication bypass and client-side OTP validation that was trivially exploitable. Independent researcher <a href="https://github.com/Sarthak-Sidhant/coempt">Sarthak Sidhant</a> investigated the procurement process, revealing that CBSE had rewritten tender norms to favour Coempt EduTeck.</p>
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-card">
+    <h2>A vendor's QA code on GitHub. 30 boards on one platform. Three critical API vulnerabilities. And a portal that was still being rewritten while exams were running.</h2>
+    <p>Coempt EduTeck — a small Hyderabad company — runs the On-Screen Marking system that graded 17.8 lakh CBSE answer sheets. We traced the corporate network behind the vendor, mapped the structural failures in India's exam technology procurement, and documented why this wasn't a one-time accident.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="number">17.8L</div><div class="label">Students affected</div></div>
+      <div class="stat"><div class="number">30+</div><div class="label">Boards on same platform</div></div>
+      <div class="stat"><div class="number">77</div><div class="label">API endpoints exposed</div></div>
+      <div class="stat"><div class="number">11</div><div class="label">Companies in vendor network</div></div>
+    </div>
+  </div>
+</section>
 
-<p>We conducted our own investigation using only public sources — GitHub, SSL certificate logs, and the Internet Archive — and found that the problems run deeper than either disclosure covered.</p>
+<!-- ── Deep Dives ── -->
+<section class="section">
+  <div class="section-label">Deep Dives — Corporate & Structural Analysis</div>
+  <div class="featured-grid">
+    <a href="know-your-coempt.html" style="text-decoration:none;color:inherit">
+      <div class="featured card accent">
+        <div class="card-icon">🏷️</div>
+        <h3>Know Your Coempt</h3>
+        <p>The Chary family has been building education-tech companies since 2000 — 11 interlocking entities across education, healthcare, pharma, and finance. How did a ₹20 crore company capture India's largest exam system?</p>
+        <div class="card-link">Read full investigation →</div>
+      </div>
+    </a>
+    <a href="know-your-examtech.html" style="text-decoration:none;color:inherit">
+      <div class="featured card teal">
+        <div class="card-icon">🔬</div>
+        <h3>Know Your ExamTech</h3>
+        <p>The CBSE scandal isn't unique. The SSC-Eduquity scam follows an identical playbook: small firms winning government contracts, tender norms rewritten, large players pushed out. Meet India's exam-tech capture pattern.</p>
+        <div class="card-link">Read full analysis →</div>
+      </div>
+    </a>
+  </div>
+</section>
 
-<h2>The Vendor Left Its Keys on the Porch</h2>
+<!-- ── Technical Evidence ── -->
+<section class="section">
+  <div class="section-label">Technical Evidence — Vulnerabilities & Architecture</div>
+  <div class="card-grid">
+    <a href="annexure.html" style="text-decoration:none;color:inherit">
+      <div class="card slate">
+        <div class="card-icon">🔓</div>
+        <h3>Technical Annexure <span class="card-tag">Code</span></h3>
+        <p>QA automation code left on GitHub, Selenium test suites against the live portal, server-side source from AP SBTET, and the commit history showing the portal was rewritten mid-exam.</p>
+        <div class="card-link">View evidence →</div>
+      </div>
+    </a>
+    <a href="api-surface.html" style="text-decoration:none;color:inherit">
+      <div class="card slate">
+        <div class="card-icon">🌐</div>
+        <h3>API Surface Analysis <span class="card-tag">77 Endpoints</span></h3>
+        <p>Full endpoint catalogue extracted from the production Angular bundle. Three critical vulnerabilities: sequential answer sheet IDs, password changes without old password, unauthenticated evaluator photos.</p>
+        <div class="card-link">View API surface →</div>
+      </div>
+    </a>
+    <a href="impacted-entities.html" style="text-decoration:none;color:inherit">
+      <div class="card slate">
+        <div class="card-icon">📋</div>
+        <h3>Impacted Entities <span class="card-tag">30+ Boards</span></h3>
+        <p>SSL certificate transparency logs reveal 30+ educational institutions on the same OnMark platform. A vulnerability in the codebase affects every board simultaneously.</p>
+        <div class="card-link">View entities →</div>
+      </div>
+    </a>
+  </div>
+</section>
 
-<p>At least two Coempt EduTeck employees maintained public GitHub repositories containing the company's internal QA automation code. One account — <code>segrgokul</code>, listing Hyderabad as location — pushed code for Selenium test suites designed to exercise the live CBSE OSM evaluation portal. Another account — <code>viswanthp</code> — published full server-side source code for a different client's On-Screen Marking instance.</p>
+<!-- ── Advocacy ── -->
+<section class="section">
+  <div class="section-label">Advocacy — Demands & Reforms</div>
+  <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <a href="terms-of-reference.html" style="text-decoration:none;color:inherit">
+      <div class="card amber">
+        <div class="card-icon">⚡</div>
+        <h3>Demands for Disclosure</h3>
+        <p>What we're asking CBSE, NTA, and the Ministry of Education to disclose about the Coempt contract, the tender process, and the security audit history.</p>
+        <div class="card-link">Read demands →</div>
+      </div>
+    </a>
+  </div>
+</section>
 
-<p>The Selenium code is not merely test infrastructure. It is, in effect, a working blueprint for automating the entire evaluation process: logging in, navigating answer sheets, clicking marks on the canvas interface, and submitting results. The code references Jenkins CI/CD integration, meaning it was designed to run unattended at scale.</p>
+<!-- ── Timeline ── -->
+<section class="section">
+  <div class="section-label">Investigation Timeline</div>
+  <div class="featured">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="date">15 Feb – 4 Mar 2026</div>
+        <div class="event">CBSE Class 12 board examinations conducted. Coempt's QA team rewrites OSM automation code on 24 Feb — the day before CBSE's mock evaluation circular.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="date">Feb 2026</div>
+        <div class="event">Security researcher Nisarga Adhikary discloses authentication bypass and client-side OTP validation in the CBSE OSM portal.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="date">May 2026</div>
+        <div class="event">CBSE Class 12 results announced. Students report scan errors, blurred marks, and score swaps. Mass re-evaluation ordered. Coempt faces national scrutiny.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="date">27–30 May 2026</div>
+        <div class="event">Our investigation published: GitHub QA code leaks, 30+ board subdomains, 77 API endpoints, IDOR vulnerability. <em>Know Your Coempt</em> and <em>Know Your ExamTech</em> deep dives follow.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<blockquote>
-"The vendor's own employees wrote and shipped the proof-of-concept for a fully automated attack on the evaluation system to a public GitHub repository."
-</blockquote>
+<!-- ── External Sources ── -->
+<section class="section">
+  <div class="section-label">Independent Research We Built On</div>
+  <div class="featured">
+    <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;font-family:var(--sans);font-size:.88em">
+      <li><a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary — Exposing Critical Vulnerabilities in CBSE's OSM Portal</a></li>
+      <li><a href="https://github.com/Sarthak-Sidhant/coempt">Sarthak Sidhant — How CBSE Rewrote Rules to Favor Coempt EduTeck</a></li>
+      <li><a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">Internet Freedom Foundation — When the Exam Itself Can Be Hacked</a></li>
+      <li><a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Raw Evidence Archive (zo.pub)</a></li>
+    </ul>
+  </div>
+</section>
 
-<p>The repositories also contain page-object models matching the live portal's exact DOM structure, configuration files with service URLs for multiple board instances, and screenshots taken during testing against the live system. We verified the code still exists on GitHub as of 30 May 2026.</p>
+<footer class="site-footer">
+  <div><strong>Cashless Consumer</strong> — Fintech & DPI Research</div>
+  <div>All findings from passive OSINT. No live systems were accessed.</div>
+  <div>
+    <a href="index.html">Home</a> ·
+    <a href="know-your-coempt.html">Coempt</a> ·
+    <a href="know-your-examtech.html">ExamTech</a> ·
+    <a href="terms-of-reference.html">Demands</a> ·
+    <a href="annexure.html">Technical</a>
+  </div>
+</footer>
 
-<div class="important">
-<strong>Note:</strong> The server-side source code repo (<code>AP_SBTET_AUDIT</code>) belongs to the Andhra Pradesh State Board of Technical Education — a different client on the same platform. It does not run on the CBSE portal, which uses Angular, while SBTET uses ASP.NET. We include it because it reveals the vendor's engineering patterns: custom cryptography, payment integrations, and authentication design that inform our understanding of the shared platform's security posture.
-</div>
-
-<h2>Thirty Boards, One Platform</h2>
-
-<p>Certificate Transparency logs for <code>*.onmark.co.in</code> — the domain Coempt uses for its OSM platform — reveal that the CBSE portal is not a standalone system. It is one instance of a <strong>multi-tenant product serving at least 30 educational institutions</strong> across India.</p>
-
-<p>At least three CBSE subdomains are live. Other confirmed clients include Bengaluru Central University, Karnataka State Women's University, Acharya Nagarjuna University, Jawaharlal Nehru Technological University, and multiple state technical education boards.</p>
-
-<p>This means a vulnerability in the platform code affects every board simultaneously. When Nisarga reported that CBSE's OTP validation was client-side only, the same flaw likely existed on every other board's evaluation portal.</p>
-
-<div class="impact-box">
-<h3>Why This Matters</h3>
-<p>India's board examination system processes the academic futures of crores of students every year. A single vendor — Coempt EduTeck — holds the entire marking pipeline for dozens of boards on one platform. If the platform has a structural vulnerability, it is not a CBSE problem. It is a national examination integrity problem.</p>
-</div>
-
-<h2>The Portal Was Moving While Exams Were Running</h2>
-
-<p>Perhaps the most troubling finding comes not from the code itself, but from the <strong>commit history</strong> of the vendor's own automation repository.</p>
-
-<p>On 21 February 2026, Coempt's QA engineer pushed the first version of the OSM automation code — a Selenium test suite designed to exercise the live evaluation portal. Screenshots captured during testing show the actual CBSE OSM interface as it appeared that day.</p>
-
-<p>Three days later, on 24 February, the engineer <strong>deleted the entire OSM test suite and rewrote it from scratch</strong>. The login page, the assessment page, the page object models, the XPath selectors — all replaced. The screenshots from the new version show a completely different portal layout.</p>
-
-<p>Why does this matter? Because 24 February 2026 fell squarely within CBSE's board examination window (15 February – 4 March). It was the day <em>before</em> CBSE issued its "Mass Mock Evaluation" circular for OSM training. The vendor's own test team was chasing a portal that was changing underneath them — during the same week the system was supposed to be ready for evaluators to practice on.</p>
-
-<blockquote>
-"CBSE's OSM mock evaluation circular was issued on 25 February 2026. One day earlier, the vendor's QA team was still rewriting their automation code because the live portal had changed."
-</blockquote>
-
-<p>The portal's instability is corroborated by the Wayback Machine, which captured a production Angular bundle from the live system on 3 March — the final day of CBSE's Class 12 exams. The bundle shows the application was actively being built and deployed through the examination period.</p>
-
-<h2>Three Vulnerabilities in the API Surface</h2>
-
-<p>We extracted 77 unique API endpoints from an archived production build of the OSM portal. Among them, three vulnerabilities stand out — not because they are exotic, but because of what they protect.</p>
-
-<h3>1. Answer Sheets Downloadable by Guessing a Number</h3>
-
-<p>When an evaluator finishes marking an answer sheet, the system generates a PDF of the marked script — the student's handwritten answers, annotated with marks and comments. That PDF is served at a URL containing a sequential numeric ID.</p>
-
-<p>The ID is a five-digit number. If it auto-increments — which the pattern strongly suggests — anyone with access to the portal can guess adjacent IDs and download other students' graded answer sheets. This is a textbook IDOR vulnerability, but the stakes are unusually high: these are not order confirmations or profile photos. They are <strong>exam answer sheets with marks and evaluator annotations</strong>.</p>
-
-<h3>2. Password Change Without the Old Password</h3>
-
-<p>The portal's password change form asks only for a new password. It never asks for the current one. The API payload contains only the evaluator's ID and the new password — no old password field, no confirmation of identity.</p>
-
-<p>This was partially noted in Nisarga's earlier disclosure. Our analysis of the production bundle confirms the exact mechanism: the frontend simply never sends the old password because the API never asks for it. Any authenticated evaluator who knows another evaluator's ID pattern can take over their account.</p>
-
-<h3>3. Evaluator Photos Without Authentication</h3>
-
-<p>The portal displays evaluator photographs — likely used for exam-duty identity verification — via a simple GET request with no authentication headers. Other API calls in the same application explicitly pass credentials. The photo endpoint does not.</p>
-
-<p>This is a lower-severity finding, but it reveals an inconsistent security posture within the same application. If the server does not independently enforce access control on the photo endpoint, these images — which may include government-issued ID photographs — are accessible to anyone who guesses an evaluator code.</p>
-
-<div class="important">
-<strong>Critical context:</strong> All three vulnerabilities are properties of the shared OnMark platform codebase, not CBSE-specific misconfigurations. The same issues likely exist on every other board's evaluation portal running the same software. We confirmed through server headers that at least one other board instance (<code>bcuosm.onmark.co.in</code>) runs identical IIS/ASP.NET infrastructure.
-</div>
-
-<h2>What This Means</h2>
-
-<p>India's digital examination infrastructure has a single point of failure. One vendor, one platform, dozens of boards, crores of students. The vendor's own employees leaked internal automation code to GitHub. The platform's OTP is decorative. The answer sheets are protected by a five-digit number. The password system doesn't verify you are who you say you are.</p>
-
-<p>None of this required hacking. Every finding was obtained from public sources: GitHub repositories, SSL certificate logs, and the Internet Archive's cached copies of the live portal.</p>
-
-<p>The question for CBSE — and for every other board on this platform — is not whether these vulnerabilities have been fixed since the February disclosures. The question is how a system with this many structural weaknesses was entrusted with the academic futures of millions of students in the first place.</p>
-
-<hr style="border-color:#e0dcd4;margin:2em 0">
-
-<h2 id="artifacts">Verification &amp; Archives</h2>
-
-<p>All raw evidence is publicly archived:</p>
-<ul>
-<li><strong>GitHub repositories</strong> (forked and archived): <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">zo.pub/cashlessconsumer/cbse-osm-onmarks-osint</a></li>
-<li><strong>Production Angular bundle</strong> (1.7 MB, Wayback Machine capture): <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">cbseevalweb_main_bundle.js</a></li>
-<li><strong>Full 77-endpoint API surface analysis</strong>: <a href="api-surface.html">API Surface Annexure</a>
-<a href="terms-of-reference.html">Terms of Reference</a></li>
-<li><strong>Code-level technical evidence</strong>: <a href="annexure.html">Technical Annexure</a></li>
-</ul>
-
-<h2>Architecture: How Answer Sheets Flow Through This Stack</h2>
-<div class="arch-diagram">
-<figure>
-<img src="images/cbse-osm-architecture.jpg" alt="CBSE OSM Answer Sheet Processing Architecture" loading="lazy">
-<figcaption>The answer sheet processing pipeline: from physical scripts through scanning, OCR/AI-assisted review, evaluator marking on the OnMark platform, to final results. <a href="images/cbse-osm-architecture.jpg">View full resolution</a></figcaption>
-</figure>
-</div>
-
-<h2>What Was Already Known</h2>
-<table>
-<tr><th>Finding</th><th>Nisarga (Feb '26)</th><th>Sarthak (May '26)</th><th>This Investigation</th></tr>
-<tr><td>Authentication bypass</td><td>✅</td><td>—</td><td>—</td></tr>
-<tr><td>Client-side OTP validation</td><td>✅</td><td>—</td><td>Confirmed via automation code</td></tr>
-<tr><td>Tender process irregularities</td><td>—</td><td>✅</td><td>—</td></tr>
-<tr><td>Vendor QA automation on GitHub</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>30+ board subdomains</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>77 API endpoints from bundle</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>Portal instability mid-evaluation</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>Answer sheet IDOR vulnerability</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>Password change without old password</td><td>Partial</td><td>—</td><td>✅ Confirmed mechanism</td></tr>
-<tr><td>Unauthenticated photo endpoint</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>ASP.NET server source leak</td><td>—</td><td>—</td><td>✅</td></tr>
-<tr><td>OCR/AI pipeline</td><td>—</td><td>—</td><td>✅</td></tr>
-</table>
-
-<h2>References</h2>
-<ul>
-<li>Nisarga Adhikary — <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Exposing Critical Vulnerabilities in CBSE's On-Screen Marking Portal</a></li>
-<li>Sarthak Sidhant — <a href="https://github.com/Sarthak-Sidhant/coempt">How CBSE Rewrote Rules to Favor Coempt EduTeck</a></li>
-<li>Internet Freedom Foundation — <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">Internet Freedom Foundation</a> — <em>When the Exam Itself Can Be Hacked</em></li>When the Exam Itself Can Be Hacked</a></li>
-<li>CBSE OSM Mock Evaluation circular — <a href="https://www.cbse.gov.in/cbsenew/documents/OSM_Mass_Mock_Evalauation_25022026.pdf">cbse.gov.in (PDF)</a></li>
-</ul>
-
-<h2>Editorial Notes</h2>
-<div class="tldr">
-<h2>Fact-check &amp; Corrections</h2>
-<ul>
-<li><strong>Student figures:</strong> 17,80,365 students registered for CBSE Class 12 (17,68,968 appeared), per official CBSE result press release, confirmed by NDTV and Times of India reporting. The earlier draft referred to "40 lakh" — this is the combined Class 10 + Class 12 figure; this article focuses on Class 12 and has been corrected.</li>
-<li><strong>"30+ subdomains":</strong> This figure comes from SSL certificate transparency logs at crt.sh, queried 29 May 2026 for <code>*.onmark.co.in</code>. Not all subdomains were live when probed; the table in the Technical Annexure shows which ones responded to HTTP requests.</li>
-<li><strong>Wayback Machine bundle:</strong> The Angular production bundle hash was corrected during editorial review. The initially referenced hash (<code>main.a2bab24a8cf0c29a9355.js</code>) does not match the Wayback capture; the correct hash is <code>main.a2bab24a9332a08b.js</code> (captured 3 March 2026, 1.7 MB). The Technical Annexure has been updated accordingly.</li>
-<li><strong>Repository count:</strong> The article references the three primary repositories by Coempt employees. Additional related repositories were also identified: <code>akhi101/SBTET_AUDIT</code> and <code>akhi101/sbtet_login_audit</code> — independent security audit repos targeting the AP SBTET instance on the same OnMark platform. These are archived but not analysed in depth here.</li>
-<li><strong>No Android app found:</strong> We searched Koodous, VirusTotal, APKPure, APKMirror, and GitHub for any Android application related to Coempt, OnMark, Globarena, or the answer-sheet scanning process. No such application was found. The OSM system is a web application (Angular SPA) with no identified mobile component.</li>
-</ul>
-</div>
-
-<div class="nav-footer">
-<a href="index.html">Main Article</a> · <a href="terms-of-reference.html">Demands for Disclosure</a> · <a href="annexure.html">Technical Annexure</a> · <a href="api-surface.html">API Surface</a> · <a href="impacted-entities.html">Impacted Entities</a>
-</div>
-<div class="disclaimer">
-<strong>Responsible disclosure note:</strong> All findings were obtained through passive OSINT from public sources (GitHub, crt.sh, Wayback Machine). No live evaluation system was accessed. No API keys, passwords, or specific credentials are disclosed in this article. Technical evidence including code snippets and endpoint listings are available in the <a href="annexure.html">Technical Annexure</a> and <a href="api-surface.html">API Surface Annexure</a>
-<a href="terms-of-reference.html">Terms of Reference</a>.
-</div>
-
-</div>
 </body>
 </html>
