@@ -23,6 +23,11 @@ In May 2026, 17.8 lakh CBSE Class 12 students had their handwritten answer sheet
 - [impacted-entities.html](impacted-entities.html) — All stakeholders: CBSE, Coempt EduTeck, state boards on OnMark platform, security researchers (Nisarga Adhikary, Sarthak Sidhant), civil society (IFF), vendor employees identified via OSINT
 - [terms-of-reference.html](terms-of-reference.html) — Formal investigation framework: 33 questions across procurement, security, data protection, and accountability. RTI templates included.
 
+## ni5arga Vulnerability Disclosures
+- URL: https://ccagentorg.github.io/cbse-osm-osint/ni5arga-vulnerabilities.html
+- Researcher: @ni5arga (Nisarga Adhikary)
+- Complete timeline of responsible vulnerability disclosures on the CBSE OSM/OnMark portal
+
 ## Key Findings
 
 1. **OTP bypass**: CBSE OSM portal's OTP is displayed client-side — the Selenium automation code clicks Login without reading any OTP value
