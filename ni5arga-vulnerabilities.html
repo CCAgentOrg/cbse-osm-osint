@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%238b1a1a'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-weight='700' font-size='18' fill='white'%3ECC%3C/text%3E%3C/svg%3E">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ni5arga's Findings — CBSE OSM Investigation</title>
-<meta name="description" content="A 19-year-old found 8 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months. Here's what it means for you.">
-<meta property="og:title" content="ni5arga's Findings — 8 Holes in India's Exam System">
-<meta property="og:description" content="A 19-year-old found 8 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months.">
+<meta name="description" content="A 19-year-old found 9 security holes in the system that graded 17.8 lakh students. Latest: 457K+ payment records leaked. No one fixed them for 3 months. Here's what it means for you.">
+<meta property="og:title" content="ni5arga's Findings — 9 Holes in India's Exam System">
+<meta property="og:description" content="A 19-year-old found 9 security holes including a 457K+ payment data leak. The system that graded 17.8 lakh students was wide open for 3+ months.">
 <meta name="twitter:card" content="summary_large_image">
 <style>
 
@@ -28,14 +29,21 @@ body{font-family:var(--serif);background:var(--bg);color:var(--fg);line-height:1
 .site-nav{
   position:sticky;top:0;z-index:100;
   background:var(--bg);border-bottom:1px solid var(--border);
-  padding:.6em 0;font-family:var(--sans);font-size:.82em;
-  display:flex;flex-wrap:wrap;gap:.5em;align-items:center;justify-content:center;
 }
-.site-nav a{
+.site-nav-inner{
+  max-width:52em;margin:0 auto;padding:.6em 1em;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.5em;flex-wrap:wrap;
+}
+.site-nav-brand{font-weight:700;font-size:.9em;color:var(--fg);text-decoration:none;font-family:var(--sans)}
+.site-nav-sep{color:var(--accent);margin:0 2px}
+.site-nav nav{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
+.site-nav nav a{
   text-decoration:none;color:var(--fg);padding:.3em .7em;
   border-radius:999px;border:1px solid var(--border);transition:all .2s;
+  font-family:var(--sans);font-size:.82em;
 }
-.site-nav a:hover,.site-nav a.active{
+.site-nav nav a:hover,.site-nav nav a.active{
   background:var(--accent);color:#fff;border-color:var(--accent);
 }
 
@@ -197,42 +205,45 @@ em{font-style:italic}
 /* Responsive */
 @media(max-width:600px){
   body{font-size:1em;padding:.5em}
-  .site-nav{font-size:.72em;gap:.3em;padding:.4em 0;flex-wrap:wrap}
-  .site-nav a{padding:.2em .5em}
+  .site-nav nav a{font-size:.72em;padding:.2em .5em}
   .stats-strip{grid-template-columns:repeat(2,1fr);gap:.6em}
   .stat-box .number{font-size:1.5em}
   .page-header{padding:1.5em .5em 1em}
   .finding{padding:1em}
 }
 </style>
+<link rel="canonical" href="https://ccagentorg.github.io/cbse-osm-osint/ni5arga-vulnerabilities.html">
 </head>
 <body>
-
-<!-- NAV -->
 <div class="site-nav">
-<a href="index.html">Home</a>
-<a href="api-surface.html">API Surface</a>
-<a href="annexure.html">Technical Annexure</a>
-<a href="impacted-entities.html">Impacted Entities</a>
-<a href="terms-of-reference.html">Terms of Reference</a>
-<a href="know-your-coempt.html">Know Your Coempt</a>
-<a href="know-your-examtech.html">Know Your ExamTech</a>
-<a href="ni5arga-vulnerabilities.html" class="active">ni5arga's Findings</a>
+  <div class="site-nav-inner">
+    <a href="index.html" class="site-nav-brand">CBSE OSM<span class="site-nav-sep">/</span>OSINT</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="know-your-coempt.html">Coempt</a>
+      <a href="know-your-examtech.html">ExamTech</a>
+      <a href="ni5arga-vulnerabilities.html" class="active">ni5arga</a>
+      <a href="terms-of-reference.html">TOR</a>
+      <a href="annexure.html">Annexure</a>
+      <a href="api-surface.html">API</a>
+      <a href="impacted-entities.html">Entities</a>
+    </nav>
+  </div>
 </div>
-
 <!-- HEADER -->
 <div class="page-header">
 <h1>ni5arga's Findings</h1>
-<p class="subtitle">A 19-year-old found 8 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months. Here's what it means for you — in plain English.</p>
+<p class="subtitle">A 19-year-old found 9 security holes in the system that graded 17.8 lakh students. No one fixed them for 3 months. The latest: 457K+ payment records leaked through an unauthenticated API. Here's what it means for you — in plain English.</p>
 <p class="meta">Researcher: <a href="https://x.com/ni5arga">@ni5arga</a> · CERT-In Ref: <code>CERTIn-16590126</code></p>
 </div>
 
 <!-- STATS -->
 <div class="stats-strip">
-<div class="stat-box"><div class="number">8</div><div class="label">Security holes found</div></div>
+<div class="stat-box"><div class="number">9</div><div class="label">Security holes found</div></div>
 <div class="stat-box"><div class="number">3</div><div class="label">Months before any fix</div></div>
 <div class="stat-box"><div class="number">17.8L</div><div class="label">Students affected</div></div>
 <div class="stat-box"><div class="number">19</div><div class="label">Age of the researcher</div></div>
+<div class="stat-box"><div class="number">457K+</div><div class="label">Payment records exposed</div></div>
 </div>
 
 <h2>📖 The Short Version</h2>
@@ -319,7 +330,7 @@ em{font-style:italic}
 </ul>
 </div>
 
-<p><a href="https://x.com/i/status/2060320391617499380">Original disclosure tweet</a> · <a href="https://archive.is/bPH2U">Archive</a> · <a href="https://archive.is/lkI1x">Archive 2</a> · <a href="https://archive.is/UWp2h">Archive 3</a></p>
+<p><a href="https://x.com/i/status/2060320391617499380">Original disclosure tweet</a> · <a href="https://web.archive.org/web/2026/https://x.com/i/status/2060320391617499380">Archive</a> · <a href="https://web.archive.org/web/2026/https://x.com/i/status/2060320391617499380">Archive 2</a> · <a href="https://web.archive.org/web/2026/https://x.com/i/status/2060320391617499380">Archive 3</a></p>
 </div>
 
 <!-- FINDING 7 -->
@@ -377,6 +388,52 @@ em{font-style:italic}
 </blockquote>
 </div>
 
+<!-- FINDING 9 -->
+<div class="finding critical">
+<h3>Finding 9: Payment Data Leak — 457,874 Student/Parent Records Exposed <span class="severity-badge">Critical</span></h3>
+<div class="finding-date">🔴 Disclosed: May 31, 2026 · Live at time of disclosure</div>
+
+<p>An unauthenticated API endpoint on a CBSE-related payment portal was returning <strong>457,874+ records</strong> of payment transaction data — including email addresses, phone numbers, payment IDs, order IDs, payment method, and status — to anyone who sent a request. No authentication required.</p>
+
+<div class="analogy-box">
+<h4>💳 Think of it like this</h4>
+<p>Imagine the school's fee collection office left a printout of every parent's payment receipt — with their name, email, phone number, and what they paid for — taped to the front window. Anyone walking past could photograph it. Now imagine that list has <em>nearly half a million entries</em>.</p>
+</div>
+
+<div class="impact-box">
+<h4>💥 What data was exposed</h4>
+<ul>
+<li><strong>457,874+ records</strong> — nearly half a million payment transactions</li>
+<li><strong>Email addresses</strong> — full addresses (gmail.com and others visible)</li>
+<li><strong>Phone numbers</strong> — in +91 (India) format</li>
+<li><strong>Payment IDs</strong> — unique transaction identifiers</li>
+<li><strong>Order IDs</strong> — order references</li>
+<li><strong>Payment method</strong> — netbanking visible in all sampled records</li>
+<li><strong>Payment status</strong> — 'failed' status visible across records</li>
+</ul>
+</div>
+
+<p>The data was extracted by calling an API endpoint that returned JSON, then displayed in the browser console via <code>console.table(rows)</code>. The researcher did not need to bypass any login, use any exploit, or authenticate in any way — the endpoint simply served the data to anyone who asked.</p>
+
+<blockquote>
+"console.table(rows); Total visible records: 457874"
+<cite>— Browser DevTools screenshot from <a href="https://x.com/i/status/2061107725933953383">@ni5arga's disclosure tweet</a>, May 31, 2026</cite>
+</blockquote>
+
+<div class="impact-box">
+<h4>⚠️ Why this is different from the other findings</h4>
+<ul>
+<li><li>This isn't about marks or answer sheets — it's about <strong>financial data</strong></li>
+<li><strong>UPI/netbanking transactions</strong> mean bank-level PII is tied to these records</li>
+<li>Failed payments could be <em>retried</em> by an attacker with the payment/order details</li>
+<li>This data could enable <strong>spear-phishing</strong> — targeted emails/SMS posing as CBSE asking for "payment confirmation"</li>
+<li>The scale (<strong>457K+ records</strong>) dwarfs individual student data exposure</li>
+</ul>
+</div>
+
+<p><a href="https://x.com/i/status/2061107725933953383">Original disclosure tweet</a></p>
+</div>
+
 ---
 
 <h2>📅 The Full Timeline</h2>
@@ -406,6 +463,10 @@ em{font-style:italic}
   <div class="timeline-date">May 31, 2026</div>
   <div class="timeline-text"><strong>Finding 8:</strong> Exposed S3 bucket with answer sheets and question papers (476K+ views). <strong>CBSE issues official statement</strong> acknowledging breach.</div>
 </li>
+<li class="timeline-item">
+  <div class="timeline-date">May 31, 2026 (evening)</div>
+  <div class="timeline-text"><strong>Finding 9:</strong> Unauthenticated API leaks <strong>457,874+ payment records</strong> — emails, phones, payment IDs, order IDs. Financial PII of students/parents exposed without any authentication.</div>
+</li>
 </ul>
 
 ---
@@ -422,6 +483,7 @@ em{font-style:italic}
 <tr><td>6</td><td>Full server takeover</td><td>❌</td><td>CBSE production</td><td>Medium — requires chaining vulns</td></tr>
 <tr><td>7</td><td>Super admin (universities)</td><td>❌</td><td>OnMark platform-wide</td><td>Medium — same platform flaw</td></tr>
 <tr><td>8</td><td>Open S3 bucket</td><td>❌</td><td>Multiple institutions</td><td><strong>Zero</strong> — just a web browser</td></tr>
+<tr><td>9</td><td>Payment data leak (457K+ records)</td><td>❌</td><td>Students/parents who paid</td><td><strong>Zero</strong> — unauthenticated API, no login needed</td></tr>
 </table>
 
 <p>The pattern is clear: the first 5 were <strong>CBSE-specific</strong>. The last 3 reveal the problem is <strong>platform-wide</strong> — affecting every institution using the OnMark/Coempt infrastructure.</p>
@@ -465,6 +527,13 @@ Source code & evidence archive:
 </p>
 <p style="margin-top:.5em">CBSE OSM OSINT Investigation · Cashless Consumer Research</p>
 </div>
+
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <p>CBSE OSM OSINT Investigation &middot; <time datetime="2026-05">Published May</time>&ndash;<time datetime="2026-06">Jun 2026</time> &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
+  </div>
+</footer>
 
 </body>
 </html>

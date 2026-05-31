@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%238b1a1a'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-weight='700' font-size='18' fill='white'%3ECC%3C/text%3E%3C/svg%3E">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Technical Annexure — CBSE OSM OSINT Evidence</title>
@@ -45,8 +46,6 @@ body{font-family:'JetBrains Mono','Fira Code',monospace;background:#0d1117;color
 a{color:#58a6ff;text-decoration:none}a:hover{color:#79c0ff}
 .container{max-width:960px;margin:0 auto;padding:20px 24px 80px}
 h1{font-size:1.5em;color:#f0f6fc;margin:30px 0 8px;font-family:-apple-system,sans-serif}
-.back{display:inline-block;color:#58a6ff;margin-bottom:20px;font-family:-apple-system,sans-serif}
-.back:hover{color:#79c0ff}
 h2{font-size:1.2em;color:#f0f6fc;margin:32px 0 12px;padding-bottom:6px;border-bottom:1px solid #21262d;font-family:-apple-system,sans-serif}
 h3{font-size:1.05em;color:#8b949e;margin:20px 0 8px;font-family:-apple-system,sans-serif}
 p{margin:8px 0}
@@ -68,6 +67,13 @@ tr:hover td{background:#161b22}
 .toc a{color:#58a6ff}
 .disclaimer{color:#484f58;font-size:.82em;border-top:1px solid #21262d;padding-top:16px;margin-top:50px;font-style:italic}
 </style>
+
+<meta property="og:title" content="Technical Annexure — CBSE OSM OSINT Evidence">
+<meta property="og:description" content="Methodology, tool inventory, code evidence, API endpoints, and forensic timeline for the CBSE On-Screen Marking investigation.">
+<meta property="og:image" content="images/cbse-osm-architecture.jpg">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://ccagentorg.github.io/cbse-osm-osint/annexure.html">
 </head>
 <body>
 <div class="site-nav">
@@ -77,14 +83,14 @@ tr:hover td{background:#161b22}
       <a href="index.html">Home</a>
       <a href="know-your-coempt.html">Coempt</a>
       <a href="know-your-examtech.html">ExamTech</a>
-      <a href="impacted-entities.html">Entities</a>
-      <a href="annexure.html">Annexure</a>
-      <a href="api-surface.html">API</a>
+      <a href="ni5arga-vulnerabilities.html">ni5arga</a>
       <a href="terms-of-reference.html">TOR</a>
+      <a href="annexure.html" class="active">Annexure</a>
+      <a href="api-surface.html">API</a>
+      <a href="impacted-entities.html">Entities</a>
     </nav>
   </div>
 </div>
-
 <div class="container">
 
 <h1>Technical Annexure</h1>
@@ -728,7 +734,7 @@ String prompt = """
 
 <footer class="site-footer">
   <div class="site-footer-inner">
-    <p>CBSE OSM OSINT Investigation &middot; Published May&ndash;Jun 2026 &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
+    <p>CBSE OSM OSINT Investigation &middot; <time datetime="2026-05">Published May</time>Published May&ndash;Jun 2026ndash;<time datetime="2026-06">Jun 2026</time> &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
   </div>
 </footer>
 

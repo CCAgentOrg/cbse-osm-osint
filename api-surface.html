@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%238b1a1a'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-weight='700' font-size='18' fill='white'%3ECC%3C/text%3E%3C/svg%3E">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>API Surface Analysis — CBSE OSM / OnMark Platform</title>
@@ -65,14 +66,18 @@ pre code{background:none;padding:0}
 .badge-yellow{background:#3d2e00;color:#d29922}
 .badge-green{background:#0f3d1f;color:#3fb950}
 .badge-blue{background:#1c2d41;color:#58a6ff}
-.nav-links{display:flex;gap:12px;margin-bottom:24px;font-size:.85em}
-.nav-links a{padding:6px 14px;border:1px solid #30363d;border-radius:6px;color:#8b949e}
-.nav-links a:hover{border-color:#58a6ff;color:#58a6ff}
 .section-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px 20px;margin:16px 0}
 .vuln-card{background:#1c1016;border:1px solid #5c2d2d;border-radius:8px;padding:16px 20px;margin:16px 0}
 .vuln-card h3{color:#f85149;margin-top:0}
 .note{color:#8b949e;font-size:.9em;font-style:italic}
 </style>
+
+<meta property="og:title" content="API Surface Analysis — CBSE OnMark Platform">
+<meta property="og:description" content="77 exposed API endpoints, hardcoded credentials, and unauthenticated evaluator access on CBSE&#x27;s OSM vendor platform.">
+<meta property="og:image" content="images/cbse-osm-architecture.jpg">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://ccagentorg.github.io/cbse-osm-osint/api-surface.html">
 </head>
 <body>
 <div class="site-nav">
@@ -82,20 +87,19 @@ pre code{background:none;padding:0}
       <a href="index.html">Home</a>
       <a href="know-your-coempt.html">Coempt</a>
       <a href="know-your-examtech.html">ExamTech</a>
-      <a href="impacted-entities.html">Entities</a>
-      <a href="annexure.html">Annexure</a>
-      <a href="api-surface.html">API</a>
+      <a href="ni5arga-vulnerabilities.html">ni5arga</a>
       <a href="terms-of-reference.html">TOR</a>
+      <a href="annexure.html">Annexure</a>
+      <a href="api-surface.html" class="active">API</a>
+      <a href="impacted-entities.html">Entities</a>
     </nav>
   </div>
 </div>
-
 <div class="container">
 
 <h1>API Surface &amp; Vulnerability Analysis</h1>
 <p class="subtitle">Complete endpoint inventory from the OnMark Angular production bundle, with authentication context and vulnerability classification.</p>
 
-<hr>
 
 <h2>1. Platform Overview</h2>
 
@@ -293,7 +297,6 @@ apiurl = "https://" + window.location.hostname + "/" + ExamSeries_ApiUrl + "/"
 <tr><td>/UFMReport</td><td>Unfair means report</td><td><span class="badge badge-red">No guard</span></td></tr>
 </table>
 
-<hr>
 
 <h2>5. Vulnerability Classification</h2>
 
@@ -346,17 +349,14 @@ apiurl = "https://" + window.location.hostname + "/" + ExamSeries_ApiUrl + "/"
 
 <p class="note">All evidence archived at <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">zo.pub/cashlessconsumer/cbse-osm-onmarks-osint</a> (1,400+ files).</p>
 
-<hr>
 
-<a href="index.html">← Article</a>
-<a href="annexure.html">Technical Annexure</a>
 
 </div>
 <script>hljs.highlightAll();</script>
 
 <footer class="site-footer">
   <div class="site-footer-inner">
-    <p>CBSE OSM OSINT Investigation &middot; Published May&ndash;Jun 2026 &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
+    <p>CBSE OSM OSINT Investigation &middot; <time datetime="2026-05">Published May</time>Published May&ndash;Jun 2026ndash;<time datetime="2026-06">Jun 2026</time> &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
   </div>
 </footer>
 
