@@ -1,0 +1,54 @@
+# CBSE OSM OSINT Investigation
+
+> Passive OSINT investigation into Coempt EduTeck's OnMark evaluation platform and the CBSE Class 12 On-Screen Marking (OSM) controversy, May 2026.
+
+## Overview
+
+In May 2026, 17.8 lakh CBSE Class 12 students had their handwritten answer sheets graded on a single vendor's (Coempt EduTeck) OnMark platform. Independent security researchers disclosed critical vulnerabilities. This investigation documents technical evidence, procurement irregularities, corporate network analysis, and the broader exam-technology industry.
+
+## Pages
+
+### Investigation Hub
+- [index.html](index.html) — Homepage with investigation overview, timeline, and navigation to all sections
+
+### Deep Dives
+- [know-your-coempt.html](know-your-coempt.html) — Corporate network analysis: Chary family (26 years of education-tech companies), S. Sadagopan (academic advisor since 2008), Ventureast (VC firm via Elbit Medical Diagnostics investment)
+- [know-your-examtech.html](know-your-examtech.html) — India's exam technology industry: the SSC-Eduquity parallel scam, why TCS keeps losing to small firms, NEP 2020 digital examination reform, NEET CBT transition
+
+### Technical Evidence
+- [annexure.html](annexure.html) — Full code evidence: OTP bypass in Selenium automation, automated canvas marking, Jenkins CI integration, 77 API endpoints extracted from Angular bundle, OCR/Gemini pipeline, forensic git timeline with SHAs
+- [api-surface.html](api-surface.html) — Complete API endpoint inventory with vulnerability classification (V-01 IDOR, V-02 password-less reset, V-03 unauthenticated photos), authentication architecture analysis, 30+ subdomain inventory
+
+### Context
+- [impacted-entities.html](impacted-entities.html) — All stakeholders: CBSE, Coempt EduTeck, state boards on OnMark platform, security researchers (Nisarga Adhikary, Sarthak Sidhant), civil society (IFF), vendor employees identified via OSINT
+- [terms-of-reference.html](terms-of-reference.html) — Formal investigation framework: 33 questions across procurement, security, data protection, and accountability. RTI templates included.
+
+## Key Findings
+
+1. **OTP bypass**: CBSE OSM portal's OTP is displayed client-side — the Selenium automation code clicks Login without reading any OTP value
+2. **77 API endpoints** extracted from a single 1.7MB Angular production bundle archived via Wayback Machine
+3. **30+ institutions** share the same OnMark infrastructure (confirmed via SSL certificate transparency logs)
+4. **Tender manipulation**: CBSE removed blacklist and cooling-off period requirements before awarding the contract to Coempt
+5. **Corporate network**: Coempt is controlled by the Chary family (11+ interlocking companies since 2000), with S. Sadagopan as strategic advisor since 2008 (confirmed on his own website)
+
+## Evidence Archive
+
+All raw evidence (GitHub repos, Angular bundles, screenshots, subdomain data) archived at:
+- https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint
+
+## Source Repository
+
+- https://github.com/CCAgentOrg/cbse-osm-osint
+
+## Methodology
+
+Passive OSINT only — no active testing. Sources: GitHub API, CRT.sh (SSL certificate transparency), Wayback Machine, HTTP header analysis, MCA corporate records, media reports.
+
+## Disclaimer
+
+No API keys, passwords, or specific credentials are reproduced. No live evaluation systems were accessed. All code snippets are from public repositories, reproduced verbatim for evidentiary purposes (credential values redacted).
+
+## Author
+
+Cashless Consumer — fintech & DPI research newsletter
+https://cashlessconsumer.zo.space
