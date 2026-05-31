@@ -4,659 +4,235 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>ni5arga Vulnerability Disclosures</title>
+  <title>ni5arga: Post-Blog Vulnerability Disclosures</title>
   <style>
-
-/* === COMMON SITE NAV & FOOTER === */
-.site-nav{background:#fff;border-bottom:1px solid #e0dcd4;position:sticky;top:0;z-index:100;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-.site-nav-inner{max-width:960px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;gap:12px;flex-wrap:wrap}
-.site-nav-brand{font-weight:700;font-size:.9em;color:#1a1a1a;text-decoration:none;letter-spacing:-.01em;white-space:nowrap}
-.site-nav-sep{color:#c4a0a0;margin:0 2px}
-.site-nav nav{display:flex;gap:4px;flex-wrap:wrap}
-.site-nav nav a{font-size:.78em;padding:6px 10px;color:#666;text-decoration:none;border-radius:4px;white-space:nowrap;transition:background .15s,color .15s}
-.site-nav nav a:hover{background:#f5f2eb;color:#8b1a1a}
-.site-nav nav a.active{background:#8b1a1a;color:#fff}
-.site-footer{border-top:1px solid #e0dcd4;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin-top:60px}
-.site-footer-inner{max-width:960px;margin:0 auto;padding:0 24px;text-align:center}
-.site-footer p{font-size:.82em;color:#888;line-height:1.6}
-.site-footer a{color:#8b1a1a;text-decoration:none;border-bottom:1px solid #c4a0a0}
-.site-footer a:hover{color:#5a0f0f}
-@media(max-width:600px){
-  .site-nav-inner{flex-direction:column;height:auto;padding:10px 16px;gap:8px}
-  .site-nav nav{gap:2px;justify-content:center}
-  .site-nav nav a{padding:4px 8px;font-size:.75em}
-  .site-footer{padding:16px}
-  .site-footer-inner{padding:0 16px}
-}
-@media(prefers-color-scheme:dark){
-  .site-nav{background:#161b22;border-bottom-color:#30363d}
-  .site-nav-brand{color:#f0f6fc}
-  .site-nav nav a{color:#8b949e}
-  .site-nav nav a:hover{background:#21262d;color:#58a6ff}
-  .site-nav nav a.active{background:#238636;color:#fff}
-  .site-footer{border-top-color:#30363d}
-  .site-footer p{color:#484f58}
-  .site-footer a{color:#58a6ff;border-bottom-color:#1f3a5f}
-  .site-footer a:hover{color:#79c0ff}
-}
-
-    html {
-      line-height: 1.5;
-      font-family: Georgia, serif;
-      font-size: 20px;
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 1em;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
-      font-size: 85%;
-      margin: 0;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      background-color: #1a1a1a;
-      border: none;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     span.underline{text-decoration: underline;}
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { color: #008000; } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { color: #008000; font-weight: bold; } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="site-nav">
-  <div class="site-nav-inner">
-    <a href="index.html" class="site-nav-brand">CBSE OSM<span class="site-nav-sep">/</span>OSINT</a>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="know-your-coempt.html">Coempt</a>
-      <a href="know-your-examtech.html">ExamTech</a>
-      <a href="impacted-entities.html">Entities</a>
-      <a href="annexure.html">Annexure</a>
-      <a href="api-surface.html">API</a>
-      <a href="terms-of-reference.html">TOR</a>
-    </nav>
-  </div>
-</div>
-
 <header id="title-block-header">
-<h1 class="title">ni5arga Vulnerability Disclosures</h1>
+<h1 class="title">ni5arga: Post-Blog Vulnerability Disclosures</h1>
 </header>
-<h1 id="ni5arga-vulnerability-disclosures-cbse-osm-portal">ni5arga
-Vulnerability Disclosures: CBSE OSM Portal</h1>
-<p><strong>Researcher:</strong> <a href="https://x.com/ni5arga">nisarga
-(<span class="citation" data-cites="ni5arga">@ni5arga</span>)</a> |
-<strong>Blog:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga.com</a> |
-<strong>CERT-In Ref:</strong> CERTIn-16590126</p>
+<h1 id="ni5arga-post-blog-vulnerability-disclosures">ni5arga: Post-Blog
+Vulnerability Disclosures</h1>
+<p><strong>Researcher:</strong> <a href="https://x.com/ni5arga"><span
+class="citation" data-cites="ni5arga">@ni5arga</span></a> (nisarga) —
+19-year-old security researcher <strong>Full blog post:</strong> <a
+href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga.com/blog/posts/hacking-cbse</a>
+(published May 22, 2026)</p>
+<hr />
+<h2 id="whats-already-blogged">What’s Already Blogged</h2>
+<p>ni5arga’s <a href="https://ni5arga.com/blog/posts/hacking-cbse/">blog
+post</a> documents five vulnerabilities discovered on <strong>February
+25, 2026</strong> and reported to CERT-In under ref
+<strong>CERTIn-16590126</strong>:</p>
+<ol type="1">
+<li><strong>Hardcoded master password</strong> in the Angular JS
+bundle</li>
+<li><strong>Client-side OTP validation</strong> — server sends OTP in
+the auth response, browser checks locally</li>
+<li><strong>No route guards</strong> — entire app navigable without
+authentication</li>
+<li><strong>Password change without old password</strong> —
+<code>ChangePassword</code> API never sends
+<code>oldpassword</code></li>
+<li><strong>Systemic IDOR</strong> — every API trusts
+<code>ValuatorID</code> from client-side storage</li>
+</ol>
+<p>These are well-documented in his blog. <strong>This page covers only
+what came after.</strong></p>
+<hr />
+<h2 id="post-blog-timeline-may-2731-2026">Post-Blog Timeline (May 27–31,
+2026)</h2>
+<h3 id="finding-6-full-crud-shell-access-on-cbse-prod-servers">🔴
+Finding 6: Full CRUD + Shell Access on CBSE Prod Servers</h3>
+<p><strong>Date:</strong> May 29, 2026 <strong>Tweet:</strong> <a
+href="https://x.com/i/status/2060320391617499380">x.com/i/status/2060320391617499380</a></p>
+<p>ni5arga (with <span class="citation"
+data-cites="thetirthparmar">@thetirthparmar</span>) demonstrated
+<strong>full create, read, update, delete access plus shell
+access</strong> to CBSE’s production OnMark server — the same server
+referenced in <a href="https://archive.is/dGw1Q">CBSE’s own
+circular</a>.</p>
+<ul>
+<li>Proof archive: <a
+href="https://archive.is/bPH2U">archive.is/bPH2U</a></li>
+<li>Additional archives: <a
+href="https://archive.is/lkI1x">archive.is/lkI1x</a>, <a
+href="https://archive.is/UWp2h">archive.is/UWp2h</a></li>
+<li>Reported to CERT-In, Education Ministry (GoI), and CBSE before
+disclosure</li>
+</ul>
+<p><strong>Bad Apple demo:</strong> <a
+href="https://x.com/i/status/2060329287367147795">x.com/i/status/2060329287367147795</a>
+— Played the Bad Apple video on the CBSE production site as proof of
+control.</p>
+<hr />
+<h3 id="finding-7-super-admin-access-on-onmark-university-portal">🔴
+Finding 7: Super Admin Access on OnMark University Portal</h3>
+<p><strong>Date:</strong> May 29, 2026 <strong>Tweets:</strong> - <a
+href="https://x.com/i/status/2060508071072592306">x.com/i/status/2060508071072592306</a>
+- <a
+href="https://x.com/i/status/2060508201439875477">x.com/i/status/2060508201439875477</a>
+- <a
+href="https://x.com/i/status/2060508407522857172">x.com/i/status/2060508407522857172</a></p>
+<p>Another OnMark subdomain was compromised, this time granting
+<strong>super admin access</strong> to a portal handling exam evaluation
+at <strong>multiple universities</strong>.</p>
+<p>Capabilities obtained: - <strong>Evaluate/grade answer
+sheets</strong> - <strong>Edit any user’s password</strong> -
+<strong>View full user list</strong> - <strong>Create new user
+accounts</strong> - <strong>Send mass SMS and email</strong> to all
+evaluators/students</p>
 <blockquote>
-<p>This page documents all publicly disclosed vulnerabilities in CBSE’s
-On-Screen Marking (OSM) portal (built on Coempt EduTeck’s OnMark
-platform), as reported by security researcher nisarga between
-February–May 2026. All vulnerabilities were reported to CERT-In before
-public disclosure.</p>
+<p>“another integral onmark subdomain has been pwn’ed, this time we
+managed to get super admin access of the portal. seems like it is tasked
+with evaluation of exams at various universities.”</p>
 </blockquote>
-<hr />
-<h2 id="timeline">Timeline</h2>
-<table>
-<colgroup>
-<col style="width: 46%" />
-<col style="width: 53%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Date</th>
-<th>Event</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>25 Feb 2026</strong></td>
-<td>Initial discovery — master password in JS bundle, OTP bypass, IDOR,
-route guard issues</td>
-</tr>
-<tr class="even">
-<td><strong>25 Feb 2026</strong></td>
-<td>First CERT-In report filed</td>
-</tr>
-<tr class="odd">
-<td><strong>Mar 2026</strong></td>
-<td>Follow-up report with video walkthrough + additional findings (route
-guards, password reset, IDOR)</td>
-</tr>
-<tr class="even">
-<td><strong>Mar 2026</strong></td>
-<td>CERT-In boilerplate acknowledgment received; no substantive
-follow-up despite multiple queries</td>
-</tr>
-<tr class="odd">
-<td><strong>9 May 2026</strong></td>
-<td>CBSE Class 12 results released; portal still vulnerable</td>
-</tr>
-<tr class="even">
-<td><strong>22 May 2026</strong></td>
-<td>Public disclosure on X; detailed blog post published</td>
-</tr>
-<tr class="odd">
-<td><strong>25 May 2026</strong></td>
-<td>SQL injection discovered, reported to CERT-In</td>
-</tr>
-<tr class="even">
-<td><strong>26 May 2026</strong></td>
-<td>CBSE issues denial statement pointing to non-existent domain</td>
-</tr>
-<tr class="odd">
-<td><strong>27 May 2026</strong></td>
-<td>CBSE retracts denial tweet after domain registered to point at
-researcher’s blog</td>
-</tr>
-<tr class="even">
-<td><strong>29 May 2026</strong></td>
-<td>CRUD + shell access on prod servers disclosed</td>
-</tr>
-<tr class="odd">
-<td><strong>29 May 2026</strong></td>
-<td>Super admin access on another OnMark subdomain (university
-evaluation)</td>
-</tr>
-<tr class="even">
-<td><strong>30 May 2026</strong></td>
-<td>AWS S3 bucket misconfiguration disclosed — 2026 answer sheets &amp;
-question papers enumerable</td>
-</tr>
-<tr class="odd">
-<td><strong>31 May 2026</strong></td>
-<td>CBSE officially acknowledges security breach</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="vulnerability-catalog">Vulnerability Catalog</h2>
-<h3 id="vuln-01-hardcoded-master-password-in-frontend-bundle">VULN-01:
-Hardcoded Master Password in Frontend Bundle</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-25 Feb 2026 <strong>Status:</strong> Unpatched at time of disclosure
-(May 22)</p>
-<p>A literal master password string was embedded in plain text in the
-Angular JavaScript bundle served at:</p>
-<pre><code>https://cbse.onmark.co.in/cbseevalweb/main.dc17c24606b3b008.js</code></pre>
-<p>When entered into the login form, the app automatically filled the
-OTP field and bypassed the entire authentication flow. No second factor
-required. Combined with publicly obtainable user IDs and school codes,
-this allowed login as any examiner.</p>
-<p><strong>Impact:</strong> Any attacker could authenticate as any
-examiner on the platform.</p>
-<p><strong>Source:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">Blog post —
-“Vulnerability 1”</a> | <a
-href="https://x.com/ni5arga/status/2057831536586850422">X post</a></p>
-<hr />
-<h3 id="vuln-02-client-side-otp-validation-security-theatre">VULN-02:
-Client-Side OTP Validation (Security Theatre)</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-25 Feb 2026 <strong>Status:</strong> Unpatched at time of disclosure</p>
-<p>The OTP step was entirely client-side. The server returned the OTP
-inside the authentication response, and JavaScript running in the
-browser compared the user’s input against it locally. Anyone inspecting
-network traffic could read the OTP directly.</p>
-<p><strong>Impact:</strong> Complete negation of the two-factor
-authentication mechanism.</p>
-<p><strong>Source:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">Blog post —
-“Vulnerability 2”</a></p>
-<hr />
-<h3 id="vuln-03-no-route-guards-full-app-walk-in">VULN-03: No Route
-Guards — Full App Walk-In</h3>
-<p><strong>Severity:</strong> 🟠 High <strong>Discovered:</strong> 25
-Feb 2026 <strong>Status:</strong> Unpatched at time of disclosure</p>
-<p>The Angular SPA had zero <code>canActivate</code> route guards.
-Internal pages (<code>/dashboard</code>, <code>/evalscriptsview</code>,
-<code>/heallscripts</code>, <code>/evaluatordetails</code>,
-<code>/verificationdashboard</code>) were all directly navigable.
-Setting fake values in
-<code>localStorage</code>/<code>sessionStorage</code> was sufficient to
-reach any page without authentication.</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;jwtToken&#39;</span><span class="op">,</span> <span class="st">&#39;dev-token-12345&#39;</span>)<span class="op">;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sessionStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;role_id&#39;</span><span class="op">,</span> <span class="st">&#39;23&#39;</span>)<span class="op">;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sessionStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;eval&#39;</span><span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">user_id</span><span class="op">:</span> <span class="st">&#39;DEV001&#39;</span><span class="op">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">role_id</span><span class="op">:</span> <span class="st">&#39;23&#39;</span><span class="op">,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">mobile_no</span><span class="op">:</span> <span class="st">&#39;9999999999&#39;</span><span class="op">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;dev@dev.com&#39;</span><span class="op">,</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">jwtToken</span><span class="op">:</span> <span class="st">&#39;dev-token-12345&#39;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}))<span class="op">;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;/cbseevalweb/#/dashboard&#39;</span><span class="op">;</span></span></code></pre></div>
-<p><strong>Impact:</strong> Unauthenticated access to all internal
-application pages.</p>
-<p><strong>Source:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">Blog post —
-“Vulnerability 3”</a></p>
+<p>CERT-In informed before posting. This reveals the vulnerability is
+<strong>not CBSE-specific</strong> — it’s systemic across the entire
+OnMark platform used by multiple institutions.</p>
 <hr />
 <h3
-id="vuln-04-password-reset-without-old-password-verification">VULN-04:
-Password Reset Without Old Password Verification</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-25 Feb 2026 <strong>Status:</strong> Unpatched at time of disclosure</p>
-<p>The <code>ChangePassword</code> API payload only contained
-<code>ValuatorID</code> and <code>pin_NewPassword</code>. The
-<code>oldpassword</code> field existed in the frontend component but was
-never sent to the server. Any <code>ValuatorID</code> could have its
-password reset without knowing the current one.</p>
-<p><strong>Impact:</strong> Combined with VULN-05, enables complete
-account takeover of any examiner.</p>
-<p><strong>Source:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">Blog post —
-“Vulnerability 4”</a></p>
-<hr />
-<h3 id="vuln-05-systemic-idor-across-entire-api">VULN-05: Systemic IDOR
-Across Entire API</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-25 Feb 2026 <strong>Status:</strong> Unpatched at time of disclosure</p>
-<p>Almost every API call identified the acting user by reading
-<code>ValuatorID</code>/<code>user_id</code> from
-<code>sessionStorage["eval"]</code> — a client-side storage object
-editable via DevTools. The server trusted whatever ID the client sent
-instead of deriving it from the authenticated session. This is IDOR at
-the <strong>architectural level</strong>, not a single broken
-endpoint.</p>
-<p><strong>Attack chain:</strong> IDOR (act as any user) + VULN-04
-(reset their password) = full account takeover → view answer scripts,
-alter marks.</p>
-<p><strong>Impact:</strong> Full account takeover of any examiner;
-ability to tamper with evaluation marks at national scale.</p>
-<p><strong>Source:</strong> <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">Blog post —
-“Vulnerability 5”</a></p>
-<hr />
-<h3 id="vuln-06-sql-injection">VULN-06: SQL Injection</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-~25 May 2026 (reported 25 May) <strong>Status:</strong> Reported to
-CERT-In; no patch confirmation</p>
-<p>A SQL injection vulnerability discovered in the OSM portal after the
-initial disclosure. Reported to CERT-In as a separate finding. Response:
-one-line acknowledgment email.</p>
-<p><strong>Impact:</strong> Potential database compromise, data
-exfiltration, or destruction of evaluation records.</p>
-<p><strong>Source:</strong> <a
-href="https://x.com/ni5arga/status/2058937997941514699">X post</a></p>
-<hr />
-<h3 id="vuln-07-crud-shell-access-on-production-servers">VULN-07: CRUD +
-Shell Access on Production Servers</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-29 May 2026 <strong>Status:</strong> Disclosed publicly</p>
-<p>Full create, read, update, delete (CRUD) access and shell access
-achieved on CBSE’s production servers — the same servers referenced in
-CBSE’s own circular.</p>
-<p><strong>Proof:</strong> <a
-href="https://archive.is/bPH2U">Archive</a></p>
-<p><strong>Impact:</strong> Complete server compromise; ability to
-execute arbitrary commands, modify evaluation data, or deploy persistent
-backdoors.</p>
-<p><strong>Source:</strong> <a
-href="https://x.com/ni5arga/status/2060320391617499380">X post</a></p>
-<p><strong>Demonstration:</strong> <a
-href="https://x.com/ni5arga/status/2060329287367147795">Bad Apple video
-played on prod site</a></p>
-<hr />
-<h3
-id="vuln-08-super-admin-access-on-university-onmark-instance">VULN-08:
-Super Admin Access on University OnMark Instance</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-29 May 2026 <strong>Status:</strong> Disclosed publicly</p>
-<p>An integral OnMark subdomain was compromised to gain super admin
-access. The instance appeared to be used for evaluation of exams at
-various universities — extending the attack surface beyond CBSE to the
-entire OnMark platform ecosystem.</p>
-<p><strong>Impact:</strong> Super admin control of a separate OnMark
-deployment; potential cross-institution compromise.</p>
-<p><strong>Source:</strong> <a
-href="https://x.com/ni5arga/status/2060508071072592306">X post</a></p>
-<hr />
-<h3
-id="vuln-09-aws-s3-bucket-misconfiguration-answer-sheets-question-papers-exposed">VULN-09:
-AWS S3 Bucket Misconfiguration — Answer Sheets &amp; Question Papers
-Exposed</h3>
-<p><strong>Severity:</strong> 🔴 Critical <strong>Discovered:</strong>
-30 May 2026 <strong>Status:</strong> Disclosed publicly</p>
-<p>CBSE’s AWS S3 bucket was not configured properly.
-<code>ListObjectsV2</code> worked without any authentication, and the
-bucket root was listable. This enabled pagination and enumeration of all
-media — including <strong>2026 answer sheets and question
-papers</strong>. Multiple institutions were using the same bucket.</p>
-<p><strong>Impact:</strong> Anyone on the internet could download any
-scanned answer booklet across institutions. Massive PII exposure.</p>
-<p><strong>Source:</strong> <a
-href="https://x.com/ni5arga/status/2060941174949433445">X post</a></p>
-<hr />
-<h3 id="vuln-10-shared-infrastructure-across-onmark-subdomains">VULN-10:
-Shared Infrastructure Across OnMark Subdomains</h3>
-<p><strong>Severity:</strong> 🟠 High <strong>Discovered:</strong>
-During investigation <strong>Status:</strong> Confirmed by independent
-researchers</p>
-<p>Every CBSE-related subdomain under <code>onmark.co.in</code> (cbse1,
-cbse2, cbse3, cbse4, etc.) resolved to the same load balancer. Test
-environments shared infrastructure with production. The same hardcoded
-master password existed in the JS bundles across all subdomains.</p>
-<p><strong>Impact:</strong> A vulnerability in one instance compromises
-all instances. No meaningful environment separation between test and
-production.</p>
-<p><strong>Source:</strong> <a
-href="https://x.com/ni5arga/status/2059522207643312598">X post —
-subdomain resolution</a> | <a
-href="https://x.com/ni5arga/status/2059344858465337369">X post — master
-password across domains</a></p>
+id="finding-8-exposed-aws-s3-bucket-answer-sheets-question-papers">🔴
+Finding 8: Exposed AWS S3 Bucket — Answer Sheets &amp; Question
+Papers</h3>
+<p><strong>Date:</strong> May 31, 2026 <strong>Tweet:</strong> <a
+href="https://x.com/i/status/2060941174949433445">x.com/i/status/2060941174949433445</a>
+(476K+ views)</p>
+<p>CBSE’s AWS S3 bucket was left <strong>completely
+unauthenticated</strong>:</p>
+<ul>
+<li><code>ListObjectsV2</code> works <strong>without any
+authentication</strong></li>
+<li>Bucket root is <strong>publicly listable</strong></li>
+<li>Contains <strong>2026 answer sheets and question papers</strong> as
+scanned images</li>
+<li>Allows <strong>pagination and enumeration</strong> of all media</li>
+<li><strong>Multiple institutions</strong> share the same bucket</li>
+</ul>
+<blockquote>
+<p>“CBSE people didn’t configure their AWS bucket properly and now we
+can paginate &amp; enumerate all their media which has 2026 answersheets
+&amp; question papers. ListObjectsV2 works without any auth and the
+bucket root is listable too — anyone on the internet can download any
+scanned booklet — across institutions. Multiple institutions are using
+the same bucket, insanely insecure.”</p>
+</blockquote>
+<p>This is arguably the most damaging disclosure — it means
+<strong>anyone on the internet</strong> could download any student’s
+scanned answer booklet without any authentication whatsoever, across
+multiple institutions using the OnMark/Coempt infrastructure.</p>
 <hr />
 <h2 id="cbses-response">CBSE’s Response</h2>
+<p><strong>May 31, 2026</strong> — CBSE issued an official statement
+from HQ acknowledging a security breach and deploying cybersecurity
+teams:</p>
+<blockquote>
+<p><a href="https://x.com/ni5arga/status/2061042510211027189">CBSE HQ
+statement</a></p>
+</blockquote>
+<p>ni5arga’s reaction: <a
+href="https://x.com/i/status/2061042510211027189">x.com/i/status/2061042510211027189</a></p>
+<p>On CERT-In’s response: <a
+href="https://x.com/i/status/2060987304681115795">x.com/i/status/2060987304681115795</a></p>
+<blockquote>
+<p>“CERT just sends me a boilerplate ‘thank you’ reply every time and
+it’s frustrating to say the least.”</p>
+</blockquote>
+<hr />
+<h2 id="what-this-tells-us">What This Tells Us</h2>
 <table>
-<colgroup>
-<col style="width: 37%" />
-<col style="width: 62%" />
-</colgroup>
 <thead>
 <tr class="header">
-<th>Date</th>
-<th>Response</th>
+<th>Finding</th>
+<th>Blogged?</th>
+<th>Scope</th>
+<th>Severity</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Feb 2026</td>
-<td>CERT-In receives report, issues boilerplate acknowledgment</td>
+<td>Hardcoded master password</td>
+<td>✅ Yes</td>
+<td>CBSE OSM portal</td>
+<td>Critical</td>
 </tr>
 <tr class="even">
-<td>Mar–May 2026</td>
-<td>No substantive follow-up despite multiple queries from
-researcher</td>
+<td>Client-side OTP</td>
+<td>✅ Yes</td>
+<td>CBSE OSM portal</td>
+<td>Critical</td>
 </tr>
 <tr class="odd">
-<td>26 May 2026</td>
-<td>CBSE denies vulnerabilities, issues statement pointing to
-non-existent domain</td>
+<td>No route guards</td>
+<td>✅ Yes</td>
+<td>CBSE OSM portal</td>
+<td>High</td>
 </tr>
 <tr class="even">
-<td>27 May 2026</td>
-<td>CBSE retracts denial after domain registered to redirect to
-researcher’s blog</td>
+<td>Password change w/o old</td>
+<td>✅ Yes</td>
+<td>CBSE OSM portal</td>
+<td>Critical</td>
 </tr>
 <tr class="odd">
-<td>31 May 2026</td>
-<td>CBSE officially acknowledges security breach</td>
+<td>Systemic IDOR</td>
+<td>✅ Yes</td>
+<td>CBSE OSM portal</td>
+<td>Critical</td>
+</tr>
+<tr class="even">
+<td>CRUD + Shell on prod</td>
+<td>❌ New</td>
+<td>CBSE production</td>
+<td>Critical</td>
+</tr>
+<tr class="odd">
+<td>Super admin (university)</td>
+<td>❌ New</td>
+<td>OnMark platform-wide</td>
+<td>Critical</td>
+</tr>
+<tr class="even">
+<td>Exposed S3 bucket</td>
+<td>❌ New</td>
+<td>Multi-institutional</td>
+<td>Critical</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="responsible-disclosure-evidence">Responsible Disclosure
-Evidence</h2>
-<ul>
-<li><a href="https://ni5arga.com/blog/images/mail2.png">CERT-In
-acknowledgment email</a></li>
-<li><a href="https://x.com/ni5arga/status/2059344391047889352">Screen
-recording of master password auth bypass on production</a></li>
-<li><a href="https://x.com/ni5arga/status/2059280940044800050">Proof
-screenshot of production access</a></li>
-<li><a href="https://x.com/ni5arga/status/2059284748686746013">CBSE’s
-own emails referencing the same URL</a></li>
-<li><a href="https://x.com/ni5arga/status/2059344460052623748">Site
-archive from 03/03/2026</a></li>
-<li><a
-href="https://x.com/ni5arga/status/2059344651828834569">Vulnerabilities
-still present in March build</a></li>
-<li><a href="https://archive.is/bPH2U">CRUD/shell access proof
-archive</a></li>
-</ul>
+<p><strong>The post-blog findings escalate the scope
+dramatically:</strong> - <strong>Blog findings:</strong> CBSE-specific,
+require some technical knowledge to exploit - <strong>Post-blog
+findings:</strong> Platform-wide (OnMark), some require <strong>zero
+technical skill</strong> (the S3 bucket is publicly listable), and
+affect <strong>multiple institutions</strong> beyond CBSE</p>
+<p>The S3 disclosure alone means every student’s answer sheet across
+every institution using this infrastructure was downloadable by anyone
+on the internet.</p>
 <hr />
 <h2 id="media-coverage">Media Coverage</h2>
-<ul>
-<li><a
+<p>ni5arga’s blog has been covered by: - <a
 href="https://www.indiatoday.in/education-today/news/story/cbse-osm-portal-vulnerability-claims-surface-with-teens-detailed-blog-post-2917243-2026-05-26">India
-Today</a></li>
-<li><a href="https://www.bbc.com/news/articles/cy42e8eljpno">BBC
-News</a></li>
-<li><a
-href="https://www.ndtv.com/education/cbse-osm-portal-had-critical-vulnerabilities-ethical-hacker-told-ndtv-he-alerted-board-months-earlier-11550090">NDTV</a></li>
-<li><a
-href="https://timesofindia.indiatimes.com/education/news/cbse-faces-fresh-scrutiny-after-teen-researcher-alleges-critical-flaws-in-osm-portal-claims-class-12-marks-could-be-altered/articleshow/131330616.cms">Times
-of India</a></li>
-<li><a
-href="https://www.thehindubusinessline.com/news/education/government-should-take-cybersecurity-more-seriously-says-ethical-hacker-on-cbse-osm-flaws/article71024371.ece">The
-Hindu BusinessLine</a></li>
-<li><a
-href="https://theprint.in/feature/19-student-hacked-cbses-osm-portal-vulnerabilities/2942305/">ThePrint</a></li>
-<li><a
-href="https://www.news18.com/viral/ex-google-engineer-calls-out-cbses-osm-portal-absolute-embarrassment-after-hacker-exposes-major-security-flaws-ws-l-10113830.html">News18</a></li>
-<li><a
-href="https://www.hindustantimes.com/htcity/leisure/this-teen-hacked-into-cbse-s-osm-portal-while-preparing-for-boards-says-this-is-just-a-hobby-101779875877374.html">Hindustan
-Times</a></li>
-<li><a
-href="https://www.financialexpress.com/india-news/cbse-portal-very-easy-to-exploit-class-12-hacker-says-he-didnt-expect-amateur-vulnerabilities-exclusivenbsp/4252095/">Financial
-Express</a></li>
-<li><a
-href="https://www.timesnownews.com/education/exclusive-i-have-enough-proof-19-year-old-defends-claims-of-security-flaws-in-cbse-osm-portal-article-154408591">Times
-Now</a></li>
-<li><a
-href="https://www.cnbctv18.com/videos/education/cbse-on-screen-marking-controversy-hacker-security-claims-experts-divided-19914723.htm">CNBC
-TV18</a></li>
-<li><a
-href="https://www.moneycontrol.com/technology/big-blunder-how-a-cbse-student-uncovered-a-security-flaw-in-a-national-exam-portal-article-13932552.html">Moneycontrol</a></li>
-<li><a
+Today</a> - <a href="https://www.bbc.com/news/articles/cy42e8eljpno">BBC
+News</a> - <a
+href="https://www.ndtv.com/education/cbse-osm-portal-had-critical-vulnerabilities-ethical-hacker-told-ndtv-he-alerted-board-months-earlier-11550090">NDTV</a>
+- <a
+href="https://theprint.in/feature/19-student-hacked-cbses-osm-portal-vulnerabilities/2942305/">ThePrint</a>
+- <a
 href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">IFF
-Blog</a></li>
-<li><a
-href="https://www.medianama.com/2026/05/223-cert-in-vulnerabilities-cbse-online-marking-portal/">Medianama</a></li>
-<li><a
-href="https://www.freepressjournal.in/education/fpj-exclusive-meet-nisarga-the-19-year-old-ethical-hacker-who-flagged-alleged-cbse-portal-issues-in-february-2026">Free
-Press Journal</a></li>
-<li><a
-href="https://news.careers360.com/cbse-osm-portal-hacker-nisarga-adhikary-vulnerabilities-report-meaning-class-12-checking-result-onmark-co-in-cybersecurity">Careers360</a></li>
-</ul>
-<hr />
-<h2 id="key-takeaway">Key Takeaway</h2>
-<p>These are not sophisticated zero-days. They are
-<strong>architecture-level security failures</strong> — secrets in
-frontend code, client-side auth, no server-side authorization, shared
-infrastructure, unpatched software. The hardest part of exploiting them
-was reading a JavaScript file and editing a value in DevTools.</p>
-<p>For a platform grading the futures of 17.8 lakh students, the basics
-are the least we should expect.</p>
-<hr />
-<p><em>Researcher’s full technical writeup: <a
-href="https://ni5arga.com/blog/posts/hacking-cbse/">ni5arga.com/blog/posts/hacking-cbse</a></em></p>
-
-<footer class="site-footer">
-  <div class="site-footer-inner">
-    <p>CBSE OSM OSINT Investigation &middot; Published May&ndash;Jun 2026 &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
-  </div>
-</footer>
-
+Blog</a> - <a
+href="https://www.medianama.com/2026/05/223-cert-in-vulnerabilities-cbse-online-marking-portal/">Medianama</a>
+- And <a
+href="https://ni5arga.com/blog/posts/hacking-cbse/#media-coverage">14
+more outlets</a></p>
 </body>
 </html>
