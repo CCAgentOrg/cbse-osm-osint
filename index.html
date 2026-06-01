@@ -5,9 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CBSE OSM Investigation — Cashless Consumer</title>
-<meta name="description" content="OSINT investigation into Coempt EduTeck, the vendor behind CBSE's On-Screen Marking system. Technical vulnerabilities, corporate network analysis, and structural reform questions.">
-<meta property="og:title" content="CBSE OSM Investigation">
-<meta property="og:description" content="OSINT investigation into Coempt EduTeck, the vendor behind CBSE's On-Screen Marking system.">
+<meta name="description" content="17.8 lakh students graded on one vendor's hacked platform. Tender rules rewritten. Who's responsible? An open-source OSINT investigation.">
+<meta property="og:title" content="CBSE OSM Investigation — Who Graded 17.8 Lakh Students?">
+<meta property="og:description" content="17.8 lakh students graded on one vendor's hacked platform. Tender rules rewritten. Open-source OSINT investigation.">
 <meta property="og:image" content="images/cbse-osm-architecture.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -23,31 +23,6 @@
 body{font-family:var(--serif);background:var(--bg);color:var(--fg);line-height:1.7}
 a{color:var(--accent);text-decoration:none;border-bottom:1px solid #c4a0a0}
 a:hover{color:var(--accent-hover);border-color:var(--accent)}
-
-/* ── Top Banner ── */
-.top-banner{
-  background:linear-gradient(135deg,#2a0a0a 0%,#5a1515 100%);
-  color:#fff;text-align:center;padding:18px 24px;
-  font-family:var(--sans);font-size:.92em;line-height:1.5
-}
-.top-banner strong{color:#ffd6d6}
-.top-banner a{color:#ffd6d6;border-bottom:1px dashed #ffd6d6}
-.top-banner a:hover{color:#fff}
-
-/* ── Header ── */
-.site-header{
-  text-align:center;padding:40px 24px 10px
-}
-.site-header h1{
-  font-family:var(--sans);font-size:2.4em;font-weight:800;
-  letter-spacing:-.03em;color:var(--fg);margin-bottom:6px
-}
-.site-header .subtitle{
-  font-family:var(--sans);color:var(--muted);font-size:1em;margin-bottom:4px
-}
-.site-header .byline{
-  font-family:var(--sans);color:var(--muted);font-size:.82em
-}
 
 /* ── Nav ── */
 .site-nav{
@@ -81,18 +56,18 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
   border:1px solid var(--card-border);padding:28px 32px;
   box-shadow:var(--card-shadow)
 }
-.hero-card h2{
-  font-family:var(--sans);font-size:1.35em;font-weight:700;
-  color:var(--fg);margin-bottom:12px;line-height:1.35
+.hero-card h1{
+  font-family:var(--sans);font-size:clamp(1.8em,4vw,2.6em);font-weight:800;
+  letter-spacing:-.03em;color:var(--fg);margin-bottom:12px;line-height:1.2
 }
-.hero-card p{
-  font-size:.95em;color:#444;margin-bottom:16px
+.hero-card .subtitle{
+  font-size:1.05em;color:#444;margin-bottom:20px;line-height:1.6
 }
 .hero-stats{
-  display:flex;flex-wrap:wrap;gap:12px;margin-top:16px
+  display:flex;flex-wrap:wrap;gap:12px;margin-top:20px
 }
 .stat{
-  flex:1 1 140px;background:#f9f5ee;border-radius:6px;
+  flex:1 1 120px;background:#f9f5ee;border-radius:6px;
   padding:14px 16px;text-align:center
 }
 .stat .number{
@@ -103,9 +78,47 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
   text-transform:uppercase;letter-spacing:.04em;margin-top:2px
 }
 
+/* ── Reading Path ── */
+.reading-path{
+  max-width:var(--container);margin:40px auto 0;padding:0 24px
+}
+.reading-path h2{
+  font-family:var(--sans);font-size:1.2em;font-weight:700;color:var(--fg);margin-bottom:20px
+}
+.path-steps{display:flex;flex-direction:column;gap:0;position:relative;padding-left:32px}
+.path-steps::before{
+  content:'';position:absolute;left:15px;top:8px;bottom:8px;
+  width:2px;background:var(--card-border)
+}
+.path-step{position:relative;margin-bottom:24px}
+.path-step:last-child{margin-bottom:0}
+.path-step::before{
+  content:'';position:absolute;left:-25px;top:6px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--accent);border:2px solid var(--bg)
+}
+.path-step .step-num{
+  font-family:var(--sans);font-size:.7em;font-weight:700;
+  color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px
+}
+.path-step h3{
+  font-family:var(--sans);font-size:1em;font-weight:700;
+  color:var(--fg);margin-bottom:4px
+}
+.path-step h3 a{color:var(--fg);border-bottom:1px solid var(--accent)}
+.path-step h3 a:hover{color:var(--accent)}
+.path-step p{font-size:.9em;color:#555;margin:0}
+.path-step .tags{margin-top:4px;display:flex;gap:6px;flex-wrap:wrap}
+.path-step .tag{
+  font-family:var(--sans);font-size:.68em;padding:2px 8px;
+  border-radius:3px;background:#f0ece4;color:#666
+}
+.path-step .tag.critical{background:#fde8e8;color:#8b1a1a}
+.path-step .tag.new{background:#e8f0e8;color:#2a6e2a}
+
 /* ── Section ── */
 .section{
-  max-width:var(--container);margin:36px auto 0;padding:0 24px
+  max-width:var(--container);margin:40px auto 0;padding:0 24px
 }
 .section-label{
   font-family:var(--sans);font-size:.75em;text-transform:uppercase;
@@ -126,7 +139,6 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
 .card:hover{
   box-shadow:0 4px 16px rgba(0,0,0,.1);transform:translateY(-2px)
 }
-.card-icon{font-size:1.8em;margin-bottom:10px}
 .card h3{
   font-family:var(--sans);font-size:1.05em;font-weight:700;
   color:var(--fg);margin-bottom:8px
@@ -138,34 +150,23 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
   font-family:var(--sans);font-size:.82em;font-weight:600;
   color:var(--accent);display:inline-flex;align-items:center;gap:4px
 }
-.card-link:hover{border-bottom-color:var(--accent)}
-.card-tag{
-  display:inline-block;background:#f0ece4;color:#888;padding:2px 8px;
-  border-radius:3px;font-size:.7em;font-family:var(--sans);
-  margin-left:4px;vertical-align:middle
-}
 .card.accent{border-left:4px solid var(--accent)}
 .card.amber{border-left:4px solid #d4770b}
 .card.teal{border-left:4px solid #2a7a6e}
 .card.slate{border-left:4px solid #5a6a8a}
+.card.purple{border-left:4px solid #6b4c9a}
 
-/* ── Featured Card ── */
+/* ── Featured ── */
 .featured{
   background:var(--card-bg);border-radius:var(--radius);
   border:1px solid var(--card-border);padding:28px 32px;
-  box-shadow:var(--card-shadow);margin-bottom:16px
+  box-shadow:var(--card-shadow)
 }
 .featured h3{
   font-family:var(--sans);font-size:1.15em;font-weight:700;
   color:var(--fg);margin-bottom:10px
 }
 .featured p{font-size:.92em;color:#555;line-height:1.65;margin-bottom:14px}
-
-/* ── Two-col featured ── */
-.featured-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0
-}
-.featured-grid .featured{margin-bottom:0}
 
 /* ── Timeline ── */
 .timeline{
@@ -185,31 +186,50 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
 .timeline-item .date{color:var(--muted);font-size:.82em;margin-bottom:2px}
 .timeline-item .event{color:var(--fg);line-height:1.5}
 
+/* ── Chronology ── */
+.chrono{margin:0;display:flex;flex-direction:column;gap:0}
+.chrono-row{
+  display:grid;grid-template-columns:100px 24px 1fr;
+  align-items:flex-start;gap:0;padding-bottom:20px;
+  font-family:var(--sans);font-size:.85em
+}
+.chrono-row:last-child{padding-bottom:0}
+.chrono-date{color:var(--muted);font-size:.8em;padding-top:2px;flex-shrink:0}
+.chrono-dot{position:relative;display:flex;flex-direction:column;align-items:center}
+.chrono-dot::before{
+  content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  width:8px;height:8px;border-radius:50%;background:var(--accent);
+  border:2px solid var(--bg)
+}
+.chrono-dot::after{
+  content:'';position:absolute;top:16px;bottom:-20px;left:50%;transform:translateX(-50%);
+  width:2px;background:var(--card-border)
+}
+.chrono-row:last-child .chrono-dot::after{display:none}
+.chrono-text{color:var(--fg);line-height:1.55}
+.chrono-text strong{color:var(--accent)}
+
 /* ── Footer ── */
 .site-footer{
   max-width:var(--container);margin:48px auto 0;
   padding:24px;border-top:1px solid var(--card-border);
   font-family:var(--sans);font-size:.78em;color:var(--muted);
-  display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px
+  text-align:center
 }
 .site-footer a{color:var(--muted);border-bottom:1px solid #ccc}
 .site-footer a:hover{color:var(--accent)}
 
 /* ── Responsive ── */
 @media(max-width:700px){
-  .site-header h1{font-size:1.7em}
-  .hero-card{padding:20px}
+  .hero-card h1{font-size:1.7em}
   .hero-stats{flex-direction:column}
   .card-grid{grid-template-columns:1fr}
-  .featured-grid{grid-template-columns:1fr}
   .section{margin:28px auto 0}
   .site-nav nav a{font-size:.76em;padding:5px 10px}
-}
-@media(min-width:701px) and (max-width:900px){
-  .card-grid{grid-template-columns:repeat(2,1fr)}
+  .path-steps{padding-left:28px}
 }
 </style>
-<link rel="canonical" href="https://ccagentorg.github.io/cbse-osm-osint/index.html">
+<link rel="canonical" href="https://ccagentorg.github.io/cbse-osm-osint/">
 </head>
 <body>
 <div class="site-nav">
@@ -217,8 +237,10 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
     <a href="index.html" class="site-nav-brand">CBSE OSM<span class="site-nav-sep">/</span>OSINT</a>
     <nav>
       <a href="index.html" class="active">Home</a>
+      <a href="findings.html">Findings</a>
       <a href="know-your-coempt.html">Coempt</a>
       <a href="know-your-examtech.html">ExamTech</a>
+      <a href="tender.html">Tenders</a>
       <a href="ni5arga-vulnerabilities.html">ni5arga</a>
       <a href="terms-of-reference.html">TOR</a>
       <a href="annexure.html">Annexure</a>
@@ -227,102 +249,145 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
     </nav>
   </div>
 </div>
-<div class="top-banner">
-  <strong>17.8 lakh CBSE Class 12 results</strong> graded on a single vendor's vulnerable platform.
-  <a href="terms-of-reference.html">Read our Demands for Disclosure →</a>
-</div>
-
-<header class="site-header">
-  <h1>CBSE OSM Investigation</h1>
-  <div class="subtitle">Inside the System That Graded 17.8 Lakh Answer Sheets — And Why It Wasn't Ready</div>
-  <div class="byline">Cashless Consumer · <time datetime="2026-05">Published May 2026</time> · All findings from public OSINT sources</div>
-</header>
 
 <!-- ── Hero ── -->
 <section class="hero">
   <div class="hero-card">
-    <h2>A vendor's QA code on GitHub. 30 boards on one platform. Three critical API vulnerabilities. And a portal that was still being rewritten while exams were running.</h2>
-    <p>Coempt EduTeck — a small Hyderabad company — runs the On-Screen Marking system that graded 17.8 lakh CBSE answer sheets. We traced the corporate network behind the vendor, mapped the structural failures in India's exam technology procurement, and documented why this wasn't a one-time accident.</p>
+    <h1>Who Graded 17.8 Lakh Students?</h1>
+    <p class="subtitle">A small Hyderabad company with a troubled past won the contract to grade CBSE's answer sheets. The platform was hacked. The tender rules were rewritten. This is the full story — from zero to everything we know.</p>
     <div class="hero-stats">
       <div class="stat"><div class="number">17.8L</div><div class="label">Students affected</div></div>
       <div class="stat"><div class="number">30+</div><div class="label">Boards on same platform</div></div>
-      <div class="stat"><div class="number">77</div><div class="label">API endpoints exposed</div></div>
+      <div class="stat"><div class="number">9</div><div class="label">Security vulnerabilities</div></div>
       <div class="stat"><div class="number">11</div><div class="label">Companies in vendor network</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── Deep Dives ── -->
-<section class="section">
-  <div class="section-label">Deep Dives — Corporate & Structural Analysis</div>
-  <div class="featured-grid">
-    <a href="know-your-coempt.html" style="text-decoration:none;color:inherit">
-      <div class="featured card accent">
-        <div class="card-icon">🏷️</div>
-        <h3>Know Your Coempt</h3>
-        <p>The Chary family has been building education-tech companies since 2000 — 11 interlocking entities across education, healthcare, pharma, and finance. How did a ₹20 crore company capture India's largest exam system?</p>
-        <div class="card-link">Read full investigation →</div>
-      </div>
-    </a>
-    <a href="know-your-examtech.html" style="text-decoration:none;color:inherit">
-      <div class="featured card teal">
-        <div class="card-icon">🔬</div>
-        <h3>Know Your ExamTech</h3>
-        <p>The CBSE scandal isn't unique. The SSC-Eduquity scam follows an identical playbook: small firms winning government contracts, tender norms rewritten, large players pushed out. Meet India's exam-tech capture pattern.</p>
-        <div class="card-link">Read full analysis →</div>
-      </div>
-    </a>
-    <a href="ni5arga-vulnerabilities.html" style="text-decoration:none;color:inherit">
-      <div class="card">
-        <div class="card-tag">Vulnerability Log</div>
-        <h3>ni5arga Disclosures</h3>
-        <p>Complete timeline of security researcher ni5arga's responsible disclosures on the CBSE OSM portal</p>
-      </div>
-    </a>
+<!-- ── Reading Path ── -->
+<section class="reading-path">
+  <h2>📖 Read in Order</h2>
+  <div class="path-steps">
+
+    <div class="path-step">
+      <div class="step-num">Step 1 — The Disclosure</div>
+      <h3><a href="ni5arga-vulnerabilities.html">ni5arga's Findings</a></h3>
+      <p>A 19-year-old researcher found 9 security holes in the CBSE OSM platform — from hardcoded passwords to a 457K-record payment data leak. Reported to CERT-In in Feb 2026; no fix for 3 months.</p>
+      <div class="tags"><span class="tag critical">Critical</span><span class="tag">9 vulns · Reported Feb 2026</span></div>
+    </div>
+
+    <div class="path-step">
+      <div class="step-num">Step 2 — The Procurement Trail</div>
+      <h3><a href="tender.html">Tender Manipulation</a></h3>
+      <p>How CBSE rewrote tender rules to favour Coempt across three rounds of bidding. Sarthak Sidhant's India Today investigation. Cross-party pattern from Telangana to Delhi.</p>
+      <div class="tags"><span class="tag">Procurement · May 2026</span></div>
+    </div>
+
+    <div class="path-step">
+      <div class="step-num">Step 3 — What We Found</div>
+      <h3><a href="findings.html">Our Findings</a></h3>
+      <p>Cashless Consumer's OSINT: vendor QA code left on GitHub, 30+ boards on a shared platform, 77 exposed API endpoints, and the corporate network behind the vendor.</p>
+      <div class="tags"><span class="tag">OSINT · May 2026</span></div>
+    </div>
+
+    <div class="path-step">
+      <div class="step-num">Step 4 — Who Owns the Vendor</div>
+      <h3><a href="know-your-coempt.html">Know Your Coempt</a></h3>
+      <p>The Chary family's 11 interlocking companies. Prof. S. Sadagopan's advisory role since 2008. How a ₹20 crore company captured India's largest exam system.</p>
+      <div class="tags"><span class="tag">Deep dive · May 2026</span></div>
+    </div>
+
+    <div class="path-step">
+      <div class="step-num">Step 5 — The Systemic Problem</div>
+      <h3><a href="know-your-examtech.html">Know Your ExamTech</a></h3>
+      <p>CBSE isn't alone. The SSC-Eduquity scandal follows an identical playbook: tenders rewritten, large firms excluded, small vendors win. This is a pattern.</p>
+      <div class="tags"><span class="tag">Structural · May 2026</span></div>
+    </div>
+
+    <div class="path-step">
+      <div class="step-num">Step 6 — What We Demand</div>
+      <h3><a href="terms-of-reference.html">Demands for Disclosure</a></h3>
+      <p>What CBSE, NTA, and the Ministry of Education must disclose. RTI templates and an advocacy framework for journalists, parliamentarians, and citizens.</p>
+      <div class="tags"><span class="tag">Advocacy</span></div>
+    </div>
+
   </div>
 </section>
 
-<!-- ── Technical Evidence ── -->
+<!-- ── Chronology ── -->
 <section class="section">
-  <div class="section-label">Technical Evidence — Vulnerabilities & Architecture</div>
+  <div class="section-label">Chronology</div>
+  <div class="featured" style="padding:28px 32px">
+    <div class="chrono">
+      <div class="chrono-row">
+        <div class="chrono-date">Feb 25, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text">ni5arga files first vulnerability report with CERT-In (5 vulns, ref: <code>CERTIn-16590126</code>)</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">Feb–Apr, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text">Three months of silence. CERT-In sends only boilerplate replies. No fix deployed.</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">May 22, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text">ni5arga publishes detailed blog post (5 vulnerabilities). Picked up by India Today, BBC, NDTV, ThePrint, IFF, Medianama + 14 more outlets.</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">May 27, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text">CBSE Class 12 results released. Students report scan errors, blurred marks, score swaps. Mass re-evaluation ordered. Scandal breaks open.</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">May 29, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text"><strong>ni5arga + @thetirthparmar</strong> demonstrate full server takeover (Bad Apple video on CBSE prod server). <strong>Sarthak Sidhant</strong> publishes India Today investigation on CBSE tender irregularities.</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">May 30, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text">Cashless Consumer investigation published: GitHub QA code leaks, 30+ board subdomains, 77 API endpoints. <em>Know Your Coempt</em> and <em>Know Your ExamTech</em> deep dives published.</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">May 31, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text"><strong>Finding 8:</strong> Open S3 bucket with answer sheets + question papers (476K+ views). <strong>Finding 9:</strong> 457,874 record payment data leak via unauthenticated API. CBSE issues official acknowledgment.</div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-date">Jun 1, 2026</div>
+        <div class="chrono-dot"></div>
+        <div class="chrono-text">CBSE responds: attributes breach to "misconfiguration," deploys cybersecurity team. IFF writes to Ministry of Education and CERT-In. Parliamentary questions expected.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── Technical Evidence ── -->
+
+<section class="section">
+  <div class="section-label">Technical Evidence</div>
   <div class="card-grid">
     <a href="annexure.html" style="text-decoration:none;color:inherit">
       <div class="card slate">
-        <div class="card-icon">🔓</div>
-        <h3>Technical Annexure <span class="card-tag">Code</span></h3>
-        <p>QA automation code left on GitHub, Selenium test suites against the live portal, server-side source from AP SBTET, and the commit history showing the portal was rewritten mid-exam.</p>
-        <div class="card-link">View evidence →</div>
+        <h3>Technical Annexure</h3>
+        <p>QA automation code on GitHub, Selenium tests against the live portal, server-side source, and commit history showing mid-exam rewrites.</p>
+        <span class="card-link">View evidence →</span>
       </div>
     </a>
     <a href="api-surface.html" style="text-decoration:none;color:inherit">
       <div class="card slate">
-        <div class="card-icon">🌐</div>
-        <h3>API Surface Analysis <span class="card-tag">77 Endpoints</span></h3>
-        <p>Full endpoint catalogue extracted from the production Angular bundle. Three critical vulnerabilities: sequential answer sheet IDs, password changes without old password, unauthenticated evaluator photos.</p>
-        <div class="card-link">View API surface →</div>
+        <h3>API Surface — 77 Endpoints</h3>
+        <p>Full endpoint catalogue from the production Angular bundle. Sequential answer sheet IDs, password changes without old password, unauthenticated photos.</p>
+        <span class="card-link">View API surface →</span>
       </div>
     </a>
     <a href="impacted-entities.html" style="text-decoration:none;color:inherit">
       <div class="card slate">
-        <div class="card-icon">📋</div>
-        <h3>Impacted Entities <span class="card-tag">30+ Boards</span></h3>
-        <p>SSL certificate transparency logs reveal 30+ educational institutions on the same OnMark platform. A vulnerability in the codebase affects every board simultaneously.</p>
-        <div class="card-link">View entities →</div>
-      </div>
-    </a>
-  </div>
-</section>
-
-<!-- ── Advocacy ── -->
-<section class="section">
-  <div class="section-label">Advocacy — Demands & Reforms</div>
-  <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
-    <a href="terms-of-reference.html" style="text-decoration:none;color:inherit">
-      <div class="card amber">
-        <div class="card-icon">⚡</div>
-        <h3>Demands for Disclosure</h3>
-        <p>What we're asking CBSE, NTA, and the Ministry of Education to disclose about the Coempt contract, the tender process, and the security audit history.</p>
-        <div class="card-link">Read demands →</div>
+        <h3>Impacted Entities — 30+ Boards</h3>
+        <p>SSL certificate logs reveal 30+ institutions on the OnMark platform. A single codebase vulnerability affects every board.</p>
+        <span class="card-link">View entities →</span>
       </div>
     </a>
   </div>
@@ -335,48 +400,47 @@ a:hover{color:var(--accent-hover);border-color:var(--accent)}
     <div class="timeline">
       <div class="timeline-item">
         <div class="date">15 Feb – 4 Mar 2026</div>
-        <div class="event">CBSE Class 12 board examinations conducted. Coempt's QA team rewrites OSM automation code on 24 Feb — the day before CBSE's mock evaluation circular.</div>
+        <div class="event">CBSE Class 12 board exams. Coempt's QA team rewrites OSM automation code on 24 Feb — the day before CBSE's mock evaluation circular.</div>
       </div>
       <div class="timeline-item">
-        <div class="date">Feb 2026</div>
-        <div class="event">Security researcher Nisarga Adhikary discloses authentication bypass and client-side OTP validation in the CBSE OSM portal.</div>
+        <div class="date">Feb 25, 2026</div>
+        <div class="event">Security researcher ni5arga files vulnerability report with CERT-In (ref: <code>CERTIn-16590126</code>).</div>
       </div>
       <div class="timeline-item">
-        <div class="date">May 2026</div>
-        <div class="event">CBSE Class 12 results announced. Students report scan errors, blurred marks, and score swaps. Mass re-evaluation ordered. Coempt faces national scrutiny.</div>
+        <div class="date">May 22, 2026</div>
+        <div class="event">ni5arga publishes detailed blog post. Covered by India Today, BBC, NDTV, and 14+ outlets.</div>
       </div>
       <div class="timeline-item">
-        <div class="date">27–30 May 2026</div>
-        <div class="event">Our investigation published: GitHub QA code leaks, 30+ board subdomains, 77 API endpoints, IDOR vulnerability. <em>Know Your Coempt</em> and <em>Know Your ExamTech</em> deep dives follow.</div>
+        <div class="date">May 27, 2026</div>
+        <div class="event">CBSE Class 12 results announced. Students report scan errors, blurred marks, and score swaps.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="date">May 29, 2026</div>
+        <div class="event">India Today exposes tender manipulation. ni5arga demonstrates full server takeover + super admin access on university portal.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="date">May 30–31, 2026</div>
+        <div class="event">Our investigation published. ni5arga discloses open S3 bucket + payment data leak (457K records). CBSE issues official statement.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── External Sources ── -->
+<!-- ── Sources ── -->
 <section class="section">
   <div class="section-label">Independent Research We Built On</div>
   <div class="featured">
     <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;font-family:var(--sans);font-size:.88em">
-      <li><a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary — Exposing Critical Vulnerabilities in CBSE's OSM Portal</a></li>
-      <li><a href="https://github.com/Sarthak-Sidhant/coempt">Sarthak Sidhant — How CBSE Rewrote Rules to Favor Coempt EduTeck</a></li>
-      <li><a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">Internet Freedom Foundation — When the Exam Itself Can Be Hacked</a></li>
-      <li><a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Raw Evidence Archive (zo.pub)</a></li>
+      <li>🔗 <a href="https://ni5arga.com/blog/posts/hacking-cbse/">Nisarga Adhikary — Exposing Critical Vulnerabilities in CBSE's OSM Portal</a></li>
+      <li>🔗 <a href="https://www.indiatoday.in/education-today/news/story/cbse-class-12-osm-tender-two-failed-bids-led-to-relaxation-of-key-conditions-in-third-round-2918876-2026-05-29">Sarthak Sidhant / India Today — How CBSE Rewrote Rules to Favor Coempt</a></li>
+      <li>🔗 <a href="https://internetfreedom.in/when-the-exam-itself-can-be-hacked-iff-writes-to-the-ministry-of-education-and-cert-in-on-the-cbse-on-screen-marking-disclosure/">Internet Freedom Foundation — When the Exam Itself Can Be Hacked</a></li>
+      <li>📦 <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Raw Evidence Archive (zo.pub)</a></li>
     </ul>
   </div>
 </section>
 
 <footer class="site-footer">
-  <div><strong>Cashless Consumer</strong> — Fintech & DPI Research</div>
-  <div>All findings from passive OSINT. No live systems were accessed.</div>
-  <div>
-    <a href="index.html">Home</a> ·
-    <a href="know-your-coempt.html">Coempt</a> ·
-    <a href="know-your-examtech.html">ExamTech</a> ·
-    <a href="ni5arga-vulnerabilities.html">ni5arga Vulns</a> ·
-    <a href="terms-of-reference.html">Demands</a> ·
-    <a href="annexure.html">Technical</a>
-  </div>
+  <p><strong>Cashless Consumer</strong> — Fintech & DPI Research · All findings from passive OSINT · No live systems were accessed</p>
 </footer>
 
 </body>

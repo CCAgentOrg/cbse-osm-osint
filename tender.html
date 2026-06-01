@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%238b1a1a'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-weight='700' font-size='18' fill='white'%3ECC%3C/text%3E%3C/svg%3E">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tender Manipulation — CBSE OSM Investigation</title>
+<meta name="description" content="How CBSE rewrote tender rules across three rounds to favour Coempt EduTeck. Sarthak Sidhant's India Today investigation. The cross-party pattern.">
+<meta property="og:title" content="Tender Manipulation — How CBSE Rewrote the Rules for Coempt">
+<meta property="og:description" content="Three failed rounds. Conditions relaxed. Coempt wins. The identical playbook used at SSC too.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f7;--fg:#2a2520;--muted:#8a8279;--accent:#8b1a1a;--accent-light:#c0392b;
+  --card:#fff;--border:#e5e0db;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --serif:Georgia,'Times New Roman',serif
+}
+[data-theme="dark"]{
+  --bg:#18181b;--fg:#e4e0dc;--muted:#a39e96;--accent:#e74c3c;--accent-light:#ff6b6b;
+  --card:#1f1f23;--border:#333
+}
+body{font-family:var(--serif);background:var(--bg);color:var(--fg);line-height:1.75;max-width:52em;margin:0 auto;padding:1em}
+
+.site-nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--bg);border-bottom:1px solid var(--border)
+}
+.site-nav-inner{
+  max-width:52em;margin:0 auto;padding:.6em 1em;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.5em;flex-wrap:wrap
+}
+.site-nav-brand{font-weight:700;font-size:.9em;color:var(--fg);text-decoration:none;font-family:var(--sans)}
+.site-nav-sep{color:var(--accent);margin:0 2px}
+.site-nav nav{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
+.site-nav nav a{
+  text-decoration:none;color:var(--fg);padding:.3em .7em;
+  border-radius:999px;border:1px solid var(--border);transition:all .2s;
+  font-family:var(--sans);font-size:.82em
+}
+.site-nav nav a:hover,.site-nav nav a.active{
+  background:var(--accent);color:#fff;border-color:var(--accent)
+}
+
+.page-header{
+  text-align:center;padding:2.5em 1em 1.5em;
+  border-bottom:1px solid var(--border);margin-bottom:2em
+}
+.page-header h1{
+  font-family:var(--sans);font-size:clamp(1.6em,4vw,2.4em);font-weight:800;
+  color:var(--accent);margin-bottom:.4em;letter-spacing:-.02em
+}
+.page-header .subtitle{
+  font-size:1.05em;color:var(--muted);max-width:38em;margin:0 auto;line-height:1.6
+}
+.page-header .meta{
+  margin-top:.8em;font-family:var(--sans);font-size:.78em;color:var(--muted)
+}
+
+h2{
+  font-family:var(--sans);font-size:1.3em;font-weight:700;
+  color:var(--accent);margin:2.2em 0 .8em;padding-bottom:.3em;
+  border-bottom:2px solid var(--border)
+}
+h3{font-family:var(--sans);font-size:1.05em;font-weight:600;margin:1.5em 0 .5em}
+p{margin-bottom:1em}
+a{color:var(--accent-light);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+a:hover{color:var(--accent)}
+blockquote{
+  border-left:3px solid var(--accent);margin:1.2em 0;padding:.6em 1.2em;
+  background:var(--card);border-radius:0 6px 6px 0;font-style:italic;color:var(--muted)
+}
+
+/* Comparison table */
+.comparison{
+  width:100%;border-collapse:collapse;margin:1.5em 0;
+  font-family:var(--sans);font-size:.85em
+}
+.comparison th,.comparison td{
+  text-align:left;padding:.6em;border-bottom:1px solid var(--border)
+}
+.comparison th{color:var(--accent);font-weight:600;font-size:.78em;text-transform:uppercase;letter-spacing:.05em}
+.comparison td:first-child{font-weight:600}
+.comparison tr:hover td{background:rgba(139,26,26,.03)}
+
+/* Flow diagram */
+.flow{
+  display:flex;flex-direction:column;align-items:center;gap:0;
+  margin:1.5em 0;padding:1.5em;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;font-family:var(--sans);font-size:.88em
+}
+.flow-step{
+  padding:.6em 1.4em;border:2px solid var(--border);border-radius:8px;
+  background:var(--bg);text-align:center;width:90%;max-width:420px
+}
+.flow-step.failed{border-color:#e67e22;background:#fef9e7}
+.flow-step.relaxed{border-color:var(--accent);background:#fde8e8;font-weight:700}
+.flow-step.won{border-color:#27ae60;background:#e8f8e8;font-weight:700}
+.flow-arrow{
+  font-size:1.2em;color:var(--muted);line-height:1
+}
+
+/* Impact box */
+.impact-box{
+  margin:1em 0;padding:1em 1.2em;
+  background:rgba(139,26,26,.06);border:1px solid rgba(139,26,26,.15);
+  border-radius:8px
+}
+[data-theme="dark"] .impact-box{
+  background:rgba(231,76,60,.1);border-color:rgba(231,76,60,.25)
+}
+.impact-box h4{
+  font-family:var(--sans);font-size:.9em;font-weight:700;color:var(--accent);margin:0 0 .5em
+}
+.impact-box ul{margin:0;padding-left:1.2em}
+.impact-box li{margin-bottom:.3em;font-size:.92em}
+
+.source-note{
+  font-family:var(--sans);font-size:.78em;color:var(--muted);margin-top:1em;
+  padding-top:.8em;border-top:1px solid var(--border)
+}
+
+.site-footer{
+  margin-top:3em;padding:1.5em;border-top:1px solid var(--border);
+  font-family:var(--sans);font-size:.78em;color:var(--muted);text-align:center
+}
+.site-footer a{color:var(--accent-light)}
+
+@media(max-width:600px){
+  body{font-size:1em;padding:.5em}
+  .site-nav nav a{font-size:.72em;padding:.2em .5em}
+  .page-header{padding:1.5em .5em 1em}
+  .comparison{font-size:.78em}
+}
+</style>
+<link rel="canonical" href="https://ccagentorg.github.io/cbse-osm-osint/tender.html">
+</head>
+<body>
+<div class="site-nav">
+  <div class="site-nav-inner">
+    <a href="index.html" class="site-nav-brand">CBSE OSM<span class="site-nav-sep">/</span>OSINT</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="findings.html">Findings</a>
+      <a href="know-your-coempt.html">Coempt</a>
+      <a href="know-your-examtech.html">ExamTech</a>
+      <a href="tender.html" class="active">Tenders</a>
+      <a href="ni5arga-vulnerabilities.html">ni5arga</a>
+      <a href="terms-of-reference.html">TOR</a>
+      <a href="annexure.html">Annexure</a>
+      <a href="api-surface.html">API</a>
+      <a href="impacted-entities.html">Entities</a>
+    </nav>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>Tender Manipulation</h1>
+  <p class="subtitle">How CBSE rewrote the rules across three rounds to favour one vendor — and the identical playbook that played out at SSC.</p>
+  <p class="meta">Based on India Today investigation by <a href="https://twitter.com/sarthaksidhant">Sarthak Sidhant</a> · <time datetime="2026-05">May 2026</time></p>
+</div>
+
+<h2>📋 The CBSE OSM Tender — Three Rounds, One Winner</h2>
+
+<p>India Today's investigation by Sarthak Sidhant revealed a systematic pattern: CBSE floated the On-Screen Marking tender multiple times, and each time the conditions shifted until Coempt EduTeck became the only viable winner.</p>
+
+<div class="flow">
+  <div class="flow-step failed">Round 1 — Tender floated<br><span style="font-size:.85em;color:var(--muted)">No compliant bids (or insufficient competition)</span></div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step failed">Round 2 — Re-tendered<br><span style="font-size:.85em;color:var(--muted)">Again failed to produce a suitable winner</span></div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step relaxed">Round 3 — Key conditions relaxed<br><span style="font-size:.85em;color:var(--accent)">Minimum turnover/experience lowered · Technical criteria softened</span></div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step won">Coempt EduTeck wins<br><span style="font-size:.85em;color:#27ae60">Lowest compliant bidder in relaxed third round</span></div>
+</div>
+
+<p class="source-note">Source: <a href="https://www.indiatoday.in/education-today/news/story/cbse-class-12-osm-tender-two-failed-bids-led-to-relaxation-of-key-conditions-in-third-round-2918876-2026-05-29">India Today — CBSE OSM tender analysis</a></p>
+
+<h2>🔄 The Identical SSC Playbook</h2>
+
+<p>The CBSE-Coempt scandal is not unique. An almost identical pattern played out at the Staff Selection Commission with vendor <strong>Eduquity Career Technologies</strong>.</p>
+
+<table class="comparison">
+<tr><th>Parameter</th><th>CBSE → Coempt</th><th>SSC → Eduquity</th></tr>
+<tr><td>Vendor</td><td>Coempt EduTeck (Hyderabad)</td><td>Eduquity Career Tech (Bangalore)</td></tr>
+<tr><td>Displaced</td><td>TCS (lost bidding)</td><td>TCS (won initial tender, then lost)</td></tr>
+<tr><td>Founded</td><td>2000 (as Globarena)</td><td>2000</td></tr>
+<tr><td>Tender pattern</td><td>2 failed rounds → relaxed → Coempt wins</td><td>TCS wins → tender cancelled → re-tendered → Eduquity wins</td></tr>
+<tr><td>Previous blacklist</td><td>Telangana Globarena fiasco (23+ suicides, 2019)</td><td>DGT declared "Ineligible" in 2020</td></tr>
+<tr><td>State-level failures</td><td>TSBIE 2017-19 result bungling</td><td>MP TET leak, MP Patwari manipulation, MBA-MH (150+ HC petitions), 4-state blacklist</td></tr>
+<tr><td>Central disaster</td><td>CBSE OSM 2026: scan/blur/swap</td><td>SSC Phase XIII 2025: 55,000+ affected, server crashes</td></tr>
+<tr><td>Revenue spike</td><td>~₹68 Cr (FY2025)</td><td>₹7 Cr → ₹117-135 Cr in 2 years</td></tr>
+<tr><td>Political defense</td><td>BJP: "Works in opposition states too!"</td><td>BJP: Same defense</td></tr>
+<tr><td>Vendor lock-in</td><td>"Removing vendor would delay results"</td><td>"Removing vendor would delay exams until December"</td></tr>
+</table>
+
+<div class="flow">
+  <div class="flow-step failed">TCS wins SSC tender on technical merit</div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step relaxed">Tender CANCELLED · Re-tendered with modified rules<br><span style="font-size:.85em;color:var(--accent)">TCS technical scores reportedly reduced · Eduquity's increased</span></div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step won">Eduquity wins at ₹171/candidate vs TCS ₹311<br><span style="font-size:.85em;color:#27ae60">Lowest bid — but only after rules changed</span></div>
+</div>
+
+<p class="source-note">Sources: <a href="https://www.bhaskarenglish.in/originals/news/ssc-protest-2025-tcs-vs-eduquity-vendor-controversy-technical-glitch-135629720.html">Bhaskar English</a>, <a href="https://www.shiksha.com/news/sarkari-exams-ssc-chairman-defends-eduquity-over-tcs-in-tender-row-aspirants-slam-exam-glitches-blogId-207748">Shiksha.com</a>, <a href="https://dgt.gov.in/sites/default/files/2023-12/comparative_statement.pdf">DGT Comparative Statement</a></p>
+
+<h2>🏛️ The Cross-Party Pattern</h2>
+
+<p>What makes this systemic — not partisan — is that the Chary family has operated across <strong>both BRS (Telangana) and BJP (Central)</strong> governments:</p>
+
+<div class="impact-box">
+<h4>Telangana / BRS Era (2017–2019)</h4>
+<ul>
+<li><strong>Globarena</strong> (now Coempt) awarded ₹4.3 crore, 3-year TSBIE contract under KCR's TRS government</li>
+<li>Norms violated — Globarena didn't meet minimum criteria (5 government universities, state board experience)</li>
+<li>Contract bypassed Centre for Good Governance</li>
+<li>2019: System produced catastrophically wrong results → <strong>23+ student suicides</strong></li>
+<li>Telangana government eventually pulled the contract</li>
+</ul>
+</div>
+
+<div class="impact-box">
+<h4>Central / BJP Era (2022–2026)</h4>
+<ul>
+<li>VSN Raju's family joins Coempt board (same day as Prof. S. Sadagopan)</li>
+<li>CBSE OSM tender won via relaxed third-round bidding</li>
+<li>BJP leaders Amit Malviya and Gaurav Bhatia defend Coempt: "it works in opposition-ruled states too"</li>
+<li>2026: CBSE OSM results disaster — scan errors, blurred marks, mass re-evaluation</li>
+</ul>
+</div>
+
+<p><strong>The same family. The same company (rebranded). The same exam-tech business. Different political patrons.</strong></p>
+
+<p class="source-note">Sources: <a href="https://www.thehindu.com/news/national/telangana/23-inter-students-commit-suicide-till-now-says-inter-minister/">The Hindu</a>, <a href="https://m.economictimes.com/news/politics-and-nation/propaganda-misinformation-bjps-response-to-rahul-gandhis-cbse-osm-allegations/articleshow/131373536.cms">Economic Times</a>, <a href="https://www.deccanchronicle.com/nation/current-affairs/241123/jtnu-h-shortlists-infamous-firms-for-awarding-marks.html">Deccan Chronicle</a></p>
+
+<h2>⚠️ NEET CBT — The Next Target?</h2>
+
+<p>On <strong>29 May 2026</strong> — just days after the CBSE OSM scandal broke — the NTA told the Supreme Court that <strong>NEET-UG will shift to Computer-Based Test mode from 2027</strong>.</p>
+
+<div class="impact-box">
+<h4>The Looming Risk</h4>
+<ul>
+<li>NEET-UG is taken by <strong>~25 lakh students annually</strong></li>
+<li>Moving to CBT creates the largest single exam-tech procurement in India's history</li>
+<li>If the pattern holds: TCS will bid → tender may be cancelled → criteria relaxed → smaller firm wins</li>
+<li><strong>Coempt and/or Eduquity are potential contenders</strong></li>
+<li>A vendor with their track record handling NEET = catastrophic risk for 25 lakh medical aspirants</li>
+</ul>
+</div>
+
+<p class="source-note">Sources: <a href="https://competition.careers360.com/articles/neet-ug-goes-online-from-2026-27">Careers360</a>, <a href="https://bodmaseducation.com/blog_details/neet-ug-2026-re-exam-extended-by-15-minutes-cbt-mode-planned-from-next-year">Bodmas Education</a></p>
+
+<h2>📰 Media Coverage</h2>
+
+<ul style="list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.5em;font-family:var(--sans);font-size:.82em">
+<li><a href="https://www.indiatoday.in/education-today/news/story/cbse-class-12-osm-tender-two-failed-bids-led-to-relaxation-of-key-conditions-in-third-round-2918876-2026-05-29" style="display:inline-block;padding:.4em .8em;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--fg)">India Today</a></li>
+<li><a href="https://www.bhaskarenglish.in/originals/news/ssc-protest-2025-tcs-vs-eduquity-vendor-controversy-technical-glitch-135629720.html" style="display:inline-block;padding:.4em .8em;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--fg)">Bhaskar English</a></li>
+<li><a href="https://sundayguardianlive.com/trending/after-neet-controversy-will-ssc-gd-constable-exam-2026-be-cancelled-over-paper-leak-claims-197042" style="display:inline-block;padding:.4em .8em;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--fg)">Sunday Guardian</a></li>
+<li><a href="https://github.com/Sarthak-Sidhant/coempt" style="display:inline-block;padding:.4em .8em;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--fg)">Sarthak's GitHub</a></li>
+</ul>
+
+<footer class="site-footer">
+  <p>CBSE OSM OSINT Investigation · Cashless Consumer Research · <time datetime="2026-06">Published Jun 2026</time> · <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a></p>
+</footer>
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <p>CBSE OSM OSINT Investigation &middot; <time datetime="2026-05">Published May</time>&ndash;<time datetime="2026-06">Jun 2026</time> &middot; <a href="https://github.com/CCAgentOrg/cbse-osm-osint">Source</a> &middot; <a href="https://zo.pub/cashlessconsumer/cbse-osm-onmarks-osint">Evidence Archive</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

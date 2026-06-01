@@ -6,22 +6,20 @@
 
 In May 2026, 17.8 lakh CBSE Class 12 students had their handwritten answer sheets graded on a single vendor's (Coempt EduTeck) OnMark platform. Independent security researchers disclosed critical vulnerabilities. This investigation documents technical evidence, procurement irregularities, corporate network analysis, and the broader exam-technology industry.
 
-## Pages
-
-### Investigation Hub
-- [index.html](index.html) — Homepage with investigation overview, timeline, and navigation to all sections
-
-### Deep Dives
-- [know-your-coempt.html](know-your-coempt.html) — Corporate network analysis: Chary family (26 years of education-tech companies), S. Sadagopan (academic advisor since 2008), Ventureast (VC firm via Elbit Medical Diagnostics investment)
-- [know-your-examtech.html](know-your-examtech.html) — India's exam technology industry: the SSC-Eduquity parallel scam, why TCS keeps losing to small firms, NEP 2020 digital examination reform, NEET CBT transition
-
-### Technical Evidence
-- [annexure.html](annexure.html) — Full code evidence: OTP bypass in Selenium automation, automated canvas marking, Jenkins CI integration, 77 API endpoints extracted from Angular bundle, OCR/Gemini pipeline, forensic git timeline with SHAs
-- [api-surface.html](api-surface.html) — Complete API endpoint inventory with vulnerability classification (V-01 IDOR, V-02 password-less reset, V-03 unauthenticated photos), authentication architecture analysis, 30+ subdomain inventory
-
-### Context
-- [impacted-entities.html](impacted-entities.html) — All stakeholders: CBSE, Coempt EduTeck, state boards on OnMark platform, security researchers (Nisarga Adhikary, Sarthak Sidhant), civil society (IFF), vendor employees identified via OSINT
-- [terms-of-reference.html](terms-of-reference.html) — Formal investigation framework: 33 questions across procurement, security, data protection, and accountability. RTI templates included.
+## Pages (all themed, responsive, common nav)
+| Page | Content | Status |
+|------|---------|--------|
+| `index.html` | Homepage hub with TL;DR, reading path, key stats, timeline | ✅ New |
+| `findings.html` | Cashless Consumer's full OSINT findings, corporate analysis | ✅ New |
+| `tender.html` | Tender irregularity analysis — CBSE/Coempt, SSC/Eduquity parallel | ✅ New |
+| `know-your-coempt.html` | Chary family, Sadagopan, Ventureast deep dive + D2 diagram | ✅ |
+| `know-your-examtech.html` | Exam-tech sector analysis, SSC-Eduquity parallel, TCS, NEP 2020 + D2 diagram | ✅ |
+| `ni5arga-vulnerabilities.html` | 9 vulnerability disclosures (includes payment data leak) | ✅ |
+| `terms-of-reference.html` | Terms of reference | Pre-existing |
+| `annexure.html` | Technical annexure | Pre-existing |
+| `api-surface.html` | Technical API surface analysis | Pre-existing |
+| `impacted-entities.html` | Impacted entities list | Pre-existing |
+| `llms.txt` | Machine-readable index for LLMs | ✅ |
 
 ## ni5arga Vulnerability Disclosures
 - URL: https://ccagentorg.github.io/cbse-osm-osint/ni5arga-vulnerabilities.html
