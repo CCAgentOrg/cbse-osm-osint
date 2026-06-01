@@ -333,5 +333,41 @@ The scan errors and blurred marks on your answer sheets are symptoms. The diseas
   </div>
 </footer>
 
+<!-- Cloudflare Web Analytics (replace TOKEN with your site token from dash.cloudflare.com) -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "PLACEHOLDER_TOKEN", "spa": true}'></script>
+<script>
+// Custom event tracking for Cloudflare Web Analytics
+window.addEventListener('load', function() {
+  function trackEvent(name, data) {
+    if (window.cloudflare && window.cloudflare.insights) {
+      window.cloudflare.insights.trackEvent({ name: name, data: data || {} });
+    }
+  }
+  // Track nav clicks
+  document.querySelectorAll('.site-nav nav a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('nav_click', { page: a.textContent.trim(), href: a.href });
+    });
+  });
+  // Track reading path clicks
+  document.querySelectorAll('.path-step a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('reading_path_click', { title: a.textContent.trim(), href: a.href });
+    });
+  });
+  // Track card clicks
+  document.querySelectorAll('.card-link').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('card_click', { label: a.textContent.trim(), href: a.href });
+    });
+  });
+  // Track source link clicks
+  document.querySelectorAll('.featured a[href^="http"]').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('source_link_click', { href: a.href, text: a.textContent.trim().substring(0, 60) });
+    });
+  });
+});
+</script>
 </body>
 </html>

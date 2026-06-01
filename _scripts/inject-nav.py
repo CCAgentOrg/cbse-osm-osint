@@ -31,6 +31,42 @@ FOOTER_HTML = '''
 </footer>
 '''
 
+# Cloudflare Web Analytics beacon (replace PLACEHOLDER_TOKEN with your site token)
+# Get a token at: https://dash.cloudflare.com → Web Analytics → Add Site
+CF_ANALYTICS_SCRIPT = '''
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "PLACEHOLDER_TOKEN", "spa": true}'></script>
+<script>
+window.addEventListener('load', function() {
+  function trackEvent(name, data) {
+    if (window.cloudflare && window.cloudflare.insights) {
+      window.cloudflare.insights.trackEvent({ name: name, data: data || {} });
+    }
+  }
+  document.querySelectorAll('.site-nav nav a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('nav_click', { page: a.textContent.trim(), href: a.href });
+    });
+  });
+  document.querySelectorAll('.path-step a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('reading_path_click', { title: a.textContent.trim(), href: a.href });
+    });
+  });
+  document.querySelectorAll('.card-link').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('card_click', { label: a.textContent.trim(), href: a.href });
+    });
+  });
+  document.querySelectorAll('.featured a[href^="http"]').forEach(function(a) {
+    a.addEventListener('click', function() {
+      trackEvent('source_link_click', { href: a.href, text: a.textContent.trim().substring(0, 60) });
+    });
+  });
+});
+</script>
+'''
+
 NAV_CSS = '''
 /* === COMMON SITE NAV & FOOTER === */
 .site-nav{background:#fff;border-bottom:1px solid #e0dcd4;position:sticky;top:0;z-index:100;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
@@ -66,7 +102,7 @@ NAV_CSS = '''
 }
 '''
 
-def inject_page(filepath, nav_html, footer_html, nav_css):
+def inject_page(filepath, nav_html, footer_html, nav_css, analytics_script=None):
     with open(filepath, 'r', encoding='utf-8') as f:
         html = f.read()
 
@@ -83,8 +119,11 @@ def inject_page(filepath, nav_html, footer_html, nav_css):
         count=1
     )
 
-    # Inject footer before </body>
-    html = html.replace('</body>', footer_html + '\n</body>', 1)
+    # Inject footer + analytics before </body>
+    before_body_close = footer_html
+    if analytics_script and 'cloudflareinsights' not in html:
+        before_body_close += analytics_script
+    html = html.replace('</body>', before_body_close + '\n</body>', 1)
 
     # Inject nav CSS into <style> block (append to first <style>)
     if '<style>' in html:
@@ -99,6 +138,6 @@ def inject_page(filepath, nav_html, footer_html, nav_css):
 
 for page in sorted(PAGES):
     path = os.path.join(REPO, page)
-    inject_page(path, NAV_HTML, FOOTER_HTML, NAV_CSS)
+    inject_page(path, NAV_HTML, FOOTER_HTML, NAV_CSS, CF_ANALYTICS_SCRIPT)
 
 print(f"\nDone: {len(PAGES)} pages processed")
